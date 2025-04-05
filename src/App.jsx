@@ -12,6 +12,7 @@ import Strategy from "./components/sections/Strategy";
 import Investment from "./components/sections/Investment";
 import ChatBot from "./components/features/ChatBot";
 import AnimatedBackgroundBubbles from "./components/ui/AnimatedBackgroundBubbles";
+import AmwayDetailCaseStudy from "./components/sections/AmwayDetailCaseStudy";
 
 const App = () => {
   const [activeSection, setActiveSection] = useState("intro");
@@ -32,6 +33,7 @@ const App = () => {
     market: useRef(null),
     ecommerce: useRef(null),
     casestudy: useRef(null),
+    amwayDetail: useRef(null),
     solutions: useRef(null),
     tools: useRef(null),
     strategy: useRef(null),
@@ -116,6 +118,12 @@ const App = () => {
       <CaseStudy
         ref={sectionRefs.casestudy}
         isVisible={isVisible.casestudy}
+        darkMode={darkMode}
+      />
+
+      <AmwayDetailCaseStudy
+        ref={sectionRefs.amwayDetail}
+        isVisible={isVisible.amwayDetail}
         darkMode={darkMode}
       />
 

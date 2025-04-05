@@ -65,6 +65,7 @@ export const navItems = [
   { id: "market", label: "Thị trường" },
   { id: "ecommerce", label: "Tác động TMĐT" },
   { id: "casestudy", label: "Case Study" },
+  { id: "amwayDetail", label: "Chi tiết Amway" },
   { id: "solutions", label: "Giải pháp" },
   { id: "tools", label: "Công cụ" },
   { id: "strategy", label: "Chiến lược" },
