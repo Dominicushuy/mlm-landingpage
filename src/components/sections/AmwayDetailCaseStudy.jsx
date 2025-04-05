@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useAnimation,
-  useInView,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ChevronDown,
   ChevronUp,
@@ -40,18 +35,14 @@ import {
 import { Button } from "../ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { Grid, GridItem, Flex } from "../layout/container";
-import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
 
 const AmwayDetailCaseStudy = ({ darkMode }) => {
   const [activeTab, setActiveTab] = useState("tech");
   const [expandedFaq, setExpandedFaq] = useState(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
-  const [showCase1, setShowCase1] = useState(false);
-  const [showCase2, setShowCase2] = useState(false);
   const containerRef = useRef(null);
   const sectionRef = useRef(null);
-  const controls = useAnimation();
 
   // Tính năng tích hợp công nghệ
   const techFeatures = [
@@ -360,27 +351,6 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Theo dõi hiển thị phần
-  const isInView = useInView(sectionRef, { once: false, amount: 0.2 });
-
-  useEffect(() => {
-    if (isInView) {
-      controls.start("visible");
-    } else {
-      controls.start("hidden");
-    }
-  }, [isInView, controls]);
-
-  // Tự động hiển thị case study
-  useEffect(() => {
-    if (scrollProgress > 0.3 && !showCase1) {
-      setShowCase1(true);
-    }
-    if (scrollProgress > 0.6 && !showCase2) {
-      setShowCase2(true);
-    }
-  }, [scrollProgress, showCase1, showCase2]);
-
   // Bật/tắt mở rộng FAQ
   const toggleFaq = (index) => {
     setExpandedFaq(expandedFaq === index ? null : index);
@@ -391,49 +361,6 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
     setActiveTab(tab);
   };
 
-  // Biến thể hoạt ảnh
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-        duration: 0.5,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
-
-  const fadeInUpVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
-
-  const staggerCardVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.5,
-      },
-    }),
-  };
-
   return (
     <div
       id="amway-detail"
@@ -442,7 +369,7 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
     >
       {/* Chỉ báo tiến độ */}
       <div className="fixed top-1/2 right-6 w-1 h-64 bg-gray-200 dark:bg-gray-700 rounded-full transform -translate-y-1/2 z-50 hidden lg:block">
-        <motion.div
+        <div
           className="w-1 bg-blue-500 dark:bg-blue-400 rounded-full"
           style={{ height: `${scrollProgress * 100}%` }}
         />
@@ -477,20 +404,15 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
             <rect width="100%" height="100%" fill="url(#grid-pattern)" />
           </svg>
 
-          {/* Quả cầu phát sáng có hoạt ảnh */}
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-500 filter blur-[100px] opacity-20 animate-float"></div>
-          <div className="absolute bottom-1/3 right-1/3 w-96 h-96 rounded-full bg-indigo-500 filter blur-[120px] opacity-20 animate-float-delayed"></div>
-          <div className="absolute top-1/2 right-1/4 w-48 h-48 rounded-full bg-purple-500 filter blur-[80px] opacity-15 animate-float-slow"></div>
+          {/* Quả cầu phát sáng */}
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-500 filter blur-[100px] opacity-20"></div>
+          <div className="absolute bottom-1/3 right-1/3 w-96 h-96 rounded-full bg-indigo-500 filter blur-[120px] opacity-20"></div>
+          <div className="absolute top-1/2 right-1/4 w-48 h-48 rounded-full bg-purple-500 filter blur-[80px] opacity-15"></div>
         </div>
 
         {/* Nội dung */}
         <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-center mb-8"
-          >
+          <div className="text-center mb-8">
             <span className="inline-block px-4 py-1 rounded-full bg-white/10 backdrop-blur-md text-blue-200 text-sm font-medium mb-4">
               Phân tích tình huống
             </span>
@@ -507,12 +429,7 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
               Phân tích sâu về cách Amway tích hợp công nghệ, tự động hóa và
               phân tích dữ liệu để cách mạng hóa mô hình kinh doanh MLM
             </p>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 1 }}
-              className="mt-8"
-            >
+            <div className="mt-8">
               <Button
                 onClick={() => {
                   const element = document.getElementById("study-content");
@@ -523,26 +440,15 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
                 Khám phá nghiên cứu
                 <ChevronDown className="ml-2 h-5 w-5" />
               </Button>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
 
         {/* Chỉ báo cuộn */}
-        <motion.div
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white/70 flex flex-col items-center"
-          animate={{
-            y: [0, 10, 0],
-            opacity: [0.7, 1, 0.7],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white/70 flex flex-col items-center">
           <p className="text-sm mb-2">Cuộn để khám phá</p>
           <ChevronDown className="h-6 w-6" />
-        </motion.div>
+        </div>
       </div>
 
       {/* Nội dung chính */}
@@ -553,16 +459,8 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
       >
         <div className="container px-4 sm:px-6 lg:px-8">
           {/* Giới thiệu & Chỉ số hiệu suất chính */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={controls}
-            className="mb-20"
-          >
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-col md:flex-row justify-between items-start mb-12 gap-8"
-            >
+          <div className="mb-20">
+            <div className="flex flex-col md:flex-row justify-between items-start mb-12 gap-8">
               <div className="md:w-1/2">
                 <div className="inline-block px-3 py-1 rounded-md bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-sm font-medium mb-4">
                   Tóm tắt dành cho lãnh đạo
@@ -634,19 +532,17 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Lưới thống kê chính */}
-            <motion.div
-              variants={itemVariants}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12"
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
               {statsData.map((stat) => (
                 <motion.div
                   key={stat.id}
-                  custom={stat.id}
-                  variants={staggerCardVariants}
-                  whileHover="hover"
+                  whileHover={{
+                    scale: 1.03,
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                  }}
                   whileTap={{ scale: 0.98 }}
                   className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md border border-gray-100 dark:border-gray-700/50 hover:shadow-lg transition-shadow"
                 >
@@ -682,16 +578,11 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
                   </div>
                 </motion.div>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Dòng thời gian chuyển đổi số */}
-          <motion.div
-            variants={fadeInUpVariants}
-            initial="hidden"
-            animate={controls}
-            className="mb-20"
-          >
+          <div className="mb-20">
             <div className="text-center mb-10">
               <div className="inline-block px-3 py-1 rounded-md bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 text-sm font-medium mb-4">
                 Hành trình chuyển đổi
@@ -711,20 +602,8 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
 
               <div className="relative">
                 {timeline.map((item, index) => (
-                  <motion.div
+                  <div
                     key={`timeline-${item.id}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{
-                      opacity:
-                        scrollProgress > (index / timeline.length) * 0.7
-                          ? 1
-                          : 0,
-                      y:
-                        scrollProgress > (index / timeline.length) * 0.7
-                          ? 0
-                          : 20,
-                    }}
-                    transition={{ duration: 0.5 }}
                     className={`relative z-10 flex items-center justify-center mb-12 ${
                       index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                     }`}
@@ -732,7 +611,7 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
                     {/* Nội dung dòng thời gian */}
                     <div className="w-full md:w-5/12 px-4">
                       <div
-                        className={`p-6 rounded-xl shadow-md transform transition-all duration-500 h-full
+                        className={`p-6 rounded-xl shadow-md h-full
                         ${
                           index % 2 === 0
                             ? "md:translate-x-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20"
@@ -789,11 +668,11 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
 
                     {/* Không gian trống ở phía bên kia để cân bằng */}
                     <div className="w-full md:w-5/12 px-4"></div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Phần tab tương tác */}
           <div className="mb-20">
@@ -858,33 +737,25 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
 
               {/* Nội dung tab */}
               <div className="p-6 md:p-8">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {activeTab === "tech" && (
-                      <TechnologyIntegrationTab techFeatures={techFeatures} />
-                    )}
-                    {activeTab === "crm" && (
-                      <CrmMarketingTab crmFeatures={crmFeatures} />
-                    )}
-                    {activeTab === "data" && (
-                      <DataAnalyticsTab dataPoints={dataPoints} />
-                    )}
-                    {activeTab === "trends" && (
-                      <FutureTrendsTab futureImpact={futureImpact} />
-                    )}
-                  </motion.div>
-                </AnimatePresence>
+                <div>
+                  {activeTab === "tech" && (
+                    <TechnologyIntegrationTab techFeatures={techFeatures} />
+                  )}
+                  {activeTab === "crm" && (
+                    <CrmMarketingTab crmFeatures={crmFeatures} />
+                  )}
+                  {activeTab === "data" && (
+                    <DataAnalyticsTab dataPoints={dataPoints} />
+                  )}
+                  {activeTab === "trends" && (
+                    <FutureTrendsTab futureImpact={futureImpact} />
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Phần nghiên cứu tình huống - Hiển thị khi cuộn */}
+          {/* Phần nghiên cứu tình huống */}
           <div className="mb-20">
             <div className="text-center mb-10">
               <div className="inline-block px-3 py-1 rounded-md bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-300 text-sm font-medium mb-4">
@@ -900,294 +771,270 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
             </div>
 
             <div className="space-y-12">
-              <AnimatePresence>
-                {showCase1 && (
-                  <motion.div
-                    key="case1"
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7 }}
-                    className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl overflow-hidden shadow-xl border border-blue-100 dark:border-blue-800/30"
-                  >
-                    <div className="grid grid-cols-1 lg:grid-cols-5">
-                      <div className="col-span-2 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-900">
-                          <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                            <Smartphone className="w-32 h-32 text-white" />
-                          </div>
-                          <div className="h-full w-full p-8 flex flex-col items-center justify-center">
-                            <div className="text-white/60 text-center mb-4">
-                              <Users className="w-12 h-12 mx-auto mb-2" />
-                              <div className="text-sm">
-                                Chuyển đổi số châu Á Thái Bình Dương
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-blue-800/90 via-blue-700/60 to-transparent"></div>
-                        <div className="relative p-6 md:p-8 flex h-full">
-                          <div className="mt-auto">
-                            <div className="bg-white/20 backdrop-blur-md rounded-lg px-3 py-1 text-white text-sm inline-block mb-4">
-                              Nghiên cứu #1
-                            </div>
-                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                              Chuyển đổi thị trường châu Á Thái Bình Dương
-                            </h3>
-                            <div className="flex items-center text-blue-100 mb-4">
-                              <Users className="h-5 w-5 mr-2" />
-                              <span>
-                                12.4 triệu khách hàng trên 8 thị trường
-                              </span>
-                            </div>
-                            <div className="flex space-x-3 mt-4">
-                              <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-medium">
-                                Di động là ưu tiên
-                              </span>
-                              <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-medium">
-                                Thương mại xã hội
-                              </span>
-                              <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-medium">
-                                Tích hợp WeChat
-                              </span>
-                            </div>
-                          </div>
-                        </div>
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl overflow-hidden shadow-xl border border-blue-100 dark:border-blue-800/30">
+                <div className="grid grid-cols-1 lg:grid-cols-5">
+                  <div className="col-span-2 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-900">
+                      <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                        <Smartphone className="w-32 h-32 text-white" />
                       </div>
-
-                      <div className="col-span-3 p-6 md:p-8">
-                        <div className="space-y-6">
-                          <div className="grid grid-cols-3 gap-4 mb-6">
-                            <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
-                              <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
-                                Tăng trưởng doanh thu
-                              </p>
-                              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                                +16.8%
-                              </p>
-                            </div>
-                            <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
-                              <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
-                                Đơn hàng di động
-                              </p>
-                              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                                74%
-                              </p>
-                            </div>
-                            <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
-                              <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
-                                Tương tác kỹ thuật số
-                              </p>
-                              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                                4.7M
-                              </p>
-                            </div>
-                          </div>
-
-                          <div>
-                            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-                              Thách thức
-                            </h4>
-                            <p className="text-gray-600 dark:text-gray-300 mb-4">
-                              Amway phải đối mặt với sự sụt giảm về mức độ tương
-                              tác ở khu vực châu Á Thái Bình Dương, với các
-                              phương pháp MLM truyền thống không còn phù hợp với
-                              người tiêu dùng am hiểu công nghệ thuộc thế hệ
-                              Millennials và Gen Z. Tỷ lệ sử dụng di động cao,
-                              nhưng hệ thống của Amway chủ yếu tập trung vào máy
-                              tính để bàn.
-                            </p>
-                          </div>
-
-                          <div>
-                            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-                              Giải pháp
-                            </h4>
-                            <p className="text-gray-600 dark:text-gray-300 mb-4">
-                              Công ty triển khai chiến lược ưu tiên di động với
-                              khả năng thương mại xã hội tích hợp, cho phép nhà
-                              phân phối chia sẻ và bán sản phẩm trực tiếp thông
-                              qua các nền tảng phổ biến như WeChat và LINE. Các
-                              sáng kiến chính bao gồm:
-                            </p>
-                            <ul className="space-y-2 mb-4">
-                              {[
-                                "Tích hợp Mini-Program WeChat để duyệt và mua sản phẩm mượt mà",
-                                "Tự động hóa chia sẻ xã hội với liên kết liên kết cá nhân hóa",
-                                "Trải nghiệm sản phẩm AR di động để dùng thử ảo trước khi mua",
-                                "Đào tạo nhà phân phối và tương tác khách hàng dạng game hóa",
-                              ].map((item, i) => (
-                                <li
-                                  key={`case1-item-${i}`}
-                                  className="flex items-start gap-2"
-                                >
-                                  <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                                  <span className="text-gray-600 dark:text-gray-300">
-                                    {item}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-
-                          <div>
-                            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-                              Kết quả
-                            </h4>
-                            <p className="text-gray-600 dark:text-gray-300">
-                              Trong vòng 18 tháng, Amway APAC đạt mức tăng
-                              trưởng doanh thu 16,8%, với 74% đơn đặt hàng đến
-                              từ các kênh di động. Chi phí thu hút nhà phân phối
-                              giảm 42%, trong khi độ tuổi trung bình của nhà
-                              phân phối giảm từ 47 xuống 39 tuổi.
-                            </p>
+                      <div className="h-full w-full p-8 flex flex-col items-center justify-center">
+                        <div className="text-white/60 text-center mb-4">
+                          <Users className="w-12 h-12 mx-auto mb-2" />
+                          <div className="text-sm">
+                            Chuyển đổi số châu Á Thái Bình Dương
                           </div>
                         </div>
                       </div>
                     </div>
-                  </motion.div>
-                )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-blue-800/90 via-blue-700/60 to-transparent"></div>
+                    <div className="relative p-6 md:p-8 flex h-full">
+                      <div className="mt-auto">
+                        <div className="bg-white/20 backdrop-blur-md rounded-lg px-3 py-1 text-white text-sm inline-block mb-4">
+                          Nghiên cứu #1
+                        </div>
+                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                          Chuyển đổi thị trường châu Á Thái Bình Dương
+                        </h3>
+                        <div className="flex items-center text-blue-100 mb-4">
+                          <Users className="h-5 w-5 mr-2" />
+                          <span>12.4 triệu khách hàng trên 8 thị trường</span>
+                        </div>
+                        <div className="flex space-x-3 mt-4">
+                          <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-medium">
+                            Di động là ưu tiên
+                          </span>
+                          <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-medium">
+                            Thương mại xã hội
+                          </span>
+                          <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-medium">
+                            Tích hợp WeChat
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-                {showCase2 && (
-                  <motion.div
-                    key="case2"
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7 }}
-                    className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl overflow-hidden shadow-xl border border-purple-100 dark:border-purple-800/30"
-                  >
-                    <div className="grid grid-cols-1 lg:grid-cols-5">
-                      <div className="col-span-3 p-6 md:p-8 order-2 lg:order-1">
-                        <div className="space-y-6">
-                          <div className="grid grid-cols-3 gap-4 mb-6">
-                            <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
-                              <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
-                                ROI tự động hóa
-                              </p>
-                              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                                314%
-                              </p>
-                            </div>
-                            <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
-                              <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
-                                Tăng năng suất
-                              </p>
-                              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                                +42%
-                              </p>
-                            </div>
-                            <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
-                              <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
-                                Độ chính xác hoa hồng
-                              </p>
-                              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                                99.8%
-                              </p>
-                            </div>
-                          </div>
-
-                          <div>
-                            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-                              Thách thức
-                            </h4>
-                            <p className="text-gray-600 dark:text-gray-300 mb-4">
-                              Hoạt động châu Âu của Amway gặp khó khăn với các
-                              quy trình thủ công kém hiệu quả trong tính toán
-                              hoa hồng, đăng ký nhà phân phối và quản lý tuân
-                              thủ. Điều này gây ra sự chậm trễ, lỗi và sự không
-                              hài lòng của nhà phân phối.
-                            </p>
-                          </div>
-
-                          <div>
-                            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-                              Giải pháp
-                            </h4>
-                            <p className="text-gray-600 dark:text-gray-300 mb-4">
-                              Amway đã phát triển nền tảng tự động hóa tích hợp
-                              có tên "AmwayNext" đã cách mạng hóa hoạt động
-                              thông qua:
-                            </p>
-                            <ul className="space-y-2 mb-4">
-                              {[
-                                "Tính toán hoa hồng dựa trên blockchain với tầm nhìn bảng điều khiển thời gian thực",
-                                "Giám sát tuân thủ được hỗ trợ bởi AI để tuân thủ quy định trên các thị trường EU khác nhau",
-                                "Đăng ký nhà phân phối tự động với xác minh KYC",
-                                "Quản lý hàng tồn kho dự đoán gắn với mô hình hoạt động của nhà phân phối",
-                              ].map((item, i) => (
-                                <li
-                                  key={`case2-item-${i}`}
-                                  className="flex items-start gap-2"
-                                >
-                                  <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                                  <span className="text-gray-600 dark:text-gray-300">
-                                    {item}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-
-                          <div>
-                            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
-                              Kết quả
-                            </h4>
-                            <p className="text-gray-600 dark:text-gray-300">
-                              Giải pháp mang lại ROI 314% trong vòng hai năm,
-                              với thời gian xử lý hoa hồng giảm từ 5 ngày xuống
-                              4 giờ. Vi phạm tuân thủ giảm 87%, trong khi điểm
-                              hài lòng của nhà phân phối tăng từ 72% lên 91%.
-                            </p>
-                          </div>
+                  <div className="col-span-3 p-6 md:p-8">
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-3 gap-4 mb-6">
+                        <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
+                          <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
+                            Tăng trưởng doanh thu
+                          </p>
+                          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                            +16.8%
+                          </p>
+                        </div>
+                        <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
+                          <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
+                            Đơn hàng di động
+                          </p>
+                          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                            74%
+                          </p>
+                        </div>
+                        <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
+                          <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
+                            Tương tác kỹ thuật số
+                          </p>
+                          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                            4.7M
+                          </p>
                         </div>
                       </div>
 
-                      <div className="col-span-2 relative overflow-hidden order-1 lg:order-2">
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-700 dark:from-purple-700 dark:to-pink-900">
-                          <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                            <Zap className="w-32 h-32 text-white" />
-                          </div>
-                          <div className="h-full w-full p-8 flex flex-col items-center justify-center">
-                            <div className="text-white/60 text-center mb-4">
-                              <Lock className="w-12 h-12 mx-auto mb-2" />
-                              <div className="text-sm">
-                                Tự động hóa hoạt động châu Âu
-                              </div>
-                            </div>
-                          </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+                          Thách thức
+                        </h4>
+                        <p className="text-gray-600 dark:text-gray-300 mb-4">
+                          Amway phải đối mặt với sự sụt giảm về mức độ tương tác
+                          ở khu vực châu Á Thái Bình Dương, với các phương pháp
+                          MLM truyền thống không còn phù hợp với người tiêu dùng
+                          am hiểu công nghệ thuộc thế hệ Millennials và Gen Z.
+                          Tỷ lệ sử dụng di động cao, nhưng hệ thống của Amway
+                          chủ yếu tập trung vào máy tính để bàn.
+                        </p>
+                      </div>
+
+                      <div>
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+                          Giải pháp
+                        </h4>
+                        <p className="text-gray-600 dark:text-gray-300 mb-4">
+                          Công ty triển khai chiến lược ưu tiên di động với khả
+                          năng thương mại xã hội tích hợp, cho phép nhà phân
+                          phối chia sẻ và bán sản phẩm trực tiếp thông qua các
+                          nền tảng phổ biến như WeChat và LINE. Các sáng kiến
+                          chính bao gồm:
+                        </p>
+                        <ul className="space-y-2 mb-4">
+                          {[
+                            "Tích hợp Mini-Program WeChat để duyệt và mua sản phẩm mượt mà",
+                            "Tự động hóa chia sẻ xã hội với liên kết liên kết cá nhân hóa",
+                            "Trải nghiệm sản phẩm AR di động để dùng thử ảo trước khi mua",
+                            "Đào tạo nhà phân phối và tương tác khách hàng dạng game hóa",
+                          ].map((item, i) => (
+                            <li
+                              key={`case1-item-${i}`}
+                              className="flex items-start gap-2"
+                            >
+                              <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                              <span className="text-gray-600 dark:text-gray-300">
+                                {item}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div>
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+                          Kết quả
+                        </h4>
+                        <p className="text-gray-600 dark:text-gray-300">
+                          Trong vòng 18 tháng, Amway APAC đạt mức tăng trưởng
+                          doanh thu 16,8%, với 74% đơn đặt hàng đến từ các kênh
+                          di động. Chi phí thu hút nhà phân phối giảm 42%, trong
+                          khi độ tuổi trung bình của nhà phân phối giảm từ 47
+                          xuống 39 tuổi.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl overflow-hidden shadow-xl border border-purple-100 dark:border-purple-800/30">
+                <div className="grid grid-cols-1 lg:grid-cols-5">
+                  <div className="col-span-3 p-6 md:p-8 order-2 lg:order-1">
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-3 gap-4 mb-6">
+                        <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
+                          <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
+                            ROI tự động hóa
+                          </p>
+                          <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                            314%
+                          </p>
                         </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-purple-800/90 via-purple-700/60 to-transparent"></div>
-                        <div className="relative p-6 md:p-8 flex h-full">
-                          <div className="mt-auto">
-                            <div className="bg-white/20 backdrop-blur-md rounded-lg px-3 py-1 text-white text-sm inline-block mb-4">
-                              Nghiên cứu #2
-                            </div>
-                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                              Tự động hóa hoạt động châu Âu
-                            </h3>
-                            <div className="flex items-center text-purple-100 mb-4">
-                              <Zap className="h-5 w-5 mr-2" />
-                              <span>
-                                Phục vụ 18 thị trường trên toàn châu Âu
+                        <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
+                          <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
+                            Tăng năng suất
+                          </p>
+                          <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                            +42%
+                          </p>
+                        </div>
+                        <div className="bg-white dark:bg-gray-700 shadow-sm rounded-lg p-4 text-center">
+                          <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">
+                            Độ chính xác hoa hồng
+                          </p>
+                          <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                            99.8%
+                          </p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+                          Thách thức
+                        </h4>
+                        <p className="text-gray-600 dark:text-gray-300 mb-4">
+                          Hoạt động châu Âu của Amway gặp khó khăn với các quy
+                          trình thủ công kém hiệu quả trong tính toán hoa hồng,
+                          đăng ký nhà phân phối và quản lý tuân thủ. Điều này
+                          gây ra sự chậm trễ, lỗi và sự không hài lòng của nhà
+                          phân phối.
+                        </p>
+                      </div>
+
+                      <div>
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+                          Giải pháp
+                        </h4>
+                        <p className="text-gray-600 dark:text-gray-300 mb-4">
+                          Amway đã phát triển nền tảng tự động hóa tích hợp có
+                          tên "AmwayNext" đã cách mạng hóa hoạt động thông qua:
+                        </p>
+                        <ul className="space-y-2 mb-4">
+                          {[
+                            "Tính toán hoa hồng dựa trên blockchain với tầm nhìn bảng điều khiển thời gian thực",
+                            "Giám sát tuân thủ được hỗ trợ bởi AI để tuân thủ quy định trên các thị trường EU khác nhau",
+                            "Đăng ký nhà phân phối tự động với xác minh KYC",
+                            "Quản lý hàng tồn kho dự đoán gắn với mô hình hoạt động của nhà phân phối",
+                          ].map((item, i) => (
+                            <li
+                              key={`case2-item-${i}`}
+                              className="flex items-start gap-2"
+                            >
+                              <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                              <span className="text-gray-600 dark:text-gray-300">
+                                {item}
                               </span>
-                            </div>
-                            <div className="flex space-x-3 mt-4">
-                              <span className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-xs font-medium">
-                                Blockchain
-                              </span>
-                              <span className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-xs font-medium">
-                                Tự động hóa
-                              </span>
-                              <span className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-xs font-medium">
-                                Tuân thủ
-                              </span>
-                            </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div>
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+                          Kết quả
+                        </h4>
+                        <p className="text-gray-600 dark:text-gray-300">
+                          Giải pháp mang lại ROI 314% trong vòng hai năm, với
+                          thời gian xử lý hoa hồng giảm từ 5 ngày xuống 4 giờ.
+                          Vi phạm tuân thủ giảm 87%, trong khi điểm hài lòng của
+                          nhà phân phối tăng từ 72% lên 91%.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 relative overflow-hidden order-1 lg:order-2">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-700 dark:from-purple-700 dark:to-pink-900">
+                      <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                        <Zap className="w-32 h-32 text-white" />
+                      </div>
+                      <div className="h-full w-full p-8 flex flex-col items-center justify-center">
+                        <div className="text-white/60 text-center mb-4">
+                          <Lock className="w-12 h-12 mx-auto mb-2" />
+                          <div className="text-sm">
+                            Tự động hóa hoạt động châu Âu
                           </div>
                         </div>
                       </div>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    <div className="absolute inset-0 bg-gradient-to-t from-purple-800/90 via-purple-700/60 to-transparent"></div>
+                    <div className="relative p-6 md:p-8 flex h-full">
+                      <div className="mt-auto">
+                        <div className="bg-white/20 backdrop-blur-md rounded-lg px-3 py-1 text-white text-sm inline-block mb-4">
+                          Nghiên cứu #2
+                        </div>
+                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                          Tự động hóa hoạt động châu Âu
+                        </h3>
+                        <div className="flex items-center text-purple-100 mb-4">
+                          <Zap className="h-5 w-5 mr-2" />
+                          <span>Phục vụ 18 thị trường trên toàn châu Âu</span>
+                        </div>
+                        <div className="flex space-x-3 mt-4">
+                          <span className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-xs font-medium">
+                            Blockchain
+                          </span>
+                          <span className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-xs font-medium">
+                            Tự động hóa
+                          </span>
+                          <span className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-xs font-medium">
+                            Tuân thủ
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1228,22 +1075,11 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
                       )}
                     </button>
 
-                    <AnimatePresence>
-                      {expandedFaq === index && (
-                        <motion.div
-                          key={`faq-answer-${faq.id}`}
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="px-6 pb-6 text-gray-600 dark:text-gray-300">
-                            {faq.answer}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    {expandedFaq === index && (
+                      <div className="px-6 pb-6 text-gray-600 dark:text-gray-300">
+                        {faq.answer}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -1251,12 +1087,7 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
           </div>
 
           {/* Lời kêu gọi hành động */}
-          <motion.div
-            variants={fadeInUpVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.8 }}
-          >
+          <div>
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-700 dark:to-indigo-700 rounded-2xl p-8 md:p-12 shadow-xl overflow-hidden relative">
               {/* Phần tử nền */}
               <div className="absolute inset-0 overflow-hidden opacity-10">
@@ -1316,21 +1147,31 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-4">
-                  <Button className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-3 shadow-lg hover:shadow-xl transition-all rounded-full">
-                    Yêu cầu demo
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="text-white border-white/30 hover:bg-white/10 px-8 py-3 backdrop-blur-sm rounded-full"
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    Tải nghiên cứu tình huống
-                    <Download className="ml-2 h-5 w-5" />
-                  </Button>
+                    <Button className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-3 shadow-lg hover:shadow-xl transition-all rounded-full">
+                      Yêu cầu demo
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button
+                      variant="outline"
+                      className="text-white border-white/30 hover:bg-white/10 px-8 py-3 backdrop-blur-sm rounded-full"
+                    >
+                      Tải nghiên cứu tình huống
+                      <Download className="ml-2 h-5 w-5" />
+                    </Button>
+                  </motion.div>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>
@@ -1353,12 +1194,10 @@ const TechnologyIntegrationTab = ({ techFeatures }) => (
         </p>
 
         <div className="mt-8 space-y-6">
-          {techFeatures.map((feature, index) => (
+          {techFeatures.map((feature) => (
             <motion.div
               key={`tech-feature-${feature.id}`}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
+              whileHover={{ x: 10 }}
               className="flex items-start gap-4"
             >
               <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg text-blue-600 dark:text-blue-400">
@@ -1398,11 +1237,9 @@ const TechnologyIntegrationTab = ({ techFeatures }) => (
                 </span>
               </div>
               <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <motion.div
+                <div
                   className="h-full bg-blue-500 dark:bg-blue-400 rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${feature.stats.effectiveness}%` }}
-                  transition={{ duration: 1, delay: 0.5 }}
+                  style={{ width: `${feature.stats.effectiveness}%` }}
                 />
               </div>
 
@@ -1413,11 +1250,9 @@ const TechnologyIntegrationTab = ({ techFeatures }) => (
                   </span>
                   <div className="flex items-center gap-2">
                     <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex-grow">
-                      <motion.div
+                      <div
                         className="h-full bg-green-500 dark:bg-green-400 rounded-full"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${feature.stats.adoption}%` }}
-                        transition={{ duration: 1, delay: 0.7 }}
+                        style={{ width: `${feature.stats.adoption}%` }}
                       />
                     </div>
                     <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
@@ -1431,11 +1266,9 @@ const TechnologyIntegrationTab = ({ techFeatures }) => (
                   </span>
                   <div className="flex items-center gap-2">
                     <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex-grow">
-                      <motion.div
+                      <div
                         className="h-full bg-purple-500 dark:bg-purple-400 rounded-full"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${feature.stats.roi}%` }}
-                        transition={{ duration: 1, delay: 0.9 }}
+                        style={{ width: `${feature.stats.roi}%` }}
                       />
                     </div>
                     <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
@@ -1527,8 +1360,14 @@ const TechnologyIntegrationTab = ({ techFeatures }) => (
                   "Giá trị trọn đời khách hàng cao hơn 32%, giữ chân tốt hơn 28%",
               },
             ].map((row, index) => (
-              <tr
+              <motion.tr
                 key={`approach-${row.id}`}
+                whileHover={{
+                  backgroundColor:
+                    index % 2 === 0
+                      ? "rgba(246, 248, 255, 0.8)"
+                      : "rgba(236, 242, 255, 0.8)",
+                }}
                 className={
                   index % 2 === 0
                     ? "bg-white dark:bg-gray-800"
@@ -1547,7 +1386,7 @@ const TechnologyIntegrationTab = ({ techFeatures }) => (
                 <td className="py-3 px-4 text-sm text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-700/50 font-medium">
                   {row.impact}
                 </td>
-              </tr>
+              </motion.tr>
             ))}
           </tbody>
         </table>
@@ -1571,7 +1410,7 @@ const CrmMarketingTab = ({ crmFeatures }) => (
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-          {crmFeatures.map((feature, index) => {
+          {crmFeatures.map((feature) => {
             const colorMap = {
               blue: "from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 border-blue-200 dark:border-blue-700/30",
               indigo:
@@ -1591,9 +1430,10 @@ const CrmMarketingTab = ({ crmFeatures }) => (
             return (
               <motion.div
                 key={`crm-feature-${feature.id}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                }}
                 className={`bg-gradient-to-br ${
                   colorMap[feature.color]
                 } border rounded-xl p-5 shadow-sm`}
@@ -1656,9 +1496,10 @@ const CrmMarketingTab = ({ crmFeatures }) => (
                   "Tăng 32% giá trị đơn hàng trung bình",
                 ],
               },
-            ].map((workflow, i) => (
-              <div
+            ].map((workflow) => (
+              <motion.div
                 key={`workflow-${workflow.id}`}
+                whileHover={{ y: -5 }}
                 className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-indigo-100 dark:border-indigo-800/30"
               >
                 <h5 className="font-medium text-gray-900 dark:text-white mb-3">
@@ -1699,7 +1540,7 @@ const CrmMarketingTab = ({ crmFeatures }) => (
                     ))}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -1707,7 +1548,10 @@ const CrmMarketingTab = ({ crmFeatures }) => (
 
       <div className="order-1 lg:order-2">
         <div className="sticky top-24 space-y-6">
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-600 dark:from-indigo-700 dark:to-purple-700 rounded-xl text-white overflow-hidden shadow-xl">
+          <motion.div
+            whileHover={{ scale: 1.03 }}
+            className="bg-gradient-to-br from-indigo-600 to-purple-600 dark:from-indigo-700 dark:to-purple-700 rounded-xl text-white overflow-hidden shadow-xl"
+          >
             <div className="p-6">
               <h4 className="font-bold text-xl mb-4">
                 Tác động triển khai CRM
@@ -1747,7 +1591,7 @@ const CrmMarketingTab = ({ crmFeatures }) => (
                     after: "91%",
                     improvement: "+26%",
                   },
-                ].map((metric, i) => (
+                ].map((metric) => (
                   <div
                     key={`impact-${metric.id}`}
                     className="flex justify-between items-center pb-2 border-b border-indigo-500 dark:border-indigo-400/30"
@@ -1775,9 +1619,12 @@ const CrmMarketingTab = ({ crmFeatures }) => (
                 ))}
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 p-6">
+          <motion.div
+            whileHover={{ scale: 1.03 }}
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 p-6"
+          >
             <h4 className="font-bold text-gray-900 dark:text-white mb-4">
               Ngăn xếp công nghệ
             </h4>
@@ -1809,7 +1656,7 @@ const CrmMarketingTab = ({ crmFeatures }) => (
                   name: "Nền tảng phân tích",
                   value: "Looker + Tableau",
                 },
-              ].map((tech, i) => (
+              ].map((tech) => (
                 <div
                   key={`tech-${tech.id}`}
                   className="flex justify-between items-center"
@@ -1834,7 +1681,7 @@ const CrmMarketingTab = ({ crmFeatures }) => (
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
@@ -1856,7 +1703,7 @@ const DataAnalyticsTab = ({ dataPoints }) => (
         </p>
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {dataPoints.map((point, index) => {
+          {dataPoints.map((point) => {
             const colorMap = {
               blue: "border-blue-200 dark:border-blue-700/50 bg-blue-50 dark:bg-blue-900/20",
               green:
@@ -1877,9 +1724,10 @@ const DataAnalyticsTab = ({ dataPoints }) => (
             return (
               <motion.div
                 key={`data-point-${point.id}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                }}
                 className={`rounded-xl border ${colorMap[point.color]} p-5`}
               >
                 <div className="flex justify-between items-start mb-4">
@@ -1946,13 +1794,17 @@ const DataAnalyticsTab = ({ dataPoints }) => (
                   "Hệ thống cảnh báo sớm xác định các nhà phân phối có nguy cơ rời đi với độ chính xác cao hơn 37% so với các phương pháp trước đây.",
               },
             ].map((insight) => (
-              <div
+              <motion.div
                 key={`insight-${insight.id}`}
+                whileHover={{
+                  scale: 1.03,
+                  backgroundColor: "rgba(255, 255, 255, 0.15)",
+                }}
                 className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20"
               >
                 <h5 className="font-bold text-lg mb-2">{insight.title}</h5>
                 <p className="text-sm text-blue-100">{insight.description}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -2022,7 +1874,11 @@ const DataAnalyticsTab = ({ dataPoints }) => (
                   ],
                 },
               ].map((phase, i) => (
-                <div key={`phase-${phase.id}`} className="relative">
+                <motion.div
+                  key={`phase-${phase.id}`}
+                  whileHover={{ x: 5 }}
+                  className="relative"
+                >
                   {/* Đường kết nối */}
                   {i < 3 && (
                     <div className="absolute left-7 top-16 bottom-0 w-0.5 bg-blue-200 dark:bg-blue-800"></div>
@@ -2059,7 +1915,7 @@ const DataAnalyticsTab = ({ dataPoints }) => (
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -2138,7 +1994,7 @@ const FutureTrendsTab = ({ futureImpact }) => (
               icon: Users,
               color: "orange",
             },
-          ].map((trend, index) => {
+          ].map((trend) => {
             const colorMap = {
               purple: "border-l-purple-500 dark:border-l-purple-400",
               blue: "border-l-blue-500 dark:border-l-blue-400",
@@ -2163,9 +2019,10 @@ const FutureTrendsTab = ({ futureImpact }) => (
             return (
               <motion.div
                 key={`trend-${trend.id}`}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
+                whileHover={{
+                  x: 10,
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                }}
                 className={`rounded-lg border-l-4 ${colorMap[trend.color]} ${
                   bgColors[trend.color]
                 } p-5 shadow-sm`}
@@ -2192,7 +2049,10 @@ const FutureTrendsTab = ({ futureImpact }) => (
       </div>
 
       <div className="space-y-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
+        <motion.div
+          whileHover={{ scale: 1.03 }}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-6"
+        >
           <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
             Mức độ sẵn sàng đối với công nghệ mới
           </h4>
@@ -2200,7 +2060,7 @@ const FutureTrendsTab = ({ futureImpact }) => (
           {/* Thay thế biểu đồ bằng bảng điểm kết hợp thanh tiến trình */}
           <div className="space-y-6">
             {futureImpact.map((item) => (
-              <div key={`impact-${item.id}`}>
+              <motion.div key={`impact-${item.id}`} whileHover={{ y: -5 }}>
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-medium text-gray-800 dark:text-gray-200">
                     {item.trend}
@@ -2245,12 +2105,15 @@ const FutureTrendsTab = ({ futureImpact }) => (
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-700 dark:to-purple-700 rounded-xl shadow-lg text-white p-6">
+        <motion.div
+          whileHover={{ scale: 1.03 }}
+          className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-700 dark:to-purple-700 rounded-xl shadow-lg text-white p-6"
+        >
           <h4 className="text-xl font-bold mb-4">
             Lộ trình ứng dụng công nghệ
           </h4>
@@ -2282,8 +2145,12 @@ const FutureTrendsTab = ({ futureImpact }) => (
                 ],
               },
             ].map((phase, i) => (
-              <div
+              <motion.div
                 key={`phase-${i}`}
+                whileHover={{
+                  y: -5,
+                  backgroundColor: "rgba(255, 255, 255, 0.15)",
+                }}
                 className="bg-white/10 backdrop-blur-sm rounded-lg p-4"
               >
                 <h5 className="font-bold text-lg mb-3">{phase.phase}</h5>
@@ -2298,10 +2165,10 @@ const FutureTrendsTab = ({ futureImpact }) => (
                     </li>
                   ))}
                 </ul>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
 
@@ -2360,8 +2227,12 @@ const FutureTrendsTab = ({ futureImpact }) => (
                 ),
               },
             ].map((rec) => (
-              <div
+              <motion.div
                 key={`rec-${rec.id}`}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                }}
                 className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-100 dark:border-gray-600 flex items-start gap-3"
               >
                 <div className="flex-shrink-0 mt-1">{rec.icon}</div>
@@ -2373,7 +2244,7 @@ const FutureTrendsTab = ({ futureImpact }) => (
                     {rec.description}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
