@@ -8,6 +8,7 @@ import {
 } from "../layout/section";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { toolsComparisonData } from "../../data/siteData";
+import { BarChart } from "../charts/chart-components";
 
 const Tools = forwardRef(({ isVisible }, ref) => {
   return (

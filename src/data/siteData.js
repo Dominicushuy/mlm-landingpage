@@ -69,6 +69,7 @@ export const navItems = [
   { id: "solutions", label: "Giải pháp" },
   { id: "tools", label: "Công cụ" },
   { id: "strategy", label: "Chiến lược" },
+  { id: "demo", label: "Demo" },
   { id: "invest", label: "Đầu tư" },
 ];
 

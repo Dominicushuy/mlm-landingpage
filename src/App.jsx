@@ -12,6 +12,7 @@ import Strategy from "./components/sections/Strategy";
 import Investment from "./components/sections/Investment";
 import ChatBot from "./components/features/ChatBot";
 import AmwayDetailCaseStudy from "./components/sections/AmwayDetailCaseStudy";
+import DemoSection from "./components/sections/DemoSection";
 import { ArrowUp, MessageSquare, Moon, Sun } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { navItems } from "./data/siteData";
@@ -171,6 +172,12 @@ const App = () => {
       <Tools
         ref={sectionRefs.tools}
         isVisible={isVisible.tools}
+        darkMode={darkMode}
+      />
+
+      <DemoSection
+        ref={sectionRefs.demo}
+        isVisible={isVisible.demo}
         darkMode={darkMode}
       />
 
