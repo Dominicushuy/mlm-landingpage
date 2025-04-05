@@ -25,16 +25,8 @@ import {
   AlertCircle,
   DollarSign,
 } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "../ui/card";
 import { Button } from "../ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
-import { Grid, GridItem, Flex } from "../layout/container";
 
 const AmwayDetailCaseStudy = ({ darkMode }) => {
   const [activeTab, setActiveTab] = useState("tech");

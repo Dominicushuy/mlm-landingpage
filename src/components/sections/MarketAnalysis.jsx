@@ -7,7 +7,6 @@ import {
   SectionSubtitle,
   SectionDescription,
 } from "../layout/section";
-import { Grid, GridItem } from "../layout/container";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import { BarChart, LineChart } from "../charts/chart-components";
 import { marketGrowthData } from "../../data/siteData";
@@ -69,8 +68,8 @@ const MarketAnalysis = forwardRef(({ isVisible }, ref) => {
           </SectionDescription>
         </SectionHeader>
 
-        <Grid cols={2} gap="lg" className="mt-12">
-          <GridItem>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+          <div>
             {/* Global market card - hover effect preserved */}
             <div
               onMouseEnter={() => handleCardHover("global")}
@@ -125,9 +124,9 @@ const MarketAnalysis = forwardRef(({ isVisible }, ref) => {
                 </CardContent>
               </Card>
             </div>
-          </GridItem>
+          </div>
 
-          <GridItem>
+          <div>
             {/* Vietnam market card - hover effect preserved */}
             <div
               onMouseEnter={() => handleCardHover("vietnam")}
@@ -201,8 +200,8 @@ const MarketAnalysis = forwardRef(({ isVisible }, ref) => {
                 </CardContent>
               </Card>
             </div>
-          </GridItem>
-        </Grid>
+          </div>
+        </div>
 
         <div className="mt-12 p-6 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg relative overflow-hidden">
           {/* Decorative elements */}
@@ -219,7 +218,7 @@ const MarketAnalysis = forwardRef(({ isVisible }, ref) => {
               đang tạo ra làn sóng chuyển đổi mới trong ngành.
             </p>
 
-            <Grid cols={3} gap="md">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
                 {
                   stat: "85%",
@@ -239,7 +238,7 @@ const MarketAnalysis = forwardRef(({ isVisible }, ref) => {
                   <p className="text-sm opacity-80">{item.label}</p>
                 </div>
               ))}
-            </Grid>
+            </div>
           </div>
         </div>
       </div>

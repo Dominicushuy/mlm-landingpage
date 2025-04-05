@@ -19,7 +19,6 @@ import {
   SectionSubtitle,
   SectionDescription,
 } from "../layout/section";
-import { Grid, GridItem, Flex } from "../layout/container";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardTitle, CardHeader } from "../ui/card";
 import { BarChart as BarChartComponent } from "../charts/chart-components";
@@ -142,8 +141,8 @@ const Solutions = forwardRef(({ isVisible }, ref) => {
           </SectionDescription>
         </SectionHeader>
 
-        <Grid cols={2} gap="lg" className="mt-16">
-          <GridItem>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+          <div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -201,9 +200,9 @@ const Solutions = forwardRef(({ isVisible }, ref) => {
                 </CardContent>
               </Card>
             </motion.div>
-          </GridItem>
+          </div>
 
-          <GridItem>
+          <div>
             <motion.div
               variants={containerVariants}
               initial="hidden"
@@ -276,7 +275,7 @@ const Solutions = forwardRef(({ isVisible }, ref) => {
                 <div className="absolute inset-0 bg-black opacity-5"></div>
 
                 <div className="relative z-10">
-                  <Flex className="flex-col md:flex-row items-center justify-between">
+                  <div className="flex flex-col md:flex-row items-center justify-between">
                     <div className="mb-6 md:mb-0 md:mr-6">
                       <h3 className="text-xl font-bold mb-2">
                         Bắt đầu với Marketing Automation
@@ -298,12 +297,12 @@ const Solutions = forwardRef(({ isVisible }, ref) => {
                         <ArrowRight className="ml-2 -mr-1 h-5 w-5" />
                       </Button>
                     </motion.div>
-                  </Flex>
+                  </div>
                 </div>
               </div>
             </motion.div>
-          </GridItem>
-        </Grid>
+          </div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -317,7 +316,7 @@ const Solutions = forwardRef(({ isVisible }, ref) => {
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full blur-xl"></div>
 
             <div className="relative z-10">
-              <Flex className="items-center mb-6">
+              <div className="flex items-center mb-6">
                 <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 mr-4">
                   <Zap className="h-6 w-6" />
                 </div>
@@ -330,9 +329,9 @@ const Solutions = forwardRef(({ isVisible }, ref) => {
                     quả hoạt động MLM
                   </p>
                 </div>
-              </Flex>
+              </div>
 
-              <Grid cols={3} gap="lg" className="mt-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-8">
                 {[
                   {
                     title: "Đánh giá & Lập kế hoạch",
@@ -387,7 +386,7 @@ const Solutions = forwardRef(({ isVisible }, ref) => {
                     </Card>
                   </motion.div>
                 ))}
-              </Grid>
+              </div>
 
               <motion.div
                 whileHover={{ scale: 1.01 }}

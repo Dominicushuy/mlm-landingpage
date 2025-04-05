@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
-import { Grid, GridItem, Flex } from "../layout/container";
 import { BarChart, LineChart, PieChart } from "../charts/chart-components";
 import { FeatureCard, StatCard } from "../features/feature-card";
 import {
@@ -112,7 +111,7 @@ const AutomationDashboard = ({ className }) => {
           Marketing Automation Dashboard
         </motion.h2>
 
-        <Flex gap="sm">
+        <div className="flex gap-2">
           <motion.div
             variants={itemVariants}
             className="flex rounded-md shadow-sm overflow-hidden"
@@ -202,10 +201,10 @@ const AutomationDashboard = ({ className }) => {
               Phễu
             </Button>
           </motion.div>
-        </Flex>
+        </div>
       </motion.div>
 
-      <Grid cols={4} gap="md">
+      <div className="grid grid-cols-4 gap-4">
         {[
           {
             id: "emails",
@@ -264,7 +263,7 @@ const AutomationDashboard = ({ className }) => {
             borderColor: "border-amber-200 dark:border-amber-700/50",
           },
         ].map((metric, index) => (
-          <GridItem key={metric.id}>
+          <div key={metric.id}>
             <motion.div
               variants={itemVariants}
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
@@ -334,12 +333,12 @@ const AutomationDashboard = ({ className }) => {
                 </CardContent>
               </Card>
             </motion.div>
-          </GridItem>
+          </div>
         ))}
-      </Grid>
+      </div>
 
-      <Grid cols={3} gap="md" className="mt-6">
-        <GridItem colSpan={2}>
+      <div className="grid grid-cols-3 gap-4 mt-6">
+        <div className="col-span-2">
           <motion.div variants={itemVariants}>
             <Card className="border border-blue-200/50 dark:border-blue-800/30 bg-gradient-to-br from-white/80 to-blue-50/50 dark:from-gray-800/80 dark:to-blue-900/20 backdrop-blur-sm shadow-md overflow-hidden">
               <CardHeader className="border-b border-blue-100 dark:border-blue-800/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4">
@@ -441,9 +440,9 @@ const AutomationDashboard = ({ className }) => {
               </CardContent>
             </Card>
           </motion.div>
-        </GridItem>
+        </div>
 
-        <GridItem>
+        <div>
           <motion.div variants={itemVariants}>
             <Card className="h-full border border-indigo-200/50 dark:border-indigo-800/30 bg-gradient-to-br from-white/80 to-indigo-50/50 dark:from-gray-800/80 dark:to-indigo-900/20 backdrop-blur-sm shadow-md overflow-hidden">
               <CardHeader className="border-b border-indigo-100 dark:border-indigo-800/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4">
@@ -531,11 +530,11 @@ const AutomationDashboard = ({ className }) => {
               </CardContent>
             </Card>
           </motion.div>
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
 
-      <Grid cols={2} gap="md" className="mt-6">
-        <GridItem>
+      <div className="grid grid-cols-2 gap-4 mt-6">
+        <div>
           <motion.div variants={itemVariants}>
             <FeatureCard
               icon={Filter}
@@ -569,9 +568,9 @@ const AutomationDashboard = ({ className }) => {
               className="border border-blue-200/50 dark:border-blue-800/30 bg-gradient-to-br from-white/80 to-blue-50/50 dark:from-gray-800/80 dark:to-blue-900/20 backdrop-blur-sm shadow-md"
             />
           </motion.div>
-        </GridItem>
+        </div>
 
-        <GridItem>
+        <div>
           <motion.div variants={itemVariants}>
             <FeatureCard
               icon={BarChart2}
@@ -605,8 +604,8 @@ const AutomationDashboard = ({ className }) => {
               className="border border-indigo-200/50 dark:border-indigo-800/30 bg-gradient-to-br from-white/80 to-indigo-50/50 dark:from-gray-800/80 dark:to-indigo-900/20 backdrop-blur-sm shadow-md"
             />
           </motion.div>
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </motion.div>
   );
 };

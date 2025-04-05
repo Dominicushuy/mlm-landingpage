@@ -7,7 +7,6 @@ import {
   SectionSubtitle,
   SectionDescription,
 } from "../layout/section";
-import { Grid, GridItem, Flex } from "../layout/container";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import { LineChart, AreaChart } from "../charts/chart-components";
 import { Button } from "../ui/button";
@@ -71,8 +70,8 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
           </SectionDescription>
         </SectionHeader>
 
-        <Grid cols={2} gap="lg" className="mt-12 items-center">
-          <GridItem>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 items-center">
+          <div>
             {/* Chart card with hover effect preserved but no display animations */}
             <div className="transform transition-transform duration-300 hover:scale-[1.02]">
               <Card
@@ -188,9 +187,9 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
                 </CardContent>
               </Card>
             </div>
-          </GridItem>
+          </div>
 
-          <GridItem>
+          <div>
             <div className="space-y-6">
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 relative inline-block">
                 Những thách thức mới
@@ -233,8 +232,8 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
                 />
               ))}
             </div>
-          </GridItem>
-        </Grid>
+          </div>
+        </div>
 
         <div className="mt-16 p-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 shadow-xl relative overflow-hidden">
           {/* Decorative elements */}
@@ -243,7 +242,7 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
           <div className="absolute inset-0 bg-black opacity-5"></div>
 
           <div className="relative z-10 text-white">
-            <Flex className="flex-col md:flex-row items-center justify-between">
+            <div className="flex flex-col md:flex-row items-center justify-between">
               <div className="mb-6 md:mb-0 md:mr-6">
                 <h3 className="text-2xl font-bold mb-3">
                   Chiến lược chuyển đổi cho MLM
@@ -262,9 +261,9 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
                 Khám phá giải pháp
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
-            </Flex>
+            </div>
 
-            <div className="mt-8 grid grid-cols-3 gap-6">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
               {[
                 {
                   number: "01",

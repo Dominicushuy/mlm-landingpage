@@ -6,7 +6,6 @@ import {
   SectionSubtitle,
   SectionDescription,
 } from "../layout/section";
-import { Container, Grid, GridItem, Flex } from "../layout/container";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { ArrowRight, Check } from "lucide-react";
@@ -32,9 +31,9 @@ const Investment = forwardRef(({ isVisible }, ref) => {
         </SectionDescription>
       </SectionHeader>
 
-      <Grid cols={3} gap="lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {pricingPlans.map((plan, index) => (
-          <GridItem key={index}>
+          <div key={index}>
             <PricingCard
               name={plan.name}
               price={plan.price}
@@ -43,9 +42,9 @@ const Investment = forwardRef(({ isVisible }, ref) => {
               popular={plan.popular}
               buttonVariant={plan.buttonVariant}
             />
-          </GridItem>
+          </div>
         ))}
-      </Grid>
+      </div>
 
       <div className="mt-16 text-center">
         <p className="mb-6 text-xl text-blue-100">

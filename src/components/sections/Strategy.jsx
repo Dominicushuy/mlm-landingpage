@@ -6,7 +6,6 @@ import {
   SectionSubtitle,
   SectionDescription,
 } from "../layout/section";
-import { Container, Grid, GridItem, Flex } from "../layout/container";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { FeatureCard, CalloutCard } from "../features/feature-card";
 import { PieChart } from "../charts/chart-components";
@@ -36,8 +35,8 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
         </SectionDescription>
       </SectionHeader>
 
-      <Grid cols={3} gap="lg">
-        <GridItem>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
           <Card
             variant="outline"
             className="border-gray-200 dark:border-gray-700 h-full"
@@ -57,9 +56,9 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
               </ul>
             </CardContent>
           </Card>
-        </GridItem>
+        </div>
 
-        <GridItem colSpan={2}>
+        <div className="col-span-1 md:col-span-2">
           <Card
             variant="filled"
             className="bg-blue-700 dark:bg-blue-800 text-white"
@@ -81,11 +80,11 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
               </div>
             </CardContent>
           </Card>
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
 
-      <Grid cols={2} gap="lg" className="mt-10">
-        <GridItem>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+        <div>
           <Card variant="default">
             <CardContent className="p-6">
               <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
@@ -113,9 +112,9 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
               </div>
             </CardContent>
           </Card>
-        </GridItem>
+        </div>
 
-        <GridItem>
+        <div>
           <Card
             variant="gradient"
             className="bg-gradient-to-r from-blue-600 to-blue-400 text-white h-full"
@@ -139,8 +138,8 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
               </div>
             </CardContent>
           </Card>
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </Section>
   );
 });

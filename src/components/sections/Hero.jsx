@@ -7,10 +7,7 @@ import React, { forwardRef, useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion"; // Requires installation
 import { Check, ArrowRight, PlusCircle } from "lucide-react";
 import { Section } from "../layout/section";
-import { Container, Grid, GridItem, Flex } from "../layout/container";
 import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
-import { ResponsiveCard } from "../ui/responsive-card";
 import {
   Modal,
   ModalContent,
@@ -24,8 +21,7 @@ import { Input, FormItem, FormLabel } from "../ui/input";
 
 const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
   // State management
-  const [typedText, setTypedText] = useState("dành cho MLM");
-  const fullText = "dành cho MLM";
+  const [typedText] = useState("dành cho MLM");
   const [showDemo, setShowDemo] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
   const heroRef = useRef(null);

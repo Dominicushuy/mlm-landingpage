@@ -7,7 +7,6 @@ import {
   SectionSubtitle,
   SectionDescription,
 } from "../layout/section";
-import { Container, Grid, GridItem, Flex } from "../layout/container";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { LineChart } from "../charts/chart-components";
@@ -105,8 +104,8 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
               variant="filled"
               className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100/50 dark:border-blue-800/30 shadow-xl overflow-hidden"
             >
-              <Grid cols={2} gap="lg">
-                <GridItem>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
                   <CardContent className="p-8 relative">
                     {/* Decorative elements */}
                     <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-xl"></div>
@@ -190,7 +189,7 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
                       <div className="mt-6">
                         <Card className="border border-blue-100 dark:border-blue-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
                           <CardContent className="p-4">
-                            <Flex className="items-center space-x-3">
+                            <div className="flex items-center space-x-3">
                               <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                                 <AlertCircle className="h-5 w-5" />
                               </div>
@@ -200,15 +199,15 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
                                 này cho thấy một dấu hiệu cảnh báo rằng mô hình
                                 kinh doanh truyền thống đang gặp khó khăn.
                               </p>
-                            </Flex>
+                            </div>
                           </CardContent>
                         </Card>
                       </div>
                     </div>
                   </CardContent>
-                </GridItem>
+                </div>
 
-                <GridItem className="relative">
+                <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 dark:from-blue-800 dark:to-indigo-800"></div>
                   <div className="absolute inset-0 bg-blue-700 dark:bg-blue-800 mix-blend-overlay opacity-20"></div>
 
@@ -297,8 +296,8 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
                       </Button>
                     </div>
                   </CardContent>
-                </GridItem>
-              </Grid>
+                </div>
+              </div>
             </Card>
           </motion.div>
         </div>
