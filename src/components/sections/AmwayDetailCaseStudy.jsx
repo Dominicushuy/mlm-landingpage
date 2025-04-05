@@ -362,7 +362,7 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
 
   return (
     <div
-      id="amway-detail"
+      id="amwayDetail"
       ref={containerRef}
       className="relative overflow-hidden"
     >

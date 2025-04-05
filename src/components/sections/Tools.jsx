@@ -1,4 +1,5 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   Section,
   SectionHeader,
@@ -7,148 +8,834 @@ import {
   SectionDescription,
 } from "../layout/section";
 import { MainSection } from "../layout/main-layout";
-import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "../ui/card";
 import { ResponsiveCard } from "../ui/responsive-card";
+import { Button } from "../ui/button";
 import { toolsComparisonData } from "../../data/siteData";
 import { BarChart } from "../charts/chart-components";
+import {
+  TrendingUp,
+  TrendingDown,
+  AlertCircle,
+  BarChart2,
+  Database,
+  Users,
+  Mail,
+  Filter,
+  ArrowRight,
+  Check,
+  Info,
+  Download,
+  ExternalLink,
+  Shield,
+  Zap,
+} from "lucide-react";
+import { DollarSign } from "lucide-react";
 
 const Tools = forwardRef(({ isVisible }, ref) => {
+  const [activeTab, setActiveTab] = useState("compare");
+  const [hoveredRow, setHoveredRow] = useState(null);
+  const [hoveredTool, setHoveredTool] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
+  const sectionRef = useRef(null);
+
+  // Track mouse position for 3D card effect
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+
+        // Only update mousePosition if the change is significant
+        setMousePosition((prev) => {
+          const diffX = Math.abs(prev.x - x);
+          const diffY = Math.abs(prev.y - y);
+          if (diffX > 0.01 || diffY > 0.01) {
+            return { x, y };
+          }
+          return prev;
+        });
+      }
+    };
+
+    // Throttled event listener
+    let waiting = false;
+    const onMouseMove = (e) => {
+      if (!waiting) {
+        handleMouseMove(e);
+        waiting = true;
+        setTimeout(() => {
+          waiting = false;
+        }, 50);
+      }
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+    };
+  }, []);
+
+  const handleRowHover = (rowId) => {
+    setHoveredRow(rowId);
+  };
+
+  const handleRowLeave = () => {
+    setHoveredRow(null);
+  };
+
+  const handleToolHover = (toolId) => {
+    setHoveredTool(toolId);
+  };
+
+  const handleToolLeave = () => {
+    setHoveredTool(null);
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+    },
+  };
+
   return (
     <MainSection
       id="tools"
-      ref={ref}
-      className="py-16 md:py-24 bg-primary-50 dark:bg-primary-900/20"
+      ref={(node) => {
+        ref.current = node;
+        sectionRef.current = node;
+      }}
+      className="py-20 bg-gradient-to-b from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 relative overflow-hidden"
     >
-      <SectionHeader>
-        <SectionSubtitle>Công cụ</SectionSubtitle>
-        <SectionTitle>So sánh công cụ tự động hóa</SectionTitle>
-        <SectionDescription>
-          Phân tích và so sánh các công cụ tự động hóa tiếp thị hiện có cho mô
-          hình MLM
-        </SectionDescription>
-      </SectionHeader>
+      {/* Background elements */}
+      <BackgroundElements mousePosition={mousePosition} />
 
-      <ResponsiveCard withBorder className="mb-10 shadow-lg">
-        <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-          <CardTitle>So sánh chức năng các công cụ</CardTitle>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Đánh giá hiệu suất theo từng tiêu chí
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64 md:h-80">
-            <BarChart
-              data={toolsComparisonData}
-              bars={[
-                { dataKey: "epixel", name: "Epixel MLM Software" },
-                { dataKey: "global", name: "Global MLM Software" },
-                { dataKey: "bi", name: "Công cụ BI (Tableau/Sisense)" },
-              ]}
-              grid={true}
-            />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <SectionHeader>
+          <div className="inline-block mb-3">
+            <div className="flex items-center space-x-2 mb-2 bg-cyan-100/80 backdrop-blur-sm dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 px-4 py-1 rounded-full text-sm font-medium border border-cyan-200/50 dark:border-cyan-800/50">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+              </span>
+              <span>Tool Comparison</span>
+            </div>
           </div>
-        </CardContent>
-      </ResponsiveCard>
+          <SectionSubtitle>Công cụ</SectionSubtitle>
+          <SectionTitle className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 dark:from-cyan-400 dark:via-blue-400 dark:to-teal-400">
+            So sánh công cụ tự động hóa
+          </SectionTitle>
+          <SectionDescription>
+            Phân tích và so sánh các công cụ tự động hóa tiếp thị hiện có cho mô
+            hình MLM
+          </SectionDescription>
+        </SectionHeader>
 
-      <ResponsiveCard withBorder className="overflow-hidden">
-        <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-          <CardTitle>Chi tiết so sánh tính năng</CardTitle>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Phân tích ưu nhược điểm của từng giải pháp
-          </p>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <ComparisonTable />
-          </div>
-        </CardContent>
-      </ResponsiveCard>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="mt-12"
+        >
+          <motion.div
+            variants={itemVariants}
+            style={{
+              transformStyle: "preserve-3d",
+              transform: `perspective(1000px) rotateY(${
+                (mousePosition.x - 0.5) * 2
+              }deg) rotateX(${(mousePosition.y - 0.5) * -2}deg)`,
+              transition: "transform 0.5s ease",
+            }}
+            className="mb-12"
+          >
+            <ResponsiveCard
+              withBorder
+              className="shadow-xl backdrop-blur-md bg-white/90 dark:bg-gray-800/90 border-white/30 dark:border-gray-700/30"
+              footer={
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Dữ liệu cập nhật Q1 2025
+                  </p>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-1 text-xs"
+                    >
+                      <Download className="h-3 w-3" /> Tải báo cáo
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-1 text-xs"
+                    >
+                      <ExternalLink className="h-3 w-3" /> Xem chi tiết
+                    </Button>
+                  </div>
+                </div>
+              }
+            >
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <div className="flex flex-wrap justify-between items-center gap-4">
+                  <div>
+                    <CardTitle className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+                      <BarChart2 className="h-5 w-5 text-cyan-500 dark:text-cyan-400 mr-2" />
+                      So sánh chức năng các công cụ
+                    </CardTitle>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      Đánh giá hiệu suất theo từng tiêu chí
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant={activeTab === "compare" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setActiveTab("compare")}
+                      className={
+                        activeTab === "compare"
+                          ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white"
+                          : ""
+                      }
+                    >
+                      Biểu đồ so sánh
+                    </Button>
+                    <Button
+                      variant={activeTab === "detail" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setActiveTab("detail")}
+                      className={
+                        activeTab === "detail"
+                          ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white"
+                          : ""
+                      }
+                    >
+                      Bảng chi tiết
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="py-6">
+                {activeTab === "compare" ? (
+                  <div className="h-80 md:h-96 relative">
+                    {/* Chart glow effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 rounded-lg"></div>
+                    <BarChart
+                      data={toolsComparisonData}
+                      bars={[
+                        {
+                          dataKey: "epixel",
+                          name: "Epixel MLM Software",
+                          color: "#06b6d4",
+                        },
+                        {
+                          dataKey: "global",
+                          name: "Global MLM Software",
+                          color: "#0284c7",
+                        },
+                        {
+                          dataKey: "bi",
+                          name: "Công cụ BI (Tableau/Sisense)",
+                          color: "#0d9488",
+                        },
+                      ]}
+                      grid={true}
+                    />
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto mt-2">
+                    <EnhancedComparisonTable
+                      onRowHover={handleRowHover}
+                      onRowLeave={handleRowLeave}
+                      hoveredRow={hoveredRow}
+                    />
+                  </div>
+                )}
+              </CardContent>
+            </ResponsiveCard>
+          </motion.div>
+
+          <motion.div
+            variants={itemVariants}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {[
+              {
+                id: "epixel",
+                title: "Epixel MLM Software",
+                description:
+                  "Nền tảng MLM toàn diện với tích hợp CRM và quản lý mạng lưới",
+                features: [
+                  "Quản lý mạng lưới phân phối đầy đủ",
+                  "Tích hợp CRM tốt",
+                  "Hỗ trợ các chiến dịch email tự động",
+                  "Báo cáo tự động, tích hợp BI cơ bản",
+                ],
+                pros: [
+                  "Giao diện thân thiện",
+                  "Tích hợp đa kênh",
+                  "Tuỳ biến cao",
+                ],
+                cons: ["Chi phí cao", "Cài đặt phức tạp"],
+                icon: Database,
+                score: 85,
+                color: "cyan",
+              },
+              {
+                id: "global",
+                title: "Global MLM Software",
+                description:
+                  "Giải pháp quốc tế với khả năng mở rộng và tính tùy biến cao",
+                features: [
+                  "Quản lý thông tin liên hệ, tự động cập nhật CRM",
+                  "Tự động tính toán và phân phối hoa hồng",
+                  "Hỗ trợ tự động nuôi dưỡng khách hàng qua email",
+                  "Tích hợp các công cụ phân tích và báo cáo",
+                ],
+                pros: [
+                  "Hỗ trợ đa ngôn ngữ",
+                  "Khả năng mở rộng tốt",
+                  "Hiệu suất cao",
+                ],
+                cons: ["Giao diện phức tạp", "Thời gian triển khai dài"],
+                icon: Users,
+                score: 78,
+                color: "blue",
+              },
+              {
+                id: "bi",
+                title: "Công cụ BI (Tableau/Sisense)",
+                description:
+                  "Nền tảng phân tích dữ liệu chuyên sâu cho các quyết định kinh doanh",
+                features: [
+                  "Hỗ trợ phân tích dữ liệu phân phối",
+                  "Không hỗ trợ trực tiếp CRM",
+                  "Không áp dụng trực tiếp cho email marketing",
+                  "Phân tích chuyên sâu là thế mạnh chính",
+                ],
+                pros: [
+                  "Phân tích dữ liệu mạnh mẽ",
+                  "Trực quan hóa dữ liệu",
+                  "Tích hợp nhiều nguồn dữ liệu",
+                ],
+                cons: [
+                  "Thiếu tính năng CRM",
+                  "Cần tích hợp với giải pháp khác",
+                ],
+                icon: BarChart2,
+                score: 65,
+                color: "teal",
+              },
+            ].map((tool, index) => (
+              <motion.div
+                key={tool.id}
+                variants={itemVariants}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                onMouseEnter={() => handleToolHover(tool.id)}
+                onMouseLeave={handleToolLeave}
+              >
+                <ToolCard
+                  tool={tool}
+                  isActive={hoveredTool === tool.id}
+                  index={index}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="mt-12">
+            <Card className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-xl border-0 overflow-hidden">
+              <CardContent className="p-8 relative">
+                {/* Decorative elements */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full transform -translate-x-1/3 translate-y-1/3"></div>
+                <div className="absolute inset-0 bg-black opacity-5"></div>
+
+                <div className="relative z-10">
+                  <div className="flex flex-col md:flex-row items-center justify-between">
+                    <div className="mb-6 md:mb-0 md:mr-6">
+                      <div className="flex items-center">
+                        <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg mr-3">
+                          <Zap className="h-6 w-6" />
+                        </div>
+                        <h3 className="text-2xl font-bold">
+                          Lựa chọn tối ưu cho MLM
+                        </h3>
+                      </div>
+                      <p className="mt-3 text-cyan-100">
+                        Giải pháp Marketing Automation tích hợp cung cấp đầy đủ
+                        các công cụ tiếp thị tự động, quản lý hoa hồng, và phân
+                        tích dữ liệu trong một nền tảng thống nhất.
+                      </p>
+                    </div>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Button
+                        variant="default"
+                        size="lg"
+                        className="px-8 py-4 bg-white text-cyan-700 hover:bg-white/90 shadow-md border-0"
+                      >
+                        Tư vấn giải pháp tích hợp
+                        <ArrowRight className="ml-2 -mr-1 h-5 w-5" />
+                      </Button>
+                    </motion.div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="mt-10">
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-xl shadow-lg p-8 border border-white/30 dark:border-gray-700/30">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                <Shield className="h-5 w-5 text-cyan-500 dark:text-cyan-400 mr-2" />
+                Hướng dẫn lựa chọn công cụ phù hợp
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="rounded-lg border border-cyan-100 dark:border-cyan-800/30 p-5 bg-gradient-to-br from-cyan-50 to-cyan-100/30 dark:from-cyan-900/20 dark:to-cyan-900/10">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                    <div className="w-8 h-8 rounded-full bg-cyan-500 dark:bg-cyan-600 text-white flex items-center justify-center mr-2">
+                      1
+                    </div>
+                    Đánh giá nhu cầu doanh nghiệp
+                  </h4>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Xác định quy mô mạng lưới phân phối, số lượng giao dịch hàng
+                    tháng, và các yêu cầu đặc thù về quản lý hoa hồng và tiếp
+                    thị.
+                  </p>
+                </div>
+
+                <div className="rounded-lg border border-blue-100 dark:border-blue-800/30 p-5 bg-gradient-to-br from-blue-50 to-blue-100/30 dark:from-blue-900/20 dark:to-blue-900/10">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                    <div className="w-8 h-8 rounded-full bg-blue-500 dark:bg-blue-600 text-white flex items-center justify-center mr-2">
+                      2
+                    </div>
+                    Xem xét khả năng tích hợp
+                  </h4>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Đảm bảo công cụ lựa chọn có thể tích hợp với các hệ thống
+                    hiện có (website, cổng thanh toán, hệ thống kế toán) và các
+                    kênh tiếp thị khác.
+                  </p>
+                </div>
+
+                <div className="rounded-lg border border-teal-100 dark:border-teal-800/30 p-5 bg-gradient-to-br from-teal-50 to-teal-100/30 dark:from-teal-900/20 dark:to-teal-900/10">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                    <div className="w-8 h-8 rounded-full bg-teal-500 dark:bg-teal-600 text-white flex items-center justify-center mr-2">
+                      3
+                    </div>
+                    Cân nhắc khả năng mở rộng
+                  </h4>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Lựa chọn nền tảng có khả năng mở rộng để đáp ứng sự phát
+                    triển của doanh nghiệp trong tương lai, tránh phải chuyển
+                    đổi công cụ sau này.
+                  </p>
+                </div>
+
+                <div className="rounded-lg border border-gray-100 dark:border-gray-800/30 p-5 bg-gradient-to-br from-gray-50 to-gray-100/30 dark:from-gray-900/20 dark:to-gray-800/10">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                    <div className="w-8 h-8 rounded-full bg-gray-500 dark:bg-gray-600 text-white flex items-center justify-center mr-2">
+                      4
+                    </div>
+                    Đánh giá ROI
+                  </h4>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Tính toán lợi nhuận đầu tư dựa trên chi phí triển khai, vận
+                    hành và giá trị mang lại từ việc tự động hóa quy trình
+                    marketing và quản lý.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 p-5 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/10 dark:to-blue-900/10 rounded-lg border border-cyan-100 dark:border-cyan-800/30">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 mt-1">
+                    <Info className="h-5 w-5 text-cyan-500 dark:text-cyan-400" />
+                  </div>
+                  <div className="ml-4">
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Lời khuyên chuyên gia
+                    </h4>
+                    <p className="text-gray-600 dark:text-gray-300 mt-1">
+                      Khi đánh giá các giải pháp, hãy ưu tiên những nền tảng
+                      cung cấp môi trường demo thực tế và tham khảo ý kiến từ
+                      doanh nghiệp MLM đã sử dụng công cụ đó. Xem xét cả chi phí
+                      ban đầu và chi phí dài hạn để có cái nhìn toàn diện về
+                      tổng chi phí sở hữu (TCO).
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
     </MainSection>
   );
 });
 
-// Comparison table component
-const ComparisonTable = () => (
-  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-    <thead className="bg-gray-50 dark:bg-gray-900">
-      <tr>
-        <th
-          scope="col"
-          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-        >
-          Tiêu chí
-        </th>
-        <th
-          scope="col"
-          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-        >
-          Epixel MLM Software
-        </th>
-        <th
-          scope="col"
-          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-        >
-          Global MLM Software
-        </th>
-        <th
-          scope="col"
-          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-        >
-          Công cụ BI (Tableau, Sisense)
-        </th>
-      </tr>
-    </thead>
-    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-      <ComparisonRow
-        criteria="Quản lý Hoa hồng"
-        epixel="Tự động hóa tính toán hoa hồng, báo cáo minh bạch"
-        global="Tự động tính toán và phân phối hoa hồng"
-        bi="Không áp dụng trực tiếp"
-      />
-      <ComparisonRow
-        criteria="CRM"
-        epixel="Quản lý mạng lưới phân phối đầy đủ, CRM tích hợp"
-        global="Quản lý thông tin liên hệ, tự động cập nhật CRM"
-        bi="Hỗ trợ phân tích dữ liệu phân phối"
-      />
-      <ComparisonRow
-        criteria="Email Marketing"
-        epixel="Hỗ trợ các chiến dịch email tự động"
-        global="Hỗ trợ tự động nuôi dưỡng khách hàng qua email"
-        bi="Không áp dụng trực tiếp"
-      />
-      <ComparisonRow
-        criteria="Phân tích Dữ liệu"
-        epixel="Báo cáo tự động, tích hợp BI"
-        global="Tích hợp các công cụ phân tích và báo cáo"
-        bi="Phân tích chuyên sâu"
-      />
-      <ComparisonRow
-        criteria="Tích hợp Đa kênh"
-        epixel="Tích hợp thông báo qua SMS, email và mạng xã hội"
-        global="Tích hợp tương tác đa kênh"
-        bi="Không áp dụng trực tiếp"
-      />
-    </tbody>
-  </table>
-);
+// Enhanced Tool Card component
+const ToolCard = ({ tool, isActive, index }) => {
+  const {
+    id,
+    title,
+    description,
+    features,
+    pros,
+    cons,
+    icon: Icon,
+    score,
+    color,
+  } = tool;
 
-const ComparisonRow = ({ criteria, epixel, global, bi }) => (
-  <tr className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-      {criteria}
-    </td>
-    <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-300">
-      {epixel}
-    </td>
-    <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-300">
-      {global}
-    </td>
-    <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-300">
-      {bi}
-    </td>
-  </tr>
-);
+  // Colors mapping for different tools
+  const colorVariants = {
+    cyan: {
+      bg: "bg-gradient-to-br from-cyan-50 to-cyan-100/80 dark:from-cyan-900/20 dark:to-cyan-900/30",
+      border: "border-cyan-200 dark:border-cyan-800/50",
+      shadow: "shadow-cyan-500/10",
+      text: "text-cyan-600 dark:text-cyan-400",
+      iconBg: "bg-cyan-500/90 dark:bg-cyan-600/90",
+      iconGlow: "shadow-lg",
+      progress: "bg-cyan-500 dark:bg-cyan-400",
+    },
+    blue: {
+      bg: "bg-gradient-to-br from-blue-50 to-blue-100/80 dark:from-blue-900/20 dark:to-blue-900/30",
+      border: "border-blue-200 dark:border-blue-800/50",
+      shadow: "shadow-blue-500/10",
+      text: "text-blue-600 dark:text-blue-400",
+      iconBg: "bg-blue-500/90 dark:bg-blue-600/90",
+      iconGlow: "shadow-lg",
+      progress: "bg-blue-500 dark:bg-blue-400",
+    },
+    teal: {
+      bg: "bg-gradient-to-br from-teal-50 to-teal-100/80 dark:from-teal-900/20 dark:to-teal-900/30",
+      border: "border-teal-200 dark:border-teal-800/50",
+      shadow: "shadow-teal-500/10",
+      text: "text-teal-600 dark:text-teal-400",
+      iconBg: "bg-teal-500/90 dark:bg-teal-600/90",
+      iconGlow: "shadow-lg",
+      progress: "bg-teal-500 dark:bg-teal-400",
+    },
+  };
+
+  const colors = colorVariants[color];
+
+  return (
+    <Card
+      className={`h-full transition-all duration-300 ${colors.bg} border ${
+        colors.border
+      } ${colors.shadow} ${isActive ? "shadow-lg" : "shadow-md"}`}
+    >
+      <CardContent className="p-6">
+        <div className="flex items-center mb-4">
+          <div
+            className={`h-12 w-12 rounded-lg ${
+              colors.iconBg
+            } flex items-center justify-center text-white mr-4 ${
+              isActive ? colors.iconGlow : ""
+            } transition-all duration-300`}
+          >
+            <Icon className="h-6 w-6" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+            {title}
+          </h3>
+        </div>
+
+        <p className="text-gray-600 dark:text-gray-300 mb-4">{description}</p>
+
+        <div className="mt-4 mb-6">
+          <div className="flex justify-between mb-1">
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+              Điểm đánh giá
+            </span>
+            <span className={`text-sm font-semibold ${colors.text}`}>
+              {score}/100
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+            <div
+              className={`h-2.5 rounded-full ${colors.progress}`}
+              style={{ width: `${score}%` }}
+            ></div>
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+            Tính năng chính
+          </h4>
+          <ul className="space-y-1 mb-4">
+            {features.map((feature, idx) => (
+              <li key={idx} className="flex items-start text-sm">
+                <Check
+                  className={`h-4 w-4 ${colors.text} mt-0.5 mr-2 flex-shrink-0`}
+                />
+                <span className="text-gray-600 dark:text-gray-300">
+                  {feature}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          <div>
+            <h4 className={`text-sm font-semibold ${colors.text} mb-2`}>
+              Ưu điểm
+            </h4>
+            <ul className="space-y-1">
+              {pros.map((pro, idx) => (
+                <li
+                  key={idx}
+                  className="text-sm text-gray-600 dark:text-gray-300 flex items-start"
+                >
+                  <span className="text-green-500 mr-1">+</span> {pro}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h4 className={`text-sm font-semibold ${colors.text} mb-2`}>
+              Nhược điểm
+            </h4>
+            <ul className="space-y-1">
+              {cons.map((con, idx) => (
+                <li
+                  key={idx}
+                  className="text-sm text-gray-600 dark:text-gray-300 flex items-start"
+                >
+                  <span className="text-red-500 mr-1">-</span> {con}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <motion.div
+          initial={{ width: "40%" }}
+          animate={{ width: isActive ? "100%" : "40%" }}
+          transition={{ duration: 0.4 }}
+          className={`h-0.5 ${colors.progress} rounded-full mt-6 opacity-50`}
+        />
+      </CardContent>
+    </Card>
+  );
+};
+
+// Enhanced Comparison Table component
+const EnhancedComparisonTable = ({ onRowHover, onRowLeave, hoveredRow }) => {
+  return (
+    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+      <thead className="bg-gray-50 dark:bg-gray-900">
+        <tr>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+          >
+            Tiêu chí
+          </th>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+          >
+            Epixel MLM Software
+          </th>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+          >
+            Global MLM Software
+          </th>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+          >
+            Công cụ BI (Tableau, Sisense)
+          </th>
+        </tr>
+      </thead>
+      <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+        {[
+          {
+            id: "crm",
+            criteria: "Quản lý CRM",
+            epixel: "Quản lý mạng lưới phân phối đầy đủ, CRM tích hợp",
+            global: "Quản lý thông tin liên hệ, tự động cập nhật CRM",
+            bi: "Hỗ trợ phân tích dữ liệu phân phối",
+            icon: (
+              <Users className="h-5 w-5 text-cyan-500 dark:text-cyan-400" />
+            ),
+          },
+          {
+            id: "commission",
+            criteria: "Quản lý Hoa hồng",
+            epixel: "Tự động hóa tính toán hoa hồng, báo cáo minh bạch",
+            global: "Tự động tính toán và phân phối hoa hồng",
+            bi: "Không áp dụng trực tiếp",
+            icon: (
+              <DollarSign className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+            ),
+          },
+          {
+            id: "email",
+            criteria: "Email Marketing",
+            epixel: "Hỗ trợ các chiến dịch email tự động",
+            global: "Hỗ trợ tự động nuôi dưỡng khách hàng qua email",
+            bi: "Không áp dụng trực tiếp",
+            icon: <Mail className="h-5 w-5 text-teal-500 dark:text-teal-400" />,
+          },
+          {
+            id: "analysis",
+            criteria: "Phân tích Dữ liệu",
+            epixel: "Báo cáo tự động, tích hợp BI cơ bản",
+            global: "Tích hợp các công cụ phân tích và báo cáo",
+            bi: "Phân tích chuyên sâu là thế mạnh chính",
+            icon: (
+              <BarChart2 className="h-5 w-5 text-cyan-500 dark:text-cyan-400" />
+            ),
+          },
+          {
+            id: "multichannel",
+            criteria: "Tích hợp Đa kênh",
+            epixel: "Tích hợp thông báo qua SMS, email và mạng xã hội",
+            global: "Tích hợp tương tác đa kênh",
+            bi: "Không áp dụng trực tiếp",
+            icon: (
+              <Filter className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+            ),
+          },
+        ].map((row) => (
+          <motion.tr
+            key={row.id}
+            onMouseEnter={() => onRowHover(row.id)}
+            onMouseLeave={onRowLeave}
+            whileHover={{ backgroundColor: "rgba(236, 254, 255, 0.5)" }}
+            animate={{
+              backgroundColor:
+                hoveredRow === row.id
+                  ? "rgba(236, 254, 255, 0.5)"
+                  : "rgba(255, 255, 255, 0)",
+            }}
+            transition={{ duration: 0.2 }}
+            className="hover:bg-cyan-50/50 dark:hover:bg-cyan-900/20 transition-colors"
+          >
+            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+              <div className="flex items-center">
+                <div className="mr-2">{row.icon}</div>
+                {row.criteria}
+              </div>
+            </td>
+            <td className="px-6 py-4 whitespace-normal text-sm text-gray-600 dark:text-gray-300">
+              {row.epixel}
+            </td>
+            <td className="px-6 py-4 whitespace-normal text-sm text-gray-600 dark:text-gray-300">
+              {row.global}
+            </td>
+            <td className="px-6 py-4 whitespace-normal text-sm text-gray-600 dark:text-gray-300">
+              {row.bi}
+            </td>
+          </motion.tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+// Background elements
+const BackgroundElements = ({ mousePosition }) => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Main gradient background */}
+      <div
+        className="absolute top-0 right-0 w-2/3 h-2/3 rounded-full bg-gradient-to-br from-cyan-400/10 to-blue-500/10 dark:from-cyan-500/5 dark:to-blue-600/5 blur-3xl -z-10"
+        style={{
+          transform: `translate(${(mousePosition.x - 0.5) * 20}px, ${
+            (mousePosition.y - 0.5) * 20
+          }px)`,
+          transition: "transform 0.8s ease-out",
+        }}
+      ></div>
+      <div
+        className="absolute bottom-0 left-0 w-1/2 h-1/2 rounded-full bg-gradient-to-tr from-blue-400/10 to-teal-500/10 dark:from-blue-500/5 dark:to-teal-600/5 blur-3xl -z-10"
+        style={{
+          transform: `translate(${(mousePosition.x - 0.5) * -20}px, ${
+            (mousePosition.y - 0.5) * -20
+          }px)`,
+          transition: "transform 0.8s ease-out",
+        }}
+      ></div>
+
+      {/* Subtle decorative particles */}
+      {[...Array(8)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute bg-cyan-500/5 dark:bg-cyan-400/5 rounded-full -z-20"
+          style={{
+            width: Math.random() * 6 + 2,
+            height: Math.random() * 6 + 2,
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+        ></div>
+      ))}
+
+      {/* Grid pattern */}
+      <svg
+        className="absolute inset-0 -z-10 opacity-[0.03] dark:opacity-[0.02]"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <pattern
+            id="tools-grid"
+            width="40"
+            height="40"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M 0 10 L 40 10 M 10 0 L 10 40"
+              stroke="currentColor"
+              strokeWidth="0.5"
+            />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#tools-grid)" />
+      </svg>
+
+      {/* Floating shapes */}
+      <div className="absolute top-1/4 right-10 w-16 h-16 rounded-full border border-cyan-200/30 dark:border-cyan-700/30 opacity-50"></div>
+      <div className="absolute bottom-1/3 left-1/4 w-24 h-24 rounded-full border border-blue-200/30 dark:border-blue-700/30 opacity-40"></div>
+      <div className="absolute top-2/3 right-1/4 w-20 h-20 rounded-lg border border-teal-200/30 dark:border-teal-700/30 opacity-40 rotate-12"></div>
+    </div>
+  );
+};
 
 Tools.displayName = "Tools";
 

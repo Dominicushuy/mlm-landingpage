@@ -222,7 +222,7 @@ const App = () => {
         />
 
         {/* Market Analysis Section */}
-        <SectionWrapper id="market-section" padding="large">
+        <SectionWrapper id="market-section">
           <MarketAnalysis
             ref={sectionRefs.market}
             isVisible={isVisible.market}
@@ -231,7 +231,7 @@ const App = () => {
         </SectionWrapper>
 
         {/* E-commerce Impact Section */}
-        <SectionWrapper id="ecommerce-section" padding="large">
+        <SectionWrapper id="ecommerce-section">
           <EcommerceImpact
             ref={sectionRefs.ecommerce}
             isVisible={isVisible.ecommerce}
@@ -240,7 +240,7 @@ const App = () => {
         </SectionWrapper>
 
         {/* Case Study Section */}
-        <SectionWrapper id="casestudy-section" padding="large">
+        <SectionWrapper id="casestudy-section">
           <CaseStudy
             ref={sectionRefs.casestudy}
             isVisible={isVisible.casestudy}
@@ -249,7 +249,7 @@ const App = () => {
         </SectionWrapper>
 
         {/* Detailed Case Study Section */}
-        <SectionWrapper id="amwayDetail-section" padding="large">
+        <SectionWrapper id="amwayDetail-section">
           <AmwayDetailCaseStudy
             ref={sectionRefs.amwayDetail}
             isVisible={isVisible.amwayDetail}
@@ -258,7 +258,7 @@ const App = () => {
         </SectionWrapper>
 
         {/* Solutions Section */}
-        <SectionWrapper id="solutions-section" padding="large">
+        <SectionWrapper id="solutions-section">
           <Solutions
             ref={sectionRefs.solutions}
             isVisible={isVisible.solutions}
@@ -267,7 +267,7 @@ const App = () => {
         </SectionWrapper>
 
         {/* Tools Section */}
-        <SectionWrapper id="tools-section" padding="large">
+        <SectionWrapper id="tools-section">
           <Tools
             ref={sectionRefs.tools}
             isVisible={isVisible.tools}
@@ -276,7 +276,7 @@ const App = () => {
         </SectionWrapper>
 
         {/* Demo Section */}
-        <SectionWrapper id="demo-section" padding="large">
+        <SectionWrapper id="demo-section">
           <DemoSection
             ref={sectionRefs.demo}
             isVisible={isVisible.demo}
@@ -285,7 +285,7 @@ const App = () => {
         </SectionWrapper>
 
         {/* Strategy Section */}
-        <SectionWrapper id="strategy-section" padding="large">
+        <SectionWrapper id="strategy-section">
           <Strategy
             ref={sectionRefs.strategy}
             isVisible={isVisible.strategy}
@@ -294,7 +294,7 @@ const App = () => {
         </SectionWrapper>
 
         {/* Investment Section */}
-        <SectionWrapper id="invest-section" padding="large">
+        <SectionWrapper id="invest-section">
           <Investment
             ref={sectionRefs.invest}
             isVisible={isVisible.invest}
