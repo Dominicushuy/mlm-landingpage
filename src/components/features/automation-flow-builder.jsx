@@ -33,6 +33,7 @@ import {
   PlayCircle,
   PauseCircle,
   Info,
+  Mail,
 } from "lucide-react";
 
 /**

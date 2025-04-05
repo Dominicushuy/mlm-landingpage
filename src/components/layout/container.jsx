@@ -2,19 +2,6 @@ import React from "react";
 import { cva } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 
-/**
- * Container component for layout structure
- *
- * @example
- * <Container>
- *   <p>Content goes here</p>
- * </Container>
- *
- * <Container size="sm" className="my-8">
- *   <p>Narrow content</p>
- * </Container>
- */
-
 const containerVariants = cva("mx-auto", {
   variants: {
     size: {
