@@ -7,7 +7,6 @@ import {
   SectionSubtitle,
   SectionDescription,
 } from "../layout/section";
-import { Grid, GridItem, Flex } from "../layout/container";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { ResponsiveCard } from "../ui/responsive-card";
 import { Button } from "../ui/button";
@@ -262,7 +261,7 @@ const DemoSection = ({ isVisible }) => {
             </h3>
           </motion.div>
 
-          <Grid cols={1} md={3} gap="lg">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 id: "efficiency",
@@ -305,7 +304,7 @@ const DemoSection = ({ isVisible }) => {
                 />
               </motion.div>
             ))}
-          </Grid>
+          </div>
 
           <motion.div variants={itemVariants} className="mt-12 text-center">
             <motion.div
