@@ -1,62 +1,47 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { cva } from "class-variance-authority";
-import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 /**
- * Navbar component with responsive mobile menu
- *
- * @example
- * <Navbar
- *   logo={<Logo />}
- *   items={[
- *     { label: "Home", href: "#home" },
- *     { label: "Features", href: "#features" },
- *     { label: "Pricing", href: "#pricing" },
- *     {
- *       label: "Resources",
- *       children: [
- *         { label: "Documentation", href: "#docs" },
- *         { label: "API", href: "#api" }
- *       ]
- *     }
- *   ]}
- *   actions={[
- *     <Button variant="outline">Sign In</Button>,
- *     <Button>Sign Up</Button>
- *   ]}
- * />
+ * Enhanced Navbar component with improved UI/UX and smooth scrolling
  */
 
-const navbarVariants = cva("relative z-50 transition-all duration-300", {
-  variants: {
-    variant: {
-      default: "bg-white dark:bg-gray-900",
-      transparent: "bg-transparent",
-      translucent: "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md",
+const navbarVariants = cva(
+  "relative z-50 transition-all duration-300 backdrop-blur-sm",
+  {
+    variants: {
+      variant: {
+        default: "bg-white dark:bg-gray-900",
+        transparent: "bg-transparent",
+        translucent: "bg-white/90 dark:bg-gray-900/90",
+        filled: "bg-primary-600 text-white",
+      },
+      position: {
+        static: "relative",
+        sticky: "sticky top-0",
+        fixed: "fixed top-0 left-0 right-0",
+      },
+      shadow: {
+        none: "",
+        sm: "shadow-sm",
+        default: "shadow",
+        lg: "shadow-lg",
+      },
+      border: {
+        none: "border-none",
+        bottom: "border-b border-gray-200 dark:border-gray-800",
+        color: "border-b-2 border-primary-500 dark:border-primary-400",
+      },
     },
-    position: {
-      static: "relative",
-      sticky: "sticky top-0",
-      fixed: "fixed top-0 left-0 right-0",
+    defaultVariants: {
+      variant: "default",
+      position: "sticky",
+      shadow: "default",
+      border: "bottom",
     },
-    shadow: {
-      none: "",
-      sm: "shadow-sm",
-      default: "shadow",
-    },
-    border: {
-      none: "border-none",
-      bottom: "border-b border-gray-200 dark:border-gray-800",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-    position: "sticky",
-    shadow: "default",
-    border: "bottom",
-  },
-});
+  }
+);
 
 const Navbar = React.forwardRef(
   (
@@ -84,6 +69,8 @@ const Navbar = React.forwardRef(
   ) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const mobileMenuRef = useRef(null);
+    const menuButtonRef = useRef(null);
 
     // Handle scroll effect if scrollBehavior is true
     useEffect(() => {
@@ -97,8 +84,28 @@ const Navbar = React.forwardRef(
       return () => window.removeEventListener("scroll", handleScroll);
     }, [scrollBehavior]);
 
+    // Handle clicks outside mobile menu to close it
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (
+          mobileMenuOpen &&
+          mobileMenuRef.current &&
+          !mobileMenuRef.current.contains(event.target) &&
+          menuButtonRef.current &&
+          !menuButtonRef.current.contains(event.target)
+        ) {
+          setMobileMenuOpen(false);
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }, [mobileMenuOpen]);
+
     const navVariant = scrolled && scrollBehavior ? "translucent" : variant;
     const navShadow = scrolled && scrollBehavior ? "default" : shadow;
+    const navBorder = scrolled && scrollBehavior ? "color" : border;
 
     const toggleMobileMenu = () => {
       setMobileMenuOpen(!mobileMenuOpen);
@@ -119,7 +126,7 @@ const Navbar = React.forwardRef(
             variant: navVariant,
             position,
             shadow: navShadow,
-            border,
+            border: navBorder,
             className,
           })
         )}
@@ -133,11 +140,22 @@ const Navbar = React.forwardRef(
         >
           <div className="flex items-center justify-between h-16">
             {/* Logo and brand */}
-            <div className="flex items-center">{logo}</div>
+            <div className="flex items-center">
+              <a
+                href="#"
+                className="transition-transform duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                {logo}
+              </a>
+            </div>
 
             {/* Desktop navigation */}
             <div className="hidden md:block">
-              <div className="flex items-baseline space-x-4">
+              <div className="flex items-baseline space-x-1">
                 {items.map((item, index) =>
                   item.children ? (
                     <NavDropdown
@@ -176,9 +194,11 @@ const Navbar = React.forwardRef(
             {/* Mobile menu button */}
             <div className="md:hidden flex items-center">
               <button
+                ref={menuButtonRef}
                 onClick={toggleMobileMenu}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
-                aria-expanded="false"
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-200"
+                aria-expanded={mobileMenuOpen ? "true" : "false"}
+                aria-label="Toggle menu"
               >
                 <span className="sr-only">Open main menu</span>
                 {mobileMenuOpen ? (
@@ -193,11 +213,10 @@ const Navbar = React.forwardRef(
 
         {/* Mobile menu */}
         <div
+          ref={mobileMenuRef}
           className={cn(
-            "md:hidden bg-white dark:bg-gray-900 shadow-lg transition-all duration-300 ease-in-out transform",
-            mobileMenuOpen
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-full pointer-events-none",
+            "md:hidden bg-white dark:bg-gray-900 shadow-lg transition-all duration-300 overflow-hidden",
+            mobileMenuOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0",
             mobileMenuClassName
           )}
         >
@@ -256,22 +275,26 @@ const NavItem = ({ item, active, className, activeClassName, onClick }) => {
     <a
       href={item.href}
       onClick={(e) => {
-        if (onClick) {
-          e.preventDefault();
-          onClick(item);
-        }
+        e.preventDefault();
+        onClick(item);
       }}
       className={cn(
-        "px-3 py-2 rounded-md text-sm font-medium transition-colors",
+        "px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 relative group",
         active
-          ? "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
-          : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white",
+          ? "text-primary-600 dark:text-primary-400"
+          : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400",
         className,
         active && activeClassName
       )}
       aria-current={active ? "page" : undefined}
     >
       {item.label}
+      <span
+        className={cn(
+          "absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform transition-transform duration-200 rounded-t-md",
+          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+        )}
+      ></span>
     </a>
   );
 };
@@ -288,16 +311,14 @@ const MobileNavItem = ({
     <a
       href={item.href}
       onClick={(e) => {
-        if (onClick) {
-          e.preventDefault();
-          onClick(item);
-        }
+        e.preventDefault();
+        onClick(item);
       }}
       className={cn(
-        "block px-3 py-2 rounded-md text-base font-medium",
+        "block px-3 py-2 rounded-md text-base font-medium transition-all duration-200",
         active
-          ? "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
-          : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white",
+          ? "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400"
+          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400",
         className,
         active && activeClassName
       )}
@@ -308,7 +329,7 @@ const MobileNavItem = ({
   );
 };
 
-// Desktop NavDropdown
+// Desktop NavDropdown with improved animations
 const NavDropdown = ({
   item,
   activeItem,
@@ -343,52 +364,72 @@ const NavDropdown = ({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "px-3 py-2 rounded-md text-sm font-medium inline-flex items-center transition-colors",
-          isChildActive
-            ? "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
-            : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white",
+          "px-3 py-2 rounded-md text-sm font-medium inline-flex items-center transition-all duration-200 relative group",
+          isChildActive || isOpen
+            ? "text-primary-600 dark:text-primary-400"
+            : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400",
           itemClassName,
           isChildActive && activeItemClassName
         )}
+        aria-expanded={isOpen ? "true" : "false"}
       >
         {item.label}
-        <ChevronDown className="ml-1 h-4 w-4" />
+        <span className="ml-1 transition-transform duration-200">
+          {isOpen ? (
+            <ChevronUp className="h-4 w-4" />
+          ) : (
+            <ChevronDown className="h-4 w-4" />
+          )}
+        </span>
+        <span
+          className={cn(
+            "absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform transition-transform duration-200 rounded-t-md",
+            isChildActive || isOpen
+              ? "scale-x-100"
+              : "scale-x-0 group-hover:scale-x-100"
+          )}
+        ></span>
       </button>
 
-      {isOpen && (
-        <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
-          <div className="py-1" role="menu" aria-orientation="vertical">
-            {item.children.map((child, idx) => (
-              <a
-                key={idx}
-                href={child.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onItemClick(child);
-                  setIsOpen(false);
-                }}
-                className={cn(
-                  "block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700",
-                  activeItem === child.href || activeItem === child.id
-                    ? "bg-gray-100 dark:bg-gray-700 text-primary-700 dark:text-primary-300"
-                    : "",
-                  dropdownItemClassName,
-                  (activeItem === child.href || activeItem === child.id) &&
-                    activeDropdownItemClassName
-                )}
-                role="menuitem"
-              >
-                {child.label}
-              </a>
-            ))}
-          </div>
+      <div
+        className={cn(
+          "absolute left-0 mt-1 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 transition-all duration-200 origin-top-left z-50 overflow-hidden",
+          isOpen
+            ? "opacity-100 scale-100"
+            : "opacity-0 scale-95 pointer-events-none"
+        )}
+      >
+        <div className="py-1" role="menu" aria-orientation="vertical">
+          {item.children.map((child, idx) => (
+            <a
+              key={idx}
+              href={child.href}
+              onClick={(e) => {
+                e.preventDefault();
+                onItemClick(child);
+                setIsOpen(false);
+              }}
+              className={cn(
+                "block px-4 py-2 text-sm transition-colors duration-150",
+                activeItem === child.href || activeItem === child.id
+                  ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400",
+                dropdownItemClassName,
+                (activeItem === child.href || activeItem === child.id) &&
+                  activeDropdownItemClassName
+              )}
+              role="menuitem"
+            >
+              {child.label}
+            </a>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-// Mobile NavDropdown
+// Improved Mobile NavDropdown
 const MobileNavDropdown = ({
   item,
   activeItem,
@@ -407,46 +448,51 @@ const MobileNavDropdown = ({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "w-full text-left flex justify-between items-center px-3 py-2 rounded-md text-base font-medium",
-          isChildActive
-            ? "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
-            : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+          "w-full text-left flex justify-between items-center px-3 py-2 rounded-md text-base font-medium transition-all duration-200",
+          isChildActive || isOpen
+            ? "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400"
+            : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400"
         )}
+        aria-expanded={isOpen ? "true" : "false"}
       >
         {item.label}
-        <ChevronRight
-          className={cn(
-            "h-5 w-5 transition-transform",
-            isOpen && "transform rotate-90"
+        <span className="transition-transform duration-200">
+          {isOpen ? (
+            <ChevronUp className="h-5 w-5" />
+          ) : (
+            <ChevronDown className="h-5 w-5" />
           )}
-        />
+        </span>
       </button>
 
-      {isOpen && (
-        <div className="pl-4 mt-1 space-y-1">
-          {item.children.map((child, idx) => (
-            <a
-              key={idx}
-              href={child.href}
-              onClick={(e) => {
-                e.preventDefault();
-                onItemClick(child);
-              }}
-              className={cn(
-                "block px-3 py-2 rounded-md text-sm font-medium border-l-2",
-                activeItem === child.href || activeItem === child.id
-                  ? "border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300"
-                  : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800",
-                dropdownItemClassName,
-                (activeItem === child.href || activeItem === child.id) &&
-                  activeDropdownItemClassName
-              )}
-            >
-              {child.label}
-            </a>
-          ))}
-        </div>
-      )}
+      <div
+        className={cn(
+          "pl-4 mt-1 space-y-1 overflow-hidden transition-all duration-200",
+          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        )}
+      >
+        {item.children.map((child, idx) => (
+          <a
+            key={idx}
+            href={child.href}
+            onClick={(e) => {
+              e.preventDefault();
+              onItemClick(child);
+            }}
+            className={cn(
+              "block px-3 py-2 rounded-md text-sm font-medium border-l-2 transition-all duration-200",
+              activeItem === child.href || activeItem === child.id
+                ? "border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400"
+                : "border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-primary-300 dark:hover:border-primary-700",
+              dropdownItemClassName,
+              (activeItem === child.href || activeItem === child.id) &&
+                activeDropdownItemClassName
+            )}
+          >
+            {child.label}
+          </a>
+        ))}
+      </div>
     </div>
   );
 };

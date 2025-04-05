@@ -17,6 +17,7 @@ import { ArrowUp, MessageSquare, Moon, Sun } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { navItems } from "./data/siteData";
 import { MainLayout } from "./components/layout/main-layout";
+import { scrollUtils } from "./utils/scrollUtils";
 
 const App = () => {
   const [activeSection, setActiveSection] = useState("intro");
@@ -32,31 +33,76 @@ const App = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showChatBot, setShowChatBot] = useState(false);
 
-  const sectionRefs = {
-    intro: useRef(null),
-    market: useRef(null),
-    ecommerce: useRef(null),
-    casestudy: useRef(null),
-    amwayDetail: useRef(null),
-    solutions: useRef(null),
-    tools: useRef(null),
-    strategy: useRef(null),
-    demo: useRef(null),
-    invest: useRef(null),
-  };
+  // Create refs for all sections defined in navItems
+  const sectionRefs = {};
+  navItems.forEach((item) => {
+    sectionRefs[item.id] = useRef(null);
+  });
 
+  // Use intersection observer to detect which section is currently in view
   const isVisible = useIntersectionObserver(sectionRefs, {
     threshold: 0.3,
     onVisibilityChange: (id, isVisible) => {
       if (isVisible) {
         setActiveSection(id);
+        // Update URL hash when scrolling to a section
+        window.history.replaceState(null, null, `#${id}`);
       }
     },
   });
 
+  // Enhanced scrollToSection function with fallback behavior
   const scrollToSection = (sectionId) => {
-    sectionRefs[sectionId].current?.scrollIntoView({ behavior: "smooth" });
+    // Primary method: Try using the ref
+    if (sectionRefs[sectionId]?.current) {
+      const headerOffset = 80; // Adjust based on header height
+      const sectionPosition =
+        sectionRefs[sectionId].current.getBoundingClientRect().top;
+      const offsetPosition =
+        sectionPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+      return;
+    }
+
+    // Fallback method 1: Try using scrollUtils
+    if (scrollUtils && typeof scrollUtils.scrollToElement === "function") {
+      const success = scrollUtils.scrollToElement(sectionId, { offset: 80 });
+      if (success) return;
+    }
+
+    // Fallback method 2: Try using getElementById directly
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+      return;
+    }
+
+    // If all else fails, log a warning
+    console.warn(`Section with ID "${sectionId}" not found`);
   };
+
+  // Check URL hash on initial load to scroll to the correct section
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    if (hash && sectionRefs[hash]) {
+      // Add a small delay to ensure the page is fully loaded
+      setTimeout(() => {
+        scrollToSection(hash);
+      }, 100);
+    }
+  }, []);
 
   // Handle dark mode
   const toggleDarkMode = () => {
@@ -100,7 +146,7 @@ const App = () => {
   // Create logo element for navbar
   const logo = (
     <div className="flex items-center text-2xl font-bold">
-      <div className="bg-blue-600 dark:bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-md mr-2">
+      <div className="bg-blue-600 dark:bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-md mr-2 transition-all duration-300 hover:scale-105">
         MA
       </div>
       <span className="text-blue-700 dark:text-blue-400">MLM</span>
@@ -125,6 +171,7 @@ const App = () => {
             size="icon"
             onClick={toggleDarkMode}
             aria-label="Toggle dark mode"
+            className="transition-transform duration-200 hover:scale-110"
           >
             {darkMode ? (
               <Sun className="h-5 w-5" />
@@ -218,7 +265,7 @@ const App = () => {
         size="icon"
         className={`fixed bottom-8 right-8 z-50 rounded-full bg-blue-600 text-white shadow-lg transform transition-all duration-300 ${
           showScrollTop
-            ? "opacity-100 translate-y-0"
+            ? "opacity-100 translate-y-0 hover:scale-110"
             : "opacity-0 translate-y-10 pointer-events-none"
         }`}
         aria-label="Scroll to top"
@@ -231,7 +278,7 @@ const App = () => {
         onClick={() => setShowChatBot(!showChatBot)}
         variant="default"
         size="icon"
-        className="fixed bottom-8 left-8 z-50 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-all duration-300"
+        className="fixed bottom-8 left-8 z-50 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-110"
         aria-label="Toggle chat"
       >
         <MessageSquare className="h-5 w-5" />
