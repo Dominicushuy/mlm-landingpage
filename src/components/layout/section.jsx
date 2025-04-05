@@ -3,13 +3,14 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 
 /**
- * Section component with animation variants
+ * Section component with animation variants and consistent padding
  *
  * @example
  * <Section
  *   id="features"
  *   variant="gradient"
  *   animation="fade-in"
+ *   padding="large"
  *   className="py-24"
  *   isVisible={visibilityState.features}
  * >
@@ -45,6 +46,13 @@ const sectionVariants = cva("transition-opacity duration-1000", {
       true: "mx-auto px-4 sm:px-6 lg:px-8",
       false: "",
     },
+    padding: {
+      none: "",
+      small: "py-8 md:py-12",
+      default: "py-12 md:py-16",
+      large: "py-16 md:py-24",
+      xlarge: "py-24 md:py-32",
+    },
     animation: {
       none: "",
       "fade-in": "animate-fade-in",
@@ -60,6 +68,7 @@ const sectionVariants = cva("transition-opacity duration-1000", {
     rounded: "none",
     shadow: "none",
     container: false,
+    padding: "default",
     animation: "none",
   },
 });
@@ -73,6 +82,7 @@ const Section = forwardRef(
       rounded,
       shadow,
       container,
+      padding,
       animation,
       isVisible = true,
       maxWidth = "max-w-7xl",
@@ -91,6 +101,7 @@ const Section = forwardRef(
             rounded,
             shadow,
             container,
+            padding,
             animation,
             className,
           }),

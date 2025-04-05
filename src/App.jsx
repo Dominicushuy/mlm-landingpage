@@ -19,6 +19,35 @@ import { navItems } from "./data/siteData";
 import { MainLayout } from "./components/layout/main-layout";
 import { scrollUtils } from "./utils/scrollUtils";
 
+// Section wrapper component for consistent styling
+const SectionWrapper = ({
+  children,
+  id,
+  className = "",
+  padding = "large",
+}) => {
+  return (
+    <div
+      id={id}
+      className={`relative w-full ${
+        padding === "none"
+          ? ""
+          : padding === "small"
+          ? "py-8 md:py-12"
+          : padding === "medium"
+          ? "py-12 md:py-16"
+          : padding === "large"
+          ? "py-16 md:py-24"
+          : padding === "xlarge"
+          ? "py-24 md:py-32"
+          : ""
+      } ${className}`}
+    >
+      {children}
+    </div>
+  );
+};
+
 const App = () => {
   const [activeSection, setActiveSection] = useState("intro");
   const [darkMode, setDarkMode] = useState(() => {
@@ -193,67 +222,85 @@ const App = () => {
         />
 
         {/* Market Analysis Section */}
-        <MarketAnalysis
-          ref={sectionRefs.market}
-          isVisible={isVisible.market}
-          darkMode={darkMode}
-        />
+        <SectionWrapper id="market-section" padding="large">
+          <MarketAnalysis
+            ref={sectionRefs.market}
+            isVisible={isVisible.market}
+            darkMode={darkMode}
+          />
+        </SectionWrapper>
 
         {/* E-commerce Impact Section */}
-        <EcommerceImpact
-          ref={sectionRefs.ecommerce}
-          isVisible={isVisible.ecommerce}
-          darkMode={darkMode}
-        />
+        <SectionWrapper id="ecommerce-section" padding="large">
+          <EcommerceImpact
+            ref={sectionRefs.ecommerce}
+            isVisible={isVisible.ecommerce}
+            darkMode={darkMode}
+          />
+        </SectionWrapper>
 
         {/* Case Study Section */}
-        <CaseStudy
-          ref={sectionRefs.casestudy}
-          isVisible={isVisible.casestudy}
-          darkMode={darkMode}
-        />
+        <SectionWrapper id="casestudy-section" padding="large">
+          <CaseStudy
+            ref={sectionRefs.casestudy}
+            isVisible={isVisible.casestudy}
+            darkMode={darkMode}
+          />
+        </SectionWrapper>
 
         {/* Detailed Case Study Section */}
-        <AmwayDetailCaseStudy
-          ref={sectionRefs.amwayDetail}
-          isVisible={isVisible.amwayDetail}
-          darkMode={darkMode}
-        />
+        <SectionWrapper id="amwayDetail-section" padding="large">
+          <AmwayDetailCaseStudy
+            ref={sectionRefs.amwayDetail}
+            isVisible={isVisible.amwayDetail}
+            darkMode={darkMode}
+          />
+        </SectionWrapper>
 
         {/* Solutions Section */}
-        <Solutions
-          ref={sectionRefs.solutions}
-          isVisible={isVisible.solutions}
-          darkMode={darkMode}
-        />
+        <SectionWrapper id="solutions-section" padding="large">
+          <Solutions
+            ref={sectionRefs.solutions}
+            isVisible={isVisible.solutions}
+            darkMode={darkMode}
+          />
+        </SectionWrapper>
 
         {/* Tools Section */}
-        <Tools
-          ref={sectionRefs.tools}
-          isVisible={isVisible.tools}
-          darkMode={darkMode}
-        />
+        <SectionWrapper id="tools-section" padding="large">
+          <Tools
+            ref={sectionRefs.tools}
+            isVisible={isVisible.tools}
+            darkMode={darkMode}
+          />
+        </SectionWrapper>
 
         {/* Demo Section */}
-        <DemoSection
-          ref={sectionRefs.demo}
-          isVisible={isVisible.demo}
-          darkMode={darkMode}
-        />
+        <SectionWrapper id="demo-section" padding="large">
+          <DemoSection
+            ref={sectionRefs.demo}
+            isVisible={isVisible.demo}
+            darkMode={darkMode}
+          />
+        </SectionWrapper>
 
         {/* Strategy Section */}
-        <Strategy
-          ref={sectionRefs.strategy}
-          isVisible={isVisible.strategy}
-          darkMode={darkMode}
-        />
+        <SectionWrapper id="strategy-section" padding="large">
+          <Strategy
+            ref={sectionRefs.strategy}
+            isVisible={isVisible.strategy}
+            darkMode={darkMode}
+          />
+        </SectionWrapper>
 
         {/* Investment Section */}
-        <Investment
-          ref={sectionRefs.invest}
-          isVisible={isVisible.invest}
-          darkMode={darkMode}
-        />
+        <SectionWrapper id="invest-section" padding="large">
+          <Investment
+            ref={sectionRefs.invest}
+            isVisible={isVisible.invest}
+            darkMode={darkMode}
+          />
+        </SectionWrapper>
       </MainLayout>
 
       <Footer darkMode={darkMode} />
