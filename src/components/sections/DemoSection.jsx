@@ -6,10 +6,10 @@ import {
   SectionSubtitle,
   SectionDescription,
 } from "../layout/section";
-import { MainSection } from "../layout/MainLayout";
+import { MainSection } from "../layout/main-layout";
 import { Grid, GridItem } from "../layout/container";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { ResponsiveCard } from "../ui/ResponsiveCard";
+import { ResponsiveCard } from "../ui/responsive-card";
 import { Button } from "../ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import CompareTool from "../features/compare-tool";

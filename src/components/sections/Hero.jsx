@@ -1,11 +1,11 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import { Check, ArrowRight, PlusCircle } from "lucide-react";
 import { Section } from "../layout/section";
-import { MainSection } from "../layout/MainLayout";
+import { MainSection } from "../layout/main-layout";
 import { Container, Grid, GridItem, Flex } from "../layout/container";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
-import { ResponsiveCard } from "../ui/ResponsiveCard";
+import { ResponsiveCard } from "../ui/responsive-card";
 import {
   Modal,
   ModalContent,

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useIntersectionObserver } from "./hooks/useIntersectionObserver";
 import { Navbar } from "./components/navigation/nav-bar";
-import Footer from "./components/layout/Footer";
+import Footer from "./components/layout/footer";
 import Hero from "./components/sections/Hero";
 import MarketAnalysis from "./components/sections/MarketAnalysis";
 import EcommerceImpact from "./components/sections/EcommerceImpact";
@@ -10,13 +10,13 @@ import Solutions from "./components/sections/Solutions";
 import Tools from "./components/sections/Tools";
 import Strategy from "./components/sections/Strategy";
 import Investment from "./components/sections/Investment";
-import ChatBot from "./components/features/ChatBot";
+import ChatBot from "./components/features/chat-bot";
 import AmwayDetailCaseStudy from "./components/sections/AmwayDetailCaseStudy";
 import DemoSection from "./components/sections/DemoSection";
 import { ArrowUp, MessageSquare, Moon, Sun } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { navItems } from "./data/siteData";
-import { MainLayout } from "./components/layout/MainLayout";
+import { MainLayout } from "./components/layout/main-layout";
 
 const App = () => {
   const [activeSection, setActiveSection] = useState("intro");

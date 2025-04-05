@@ -8,7 +8,7 @@ import {
   Smartphone,
   Zap,
 } from "lucide-react";
-import SectionHeading from "../ui/SectionHeading";
+import SectionHeading from "../ui/section-heading";
 
 const AmwayDetailCaseStudy = ({ darkMode }) => {
   const [activeTab, setActiveTab] = useState("tech");

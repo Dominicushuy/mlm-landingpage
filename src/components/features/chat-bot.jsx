@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, X, User, Bot, ArrowRight } from "lucide-react";
+import { Send, X, User, Bot } from "lucide-react";
 import { Card, CardHeader, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Flex } from "../layout/container";
 
 const ChatBot = ({ onClose }) => {
   const [messages, setMessages] = useState([
