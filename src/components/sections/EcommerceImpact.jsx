@@ -1,5 +1,5 @@
-import React, { forwardRef, useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useAnimation } from "framer-motion";
+import React, { forwardRef, useState, useRef } from "react";
+import { motion } from "framer-motion";
 import {
   Section,
   SectionHeader,
@@ -11,7 +11,6 @@ import { Grid, GridItem, Flex } from "../layout/container";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import { LineChart, AreaChart } from "../charts/chart-components";
 import { Button } from "../ui/button";
-import { FeatureCard } from "../features/feature-card";
 import { marketGrowthData } from "../../data/siteData";
 import {
   Zap,
@@ -22,74 +21,12 @@ import {
   ShoppingCart,
   Users,
   BarChart2,
-  Globe,
 } from "lucide-react";
 
 const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
-  const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
   const [highlightedFeature, setHighlightedFeature] = useState(null);
   const [chartView, setChartView] = useState("line");
   const sectionRef = useRef(null);
-  const controls = useAnimation();
-
-  // Animation effect when component becomes visible
-  useEffect(() => {
-    if (isVisible) {
-      controls.start("visible");
-    } else {
-      controls.start("hidden");
-    }
-  }, [isVisible, controls]);
-
-  // Track mouse position for 3D parallax effects
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
-        setMousePosition({ x, y });
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
-
-  // Animation variants
-  const parentVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: 0.2,
-        duration: 0.6,
-      },
-    },
-  };
-
-  const childVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
-
-  const cardVariants = {
-    hover: {
-      scale: 1.02,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 10,
-      },
-    },
-  };
 
   // Chart data for both line and area
   const chartData = marketGrowthData.map((item) => ({
@@ -107,60 +44,37 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
       }}
       variant="gradient"
       isVisible={isVisible}
-      animation="fade-in"
       container
       className="relative overflow-hidden"
     >
-      {/* Decorative Background Elements */}
-      <GlassmorphismBackground mousePosition={mousePosition} />
-      <ParticlesBackground />
+      {/* Simplified static background elements */}
+      <SimpleBackgroundElements />
 
-      <motion.div
-        initial="hidden"
-        animate={controls}
-        variants={parentVariants}
-        className="relative z-10"
-      >
-        <motion.div variants={childVariants}>
-          <SectionHeader>
-            <div className="inline-block mb-3">
-              <motion.div
-                className="flex items-center space-x-2 mb-2 bg-indigo-100/80 backdrop-blur-sm dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-4 py-1 rounded-full text-sm font-medium border border-indigo-200/50 dark:border-indigo-800/50"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <span className="flex h-2 w-2 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-                </span>
-                <span>Phân tích tác động</span>
-              </motion.div>
+      <div className="relative z-10">
+        <SectionHeader>
+          <div className="inline-block mb-3">
+            <div className="flex items-center space-x-2 mb-2 bg-indigo-100/80 backdrop-blur-sm dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-4 py-1 rounded-full text-sm font-medium border border-indigo-200/50 dark:border-indigo-800/50">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+              </span>
+              <span>Phân tích tác động</span>
             </div>
-            <SectionSubtitle>Tác động TMĐT</SectionSubtitle>
-            <SectionTitle className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
-              Thương mại điện tử thay đổi MLM
-            </SectionTitle>
-            <SectionDescription>
-              Tác động của thương mại điện tử đến mô hình kinh doanh đa cấp
-              truyền thống và cách thức chuyển đổi để thích ứng
-            </SectionDescription>
-          </SectionHeader>
-        </motion.div>
+          </div>
+          <SectionSubtitle>Tác động TMĐT</SectionSubtitle>
+          <SectionTitle className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+            Thương mại điện tử thay đổi MLM
+          </SectionTitle>
+          <SectionDescription>
+            Tác động của thương mại điện tử đến mô hình kinh doanh đa cấp truyền
+            thống và cách thức chuyển đổi để thích ứng
+          </SectionDescription>
+        </SectionHeader>
 
         <Grid cols={2} gap="lg" className="mt-12 items-center">
           <GridItem>
-            <motion.div
-              variants={{ ...childVariants, ...cardVariants }}
-              whileHover="hover"
-              style={{
-                transformStyle: "preserve-3d",
-                transform: `perspective(1000px) rotateY(${
-                  (mousePosition.x - 0.5) * 3
-                }deg) rotateX(${(mousePosition.y - 0.5) * -3}deg)`,
-                transition: "transform 0.3s ease",
-              }}
-            >
+            {/* Chart card with hover effect preserved but no display animations */}
+            <div className="transform transition-transform duration-300 hover:scale-[1.02]">
               <Card
                 variant="default"
                 className="shadow-xl border border-white/20 backdrop-blur-md bg-white/90 dark:bg-gray-800/90 overflow-hidden"
@@ -195,77 +109,59 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
                     </div>
                   </div>
 
-                  {/* Dynamic chart based on selection */}
+                  {/* Chart container */}
                   <div className="h-80 relative">
                     {/* Chart glow effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-lg"></div>
 
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={chartView}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                        className="w-full h-full"
-                      >
-                        {chartView === "line" ? (
-                          <LineChart
-                            data={chartData}
-                            lines={[
-                              {
-                                dataKey: "mlm",
-                                name: "MLM (tỷ USD)",
-                                color: "#8b5cf6",
-                              },
-                              {
-                                dataKey: "ecommerce_growth",
-                                name: "TMĐT (nghìn tỷ USD)",
-                                color: "#ef4444",
-                              },
-                            ]}
-                            xAxisKey="year"
-                          />
-                        ) : (
-                          <AreaChart
-                            data={chartData}
-                            areas={[
-                              {
-                                dataKey: "mlm",
-                                name: "MLM (tỷ USD)",
-                                color: "#8b5cf6",
-                                fillOpacity: 0.4,
-                              },
-                              {
-                                dataKey: "ecommerce_growth",
-                                name: "TMĐT (nghìn tỷ USD)",
-                                color: "#ef4444",
-                                fillOpacity: 0.4,
-                              },
-                            ]}
-                            xAxisKey="year"
-                          />
-                        )}
-                      </motion.div>
-                    </AnimatePresence>
+                    {/* Dynamic chart based on selection */}
+                    <div className="w-full h-full">
+                      {chartView === "line" ? (
+                        <LineChart
+                          data={chartData}
+                          lines={[
+                            {
+                              dataKey: "mlm",
+                              name: "MLM (tỷ USD)",
+                              color: "#8b5cf6",
+                            },
+                            {
+                              dataKey: "ecommerce_growth",
+                              name: "TMĐT (nghìn tỷ USD)",
+                              color: "#ef4444",
+                            },
+                          ]}
+                          xAxisKey="year"
+                        />
+                      ) : (
+                        <AreaChart
+                          data={chartData}
+                          areas={[
+                            {
+                              dataKey: "mlm",
+                              name: "MLM (tỷ USD)",
+                              color: "#8b5cf6",
+                              fillOpacity: 0.4,
+                            },
+                            {
+                              dataKey: "ecommerce_growth",
+                              name: "TMĐT (nghìn tỷ USD)",
+                              color: "#ef4444",
+                              fillOpacity: 0.4,
+                            },
+                          ]}
+                          xAxisKey="year"
+                        />
+                      )}
+                    </div>
                   </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.8 }}
-                    className="mt-6 text-center text-gray-500 dark:text-gray-400 italic"
-                  >
+                  <div className="mt-6 text-center text-gray-500 dark:text-gray-400 italic">
                     So sánh tăng trưởng thị trường MLM và thương mại điện tử
                     toàn cầu
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 1 }}
-                    className="mt-4 grid grid-cols-2 gap-4"
-                  >
+                  <div className="mt-4 grid grid-cols-2 gap-4">
                     <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg flex items-center">
                       <TrendingUp className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
                       <div>
@@ -288,25 +184,18 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
                         </p>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           </GridItem>
 
           <GridItem>
             <div className="space-y-6">
-              <motion.div variants={childVariants}>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 relative inline-block">
-                  Những thách thức mới
-                  <motion.div
-                    className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400"
-                    initial={{ width: 0 }}
-                    animate={{ width: "100%" }}
-                    transition={{ duration: 1, delay: 0.8 }}
-                  />
-                </h3>
-              </motion.div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 relative inline-block">
+                Những thách thức mới
+                <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400 w-full"></div>
+              </h3>
 
               {[
                 {
@@ -347,10 +236,7 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
           </GridItem>
         </Grid>
 
-        <motion.div
-          variants={childVariants}
-          className="mt-16 p-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 shadow-xl relative overflow-hidden"
-        >
+        <div className="mt-16 p-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 shadow-xl relative overflow-hidden">
           {/* Decorative elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full transform -translate-x-1/3 translate-y-1/3"></div>
@@ -371,7 +257,7 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
               <Button
                 variant="default"
                 size="lg"
-                className="px-8 py-3 bg-white text-indigo-700 hover:bg-gray-100 hover:text-indigo-800 shadow-md"
+                className="px-8 py-3 bg-white text-indigo-700 hover:bg-gray-100 hover:text-indigo-800 shadow-md transform transition-transform duration-200 hover:scale-105"
               >
                 Khám phá giải pháp
                 <ArrowRight className="ml-2 w-5 h-5" />
@@ -393,73 +279,25 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
                   text: "Áp dụng phân tích dữ liệu để dự báo xu hướng",
                 },
               ].map((step, i) => (
-                <motion.div
+                <div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 1.2 + i * 0.1 }}
-                  className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20"
+                  className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 transform transition-transform duration-200 hover:translate-y-[-5px]"
                 >
                   <span className="text-3xl font-bold opacity-50">
                     {step.number}
                   </span>
                   <p className="mt-2 font-medium">{step.text}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
-        </motion.div>
-      </motion.div>
-
-      {/* Chart interactive dots */}
-      <motion.div
-        className="absolute w-6 h-6 rounded-full bg-indigo-500/20 backdrop-blur-xl border border-indigo-500/30"
-        animate={{
-          x: [
-            mousePosition.x * 500,
-            mousePosition.x * 500 + 20,
-            mousePosition.x * 500,
-          ],
-          y: [
-            mousePosition.y * 100 + 200,
-            mousePosition.y * 100 + 210,
-            mousePosition.y * 100 + 200,
-          ],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
-      />
-
-      <motion.div
-        className="absolute w-4 h-4 rounded-full bg-purple-500/20 backdrop-blur-xl border border-purple-500/30"
-        animate={{
-          x: [
-            mousePosition.x * 300 + 100,
-            mousePosition.x * 300 + 90,
-            mousePosition.x * 300 + 100,
-          ],
-          y: [
-            mousePosition.y * 200 + 300,
-            mousePosition.y * 200 + 320,
-            mousePosition.y * 200 + 300,
-          ],
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
-      />
+        </div>
+      </div>
     </Section>
   );
 });
 
-// Enhanced Feature Card component with animations and 3D effects
+// Enhanced Feature Card component with hover effect preserved
 const EnhancedFeatureCard = ({
   feature,
   index,
@@ -501,9 +339,6 @@ const EnhancedFeatureCard = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
       whileHover={{
         scale: 1.03,
         transition: { duration: 0.2 },
@@ -547,7 +382,7 @@ const EnhancedFeatureCard = ({
           </div>
         </div>
 
-        {/* Bottom decorative line with animation */}
+        {/* Bottom decorative line with hover animation */}
         <motion.div
           className={`h-0.5 w-full mt-4 ${colors.iconBg} rounded-full opacity-30`}
           initial={{ width: "30%" }}
@@ -559,63 +394,24 @@ const EnhancedFeatureCard = ({
   );
 };
 
-// Glassmorphism background effect with parallax
-const GlassmorphismBackground = ({ mousePosition }) => {
+// Simplified static background - single component with minimal elements
+const SimpleBackgroundElements = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Large gradient circles with glassmorphism */}
-      <motion.div
-        className="absolute top-0 right-0 w-2/3 h-2/3 rounded-full bg-gradient-to-br from-indigo-400/15 to-purple-500/15 dark:from-indigo-500/5 dark:to-purple-600/5 blur-3xl -z-10"
-        animate={{
-          x: mousePosition.x * 30 - 15,
-          y: mousePosition.y * 30 - 15,
-        }}
-        transition={{ duration: 0.5 }}
-      />
-      <motion.div
-        className="absolute bottom-0 left-0 w-1/2 h-1/2 rounded-full bg-gradient-to-tr from-purple-400/15 to-pink-500/15 dark:from-purple-500/5 dark:to-pink-600/5 blur-3xl -z-10"
-        animate={{
-          x: mousePosition.x * -30 + 15,
-          y: mousePosition.y * -30 + 15,
-        }}
-        transition={{ duration: 0.5 }}
-      />
+      {/* Static gradient elements with reduced opacity */}
+      <div className="absolute top-0 right-0 w-2/3 h-2/3 rounded-full bg-gradient-to-br from-indigo-400/10 to-purple-500/10 dark:from-indigo-500/5 dark:to-purple-600/5 blur-3xl -z-10"></div>
+      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 rounded-full bg-gradient-to-tr from-purple-400/10 to-pink-500/10 dark:from-purple-500/5 dark:to-pink-600/5 blur-3xl -z-10"></div>
 
-      {/* Glassmorphism elements */}
-      <div className="absolute top-1/4 right-1/5 w-48 h-48 rounded-full bg-white/5 backdrop-blur-3xl border border-white/10 dark:border-white/5 -z-10"></div>
-      <div className="absolute bottom-1/3 left-1/4 w-36 h-36 rounded-full bg-white/5 backdrop-blur-3xl border border-white/10 dark:border-white/5 -z-10"></div>
-
-      {/* Additional decorative elements */}
-      <div className="absolute top-1/2 left-10 w-16 h-16 rounded-md bg-gradient-to-r from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-white/10 dark:border-white/5 transform rotate-45 -z-10"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-24 h-24 rounded-md bg-gradient-to-r from-purple-500/10 to-pink-500/10 backdrop-blur-xl border border-white/10 dark:border-white/5 transform -rotate-12 -z-10"></div>
-    </div>
-  );
-};
-
-// Animated particles background
-const ParticlesBackground = () => {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none -z-20">
-      {/* Generate random particles */}
-      {Array.from({ length: 25 }).map((_, i) => (
-        <motion.div
+      {/* A few static particles for minimal decoration */}
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div
           key={i}
-          className="absolute bg-indigo-500/10 dark:bg-indigo-400/10 rounded-full"
+          className="absolute bg-indigo-500/5 dark:bg-indigo-400/5 rounded-full -z-20"
           style={{
-            width: Math.random() * 8 + 2,
-            height: Math.random() * 8 + 2,
+            width: Math.random() * 6 + 2,
+            height: Math.random() * 6 + 2,
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-          }}
-          animate={{
-            y: [0, Math.random() * 30 - 15],
-            x: [0, Math.random() * 30 - 15],
-            opacity: [0.05, 0.2, 0.05],
-          }}
-          transition={{
-            duration: Math.random() * 8 + 4,
-            repeat: Infinity,
-            repeatType: "reverse",
           }}
         />
       ))}

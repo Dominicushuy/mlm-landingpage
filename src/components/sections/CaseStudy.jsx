@@ -1,5 +1,5 @@
-import React, { forwardRef, useState, useRef, useEffect } from "react";
-import { motion, useAnimation } from "framer-motion";
+import React, { forwardRef, useState, useRef } from "react";
+import { motion } from "framer-motion";
 import {
   Section,
   SectionHeader,
@@ -8,7 +8,7 @@ import {
   SectionDescription,
 } from "../layout/section";
 import { Container, Grid, GridItem, Flex } from "../layout/container";
-import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
+import { Card, CardContent, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { LineChart } from "../charts/chart-components";
 import { ChartWrapper } from "../charts/chart-wrapper";
@@ -28,65 +28,21 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
   const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
   const [activeTab, setActiveTab] = useState("revenue");
   const sectionRef = useRef(null);
-  const controls = useAnimation();
 
-  // Animation effect when component becomes visible
-  useEffect(() => {
-    if (isVisible) {
-      controls.start("visible");
-    } else {
-      controls.start("hidden");
-    }
-  }, [isVisible, controls]);
+  // Throttled mouse position handler for 3D effects
+  const handleMouseMove = (e) => {
+    if (sectionRef.current) {
+      const rect = sectionRef.current.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
 
-  // Track mouse position for 3D effects
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
+      // Only update mousePosition if the change is significant (reducing jitter)
+      const diffX = Math.abs(mousePosition.x - x);
+      const diffY = Math.abs(mousePosition.y - y);
+      if (diffX > 0.01 || diffY > 0.01) {
         setMousePosition({ x, y });
       }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
-
-  // Animation variants
-  const parentVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: 0.2,
-        duration: 0.6,
-      },
-    },
-  };
-
-  const childVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
-
-  const cardVariants = {
-    hover: {
-      scale: 1.02,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 10,
-      },
-    },
+    }
   };
 
   return (
@@ -97,296 +53,268 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
         sectionRef.current = node;
       }}
       variant="default"
-      animation="fade-in"
       isVisible={isVisible}
       container
       className="relative overflow-hidden py-20"
+      onMouseMove={handleMouseMove}
     >
-      {/* Decorative Background Elements */}
-      <GlassmorphismBackground mousePosition={mousePosition} />
-      <ParticlesBackground />
+      {/* Simplified static backgrounds */}
+      <SimpleBackgroundElements />
 
-      <motion.div
-        initial="hidden"
-        animate={controls}
-        variants={parentVariants}
-        className="relative z-10"
-      >
-        <motion.div variants={childVariants}>
-          <SectionHeader>
-            <div className="inline-block mb-3">
-              <motion.div
-                className="flex items-center space-x-2 mb-2 bg-orange-100/80 backdrop-blur-sm dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 px-4 py-1 rounded-full text-sm font-medium border border-orange-200/50 dark:border-orange-800/50"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <span className="flex h-2 w-2 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-                </span>
-                <span>Case Analysis</span>
-              </motion.div>
+      <div className="relative z-10">
+        <SectionHeader>
+          <div className="inline-block mb-3">
+            <div className="flex items-center space-x-2 mb-2 bg-orange-100/80 backdrop-blur-sm dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 px-4 py-1 rounded-full text-sm font-medium border border-orange-200/50 dark:border-orange-800/50">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+              </span>
+              <span>Case Analysis</span>
             </div>
-            <SectionSubtitle>Case Study</SectionSubtitle>
-            <SectionTitle className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 dark:from-orange-400 dark:to-red-400">
-              Amway: Thách thức trong kỷ nguyên số
-            </SectionTitle>
-            <SectionDescription>
-              Phân tích tình hình doanh thu và những thách thức của Amway - một
-              biểu tượng trong ngành MLM
-            </SectionDescription>
-          </SectionHeader>
-        </motion.div>
+          </div>
+          <SectionSubtitle>Case Study</SectionSubtitle>
+          <SectionTitle className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 dark:from-orange-400 dark:to-red-400">
+            Amway: Thách thức trong kỷ nguyên số
+          </SectionTitle>
+          <SectionDescription>
+            Phân tích tình hình doanh thu và những thách thức của Amway - một
+            biểu tượng trong ngành MLM
+          </SectionDescription>
+        </SectionHeader>
 
-        <motion.div
-          variants={childVariants}
-          whileHover="hover"
-          variants={cardVariants}
-          style={{
-            transformStyle: "preserve-3d",
-            transform: `perspective(1000px) rotateY(${
-              (mousePosition.x - 0.5) * 3
-            }deg) rotateX(${(mousePosition.y - 0.5) * -3}deg)`,
-            transition: "transform 0.3s ease",
-          }}
-          className="mb-12"
-        >
-          <Card
-            variant="filled"
-            className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100/50 dark:border-blue-800/30 shadow-xl overflow-hidden"
+        <div className="mb-12">
+          <motion.div
+            whileHover={{
+              scale: 1.02,
+              transition: {
+                type: "spring",
+                stiffness: 400,
+                damping: 10,
+              },
+            }}
+            style={{
+              transformStyle: "preserve-3d",
+              transform: `perspective(1000px) rotateY(${
+                (mousePosition.x - 0.5) * 3
+              }deg) rotateX(${(mousePosition.y - 0.5) * -3}deg)`,
+              transition: "transform 0.3s ease",
+            }}
+            className="w-full"
           >
-            <Grid cols={2} gap="lg">
-              <GridItem>
-                <CardContent className="p-8 relative">
-                  {/* Decorative elements */}
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-xl"></div>
-                  <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-blue-400/10 to-purple-500/10 rounded-full blur-lg"></div>
+            <Card
+              variant="filled"
+              className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100/50 dark:border-blue-800/30 shadow-xl overflow-hidden"
+            >
+              <Grid cols={2} gap="lg">
+                <GridItem>
+                  <CardContent className="p-8 relative">
+                    {/* Decorative elements */}
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-xl"></div>
+                    <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-blue-400/10 to-purple-500/10 rounded-full blur-lg"></div>
 
-                  <div className="relative z-10">
-                    <div className="flex justify-between items-center mb-6">
-                      <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {activeTab === "revenue"
-                          ? "Doanh thu Amway (2019-2023)"
-                          : "Phân tích xu hướng Amway"}
-                      </CardTitle>
+                    <div className="relative z-10">
+                      <div className="flex justify-between items-center mb-6">
+                        <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                          {activeTab === "revenue"
+                            ? "Doanh thu Amway (2019-2023)"
+                            : "Phân tích xu hướng Amway"}
+                        </CardTitle>
 
-                      <div className="flex bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-1 shadow-sm">
-                        <button
-                          onClick={() => setActiveTab("revenue")}
-                          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                            activeTab === "revenue"
-                              ? "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400"
-                              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/30"
-                          }`}
-                        >
-                          Doanh thu
-                        </button>
-                        <button
-                          onClick={() => setActiveTab("trends")}
-                          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                            activeTab === "trends"
-                              ? "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400"
-                              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/30"
-                          }`}
-                        >
-                          Xu hướng
-                        </button>
+                        <div className="flex bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-1 shadow-sm">
+                          <button
+                            onClick={() => setActiveTab("revenue")}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                              activeTab === "revenue"
+                                ? "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400"
+                                : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/30"
+                            }`}
+                          >
+                            Doanh thu
+                          </button>
+                          <button
+                            onClick={() => setActiveTab("trends")}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                              activeTab === "trends"
+                                ? "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400"
+                                : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/30"
+                            }`}
+                          >
+                            Xu hướng
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="h-64 relative">
+                        {/* Chart glow effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-lg"></div>
+                        <div className="relative z-10">
+                          {activeTab === "revenue" ? (
+                            <LineChart
+                              data={amwayRevenueData}
+                              lines={[
+                                {
+                                  dataKey: "revenue",
+                                  name: "Doanh thu (tỷ USD)",
+                                  color: "#4f46e5",
+                                },
+                              ]}
+                              xAxisKey="year"
+                              yAxisDomain={[7.5, 8.5]}
+                            />
+                          ) : (
+                            <LineChart
+                              data={amwayRevenueData.map((item) => ({
+                                ...item,
+                                trend: (item.revenue - 7.8) * 10,
+                              }))}
+                              lines={[
+                                {
+                                  dataKey: "revenue",
+                                  name: "Doanh thu (tỷ USD)",
+                                  color: "#4f46e5",
+                                },
+                                {
+                                  dataKey: "trend",
+                                  name: "Chỉ số xu hướng",
+                                  color: "#ef4444",
+                                  strokeDasharray: "5 5",
+                                },
+                              ]}
+                              xAxisKey="year"
+                              yAxisDomain={[7.5, 8.5]}
+                            />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mt-6">
+                        <Card className="border border-blue-100 dark:border-blue-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+                          <CardContent className="p-4">
+                            <Flex className="items-center space-x-3">
+                              <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                                <AlertCircle className="h-5 w-5" />
+                              </div>
+                              <p className="text-gray-700 dark:text-gray-300">
+                                Doanh thu toàn cầu của Amway năm 2023 đạt khoảng
+                                7,7 tỷ USD, giảm 5% so với năm 2022. Thông tin
+                                này cho thấy một dấu hiệu cảnh báo rằng mô hình
+                                kinh doanh truyền thống đang gặp khó khăn.
+                              </p>
+                            </Flex>
+                          </CardContent>
+                        </Card>
                       </div>
                     </div>
+                  </CardContent>
+                </GridItem>
 
-                    <div className="h-64 relative">
-                      {/* Animated chart container */}
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.8, delay: 0.6 }}
-                        className="relative z-10"
+                <GridItem className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 dark:from-blue-800 dark:to-indigo-800"></div>
+                  <div className="absolute inset-0 bg-blue-700 dark:bg-blue-800 mix-blend-overlay opacity-20"></div>
+
+                  {/* Decorative grid pattern */}
+                  <svg
+                    width="100%"
+                    height="100%"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="absolute inset-0 opacity-10"
+                  >
+                    <defs>
+                      <pattern
+                        id="smallGrid"
+                        width="8"
+                        height="8"
+                        patternUnits="userSpaceOnUse"
                       >
-                        {activeTab === "revenue" ? (
-                          <LineChart
-                            data={amwayRevenueData}
-                            lines={[
-                              {
-                                dataKey: "revenue",
-                                name: "Doanh thu (tỷ USD)",
-                                color: "#4f46e5",
-                              },
-                            ]}
-                            xAxisKey="year"
-                            yAxisDomain={[7.5, 8.5]}
-                          />
-                        ) : (
-                          <LineChart
-                            data={amwayRevenueData.map((item) => ({
-                              ...item,
-                              trend: (item.revenue - 7.8) * 10,
-                            }))}
-                            lines={[
-                              {
-                                dataKey: "revenue",
-                                name: "Doanh thu (tỷ USD)",
-                                color: "#4f46e5",
-                              },
-                              {
-                                dataKey: "trend",
-                                name: "Chỉ số xu hướng",
-                                color: "#ef4444",
-                                strokeDasharray: "5 5",
-                              },
-                            ]}
-                            xAxisKey="year"
-                            yAxisDomain={[7.5, 8.5]}
-                          />
-                        )}
-                      </motion.div>
+                        <path
+                          d="M 8 0 L 0 0 0 8"
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="0.5"
+                        />
+                      </pattern>
+                      <pattern
+                        id="grid"
+                        width="80"
+                        height="80"
+                        patternUnits="userSpaceOnUse"
+                      >
+                        <rect width="80" height="80" fill="url(#smallGrid)" />
+                        <path
+                          d="M 80 0 L 0 0 0 80"
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="1"
+                        />
+                      </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                  </svg>
+
+                  <CardContent className="p-8 text-white relative z-10">
+                    <CardTitle className="text-2xl font-bold mb-6 text-white">
+                      Nguyên nhân sụt giảm
+                    </CardTitle>
+                    <div className="space-y-6">
+                      {[
+                        {
+                          number: 1,
+                          title: "Thay đổi hành vi người tiêu dùng",
+                          description:
+                            "Người tiêu dùng ngày nay ưa chuộng sự tiện lợi và cá nhân hoá trong trải nghiệm mua sắm.",
+                          icon: Users,
+                        },
+                        {
+                          number: 2,
+                          title: "Áp lực cạnh tranh từ TMĐT",
+                          description:
+                            "Sự ra đời của các nền tảng bán hàng trực tuyến đã làm tăng tính cạnh tranh, khiến các công ty MLM không thể dựa vào mối quan hệ cá nhân truyền thống.",
+                          icon: ShoppingCart,
+                        },
+                        {
+                          number: 3,
+                          title: "Thiếu sự đổi mới công nghệ",
+                          description:
+                            "Các công ty MLM chưa tích hợp đầy đủ các giải pháp Marketing Automation và các công cụ số hoá khác, dẫn đến quản lý mạng lưới phân phối trở nên lỗi thời.",
+                          icon: Settings,
+                        },
+                      ].map((reason, index) => (
+                        <DeclineReasonEnhanced
+                          key={index}
+                          reason={reason}
+                          index={index}
+                        />
+                      ))}
                     </div>
 
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.8 }}
-                      className="mt-6"
-                    >
-                      <Card className="border border-blue-100 dark:border-blue-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-                        <CardContent className="p-4">
-                          <Flex className="items-center space-x-3">
-                            <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
-                              <AlertCircle className="h-5 w-5" />
-                            </div>
-                            <p className="text-gray-700 dark:text-gray-300">
-                              Doanh thu toàn cầu của Amway năm 2023 đạt khoảng
-                              7,7 tỷ USD, giảm 5% so với năm 2022. Thông tin này
-                              cho thấy một dấu hiệu cảnh báo rằng mô hình kinh
-                              doanh truyền thống đang gặp khó khăn.
-                            </p>
-                          </Flex>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  </div>
-                </CardContent>
-              </GridItem>
-
-              <GridItem className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 dark:from-blue-800 dark:to-indigo-800"></div>
-                <div className="absolute inset-0 bg-blue-700 dark:bg-blue-800 mix-blend-overlay opacity-20"></div>
-
-                {/* Decorative grid pattern */}
-                <svg
-                  width="100%"
-                  height="100%"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="absolute inset-0 opacity-10"
-                >
-                  <defs>
-                    <pattern
-                      id="smallGrid"
-                      width="8"
-                      height="8"
-                      patternUnits="userSpaceOnUse"
-                    >
-                      <path
-                        d="M 8 0 L 0 0 0 8"
-                        fill="none"
-                        stroke="white"
-                        strokeWidth="0.5"
-                      />
-                    </pattern>
-                    <pattern
-                      id="grid"
-                      width="80"
-                      height="80"
-                      patternUnits="userSpaceOnUse"
-                    >
-                      <rect width="80" height="80" fill="url(#smallGrid)" />
-                      <path
-                        d="M 80 0 L 0 0 0 80"
-                        fill="none"
-                        stroke="white"
-                        strokeWidth="1"
-                      />
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#grid)" />
-                </svg>
-
-                <CardContent className="p-8 text-white relative z-10">
-                  <CardTitle className="text-2xl font-bold mb-6 text-white">
-                    Nguyên nhân sụt giảm
-                  </CardTitle>
-                  <div className="space-y-6">
-                    {[
-                      {
-                        number: 1,
-                        title: "Thay đổi hành vi người tiêu dùng",
-                        description:
-                          "Người tiêu dùng ngày nay ưa chuộng sự tiện lợi và cá nhân hoá trong trải nghiệm mua sắm.",
-                        icon: Users,
-                      },
-                      {
-                        number: 2,
-                        title: "Áp lực cạnh tranh từ TMĐT",
-                        description:
-                          "Sự ra đời của các nền tảng bán hàng trực tuyến đã làm tăng tính cạnh tranh, khiến các công ty MLM không thể dựa vào mối quan hệ cá nhân truyền thống.",
-                        icon: ShoppingCart,
-                      },
-                      {
-                        number: 3,
-                        title: "Thiếu sự đổi mới công nghệ",
-                        description:
-                          "Các công ty MLM chưa tích hợp đầy đủ các giải pháp Marketing Automation và các công cụ số hoá khác, dẫn đến quản lý mạng lưới phân phối trở nên lỗi thời.",
-                        icon: Settings,
-                      },
-                    ].map((reason, index) => (
-                      <DeclineReasonEnhanced
-                        key={index}
-                        reason={reason}
-                        index={index}
-                      />
-                    ))}
-                  </div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 1 }}
-                    className="mt-8"
-                  >
-                    <Button
-                      variant="outline"
-                      className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm"
-                    >
-                      Xem đầy đủ báo cáo
-                      <ArrowDownRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </motion.div>
-                </CardContent>
-              </GridItem>
-            </Grid>
-          </Card>
-        </motion.div>
+                    <div className="mt-8">
+                      <Button
+                        variant="outline"
+                        className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm transition-transform duration-200 hover:scale-105"
+                      >
+                        Xem đầy đủ báo cáo
+                        <ArrowDownRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </GridItem>
+              </Grid>
+            </Card>
+          </motion.div>
+        </div>
 
         <div className="mt-12">
-          <motion.div variants={childVariants} className="mb-6">
+          <div className="mb-6">
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 relative inline-block">
               Biến động doanh thu Amway (2019-2023)
-              <motion.div
-                className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-orange-500 to-red-500 dark:from-orange-400 dark:to-red-400"
-                initial={{ width: 0 }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 1, delay: 0.8 }}
-              />
+              <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-orange-500 to-red-500 dark:from-orange-400 dark:to-red-400 w-full" />
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
               Dựa trên dữ liệu từ các báo cáo kinh doanh
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={childVariants}
-            className="overflow-hidden rounded-xl border border-gray-200/70 dark:border-gray-800/70 shadow-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm"
-          >
+          <div className="overflow-hidden rounded-xl border border-gray-200/70 dark:border-gray-800/70 shadow-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-sm">
@@ -460,13 +388,10 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
                 </tbody>
               </table>
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        <motion.div
-          variants={childVariants}
-          className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6"
-        >
+        <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             {
               icon: DollarSign,
@@ -502,8 +427,8 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
           ].map((stat, index) => (
             <StatCard key={index} stat={stat} index={index} />
           ))}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </Section>
   );
 });
@@ -566,29 +491,23 @@ const Users = (props) => (
   </svg>
 );
 
-// Enhanced Decline Reason component with animations
+// Enhanced Decline Reason component with hover animation preserved
 const DeclineReasonEnhanced = ({ reason, index }) => {
   const { number, title, description, icon: Icon } = reason;
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+      whileHover={{ x: 5 }}
+      transition={{ duration: 0.2 }}
       className="flex items-start relative"
     >
       <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-white text-blue-700 mt-1 mr-3 shadow-glow-blue z-10">
         <span className="font-bold">{number}</span>
       </div>
 
-      {/* Connect line to next item */}
+      {/* Connect line to next item - static */}
       {index < 2 && (
-        <motion.div
-          className="absolute left-4 top-8 w-0.5 bg-white/30 -z-10"
-          initial={{ height: 0 }}
-          animate={{ height: 55 }}
-          transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
-        />
+        <div className="absolute left-4 top-8 w-0.5 bg-white/30 -z-10 h-[55px]" />
       )}
 
       <div className="ml-3">
@@ -602,15 +521,13 @@ const DeclineReasonEnhanced = ({ reason, index }) => {
   );
 };
 
-// Enhanced Table Row component
+// Enhanced Table Row component - hover effect preserved
 const TableRowEnhanced = ({ row, index }) => {
   const { year, revenue, growth, isNegative, isPositive } = row;
 
   return (
     <motion.tr
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
+      whileHover={{ backgroundColor: "rgba(243, 244, 246, 0.5)" }}
       className="hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors"
     >
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
@@ -651,7 +568,7 @@ const TableRowEnhanced = ({ row, index }) => {
   );
 };
 
-// Stat Card Component
+// Stat Card Component with hover effect preserved
 const StatCard = ({ stat, index }) => {
   const { icon: Icon, title, value, change, description, color } = stat;
 
@@ -686,9 +603,6 @@ const StatCard = ({ stat, index }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.8 + index * 0.1 }}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
       className={`rounded-xl p-5 ${colors.bg} border ${colors.border} backdrop-blur-sm shadow-md`}
     >
@@ -722,63 +636,24 @@ const StatCard = ({ stat, index }) => {
   );
 };
 
-// Glassmorphism background effect
-const GlassmorphismBackground = ({ mousePosition }) => {
+// Simplified static background
+const SimpleBackgroundElements = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Large gradient circles with glassmorphism */}
-      <motion.div
-        className="absolute top-0 right-0 w-2/3 h-2/3 rounded-full bg-gradient-to-br from-orange-400/10 to-red-500/10 dark:from-orange-500/5 dark:to-red-600/5 blur-3xl -z-10"
-        animate={{
-          x: mousePosition.x * 30 - 15,
-          y: mousePosition.y * 30 - 15,
-        }}
-        transition={{ duration: 0.5 }}
-      />
-      <motion.div
-        className="absolute bottom-0 left-0 w-1/2 h-1/2 rounded-full bg-gradient-to-tr from-blue-400/10 to-indigo-500/10 dark:from-blue-500/5 dark:to-indigo-600/5 blur-3xl -z-10"
-        animate={{
-          x: mousePosition.x * -30 + 15,
-          y: mousePosition.y * -30 + 15,
-        }}
-        transition={{ duration: 0.5 }}
-      />
+      {/* Static gradient circles with minimal opacity */}
+      <div className="absolute top-0 right-0 w-2/3 h-2/3 rounded-full bg-gradient-to-br from-orange-400/10 to-red-500/10 dark:from-orange-500/5 dark:to-red-600/5 blur-3xl -z-10"></div>
+      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 rounded-full bg-gradient-to-tr from-blue-400/10 to-indigo-500/10 dark:from-blue-500/5 dark:to-indigo-600/5 blur-3xl -z-10"></div>
 
-      {/* Glassmorphism circle elements */}
-      <div className="absolute top-1/3 right-10 w-48 h-48 rounded-full bg-white/5 backdrop-blur-3xl border border-white/10 dark:border-white/5 -z-10"></div>
-      <div className="absolute bottom-1/4 left-1/4 w-36 h-36 rounded-full bg-white/5 backdrop-blur-3xl border border-white/10 dark:border-white/5 -z-10"></div>
-
-      {/* Decorative geometric elements */}
-      <div className="absolute top-2/3 left-16 w-16 h-16 rounded-md bg-gradient-to-r from-orange-500/5 to-red-500/5 backdrop-blur-xl border border-white/10 dark:border-white/5 transform rotate-45 -z-10"></div>
-      <div className="absolute bottom-1/5 right-1/5 w-24 h-24 rounded-md bg-gradient-to-r from-blue-500/5 to-indigo-500/5 backdrop-blur-xl border border-white/10 dark:border-white/5 transform -rotate-12 -z-10"></div>
-    </div>
-  );
-};
-
-// Subtle particles background animation
-const ParticlesBackground = () => {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none -z-20">
-      {/* Generate random particles */}
-      {Array.from({ length: 20 }).map((_, i) => (
-        <motion.div
+      {/* A few static particles for minimal decoration */}
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div
           key={i}
-          className="absolute bg-orange-500/10 dark:bg-orange-400/10 rounded-full"
+          className="absolute bg-orange-500/5 dark:bg-orange-400/5 rounded-full -z-20"
           style={{
-            width: Math.random() * 8 + 3,
-            height: Math.random() * 8 + 3,
+            width: Math.random() * 6 + 2,
+            height: Math.random() * 6 + 2,
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-          }}
-          animate={{
-            y: [0, Math.random() * 20 - 10],
-            x: [0, Math.random() * 20 - 10],
-            opacity: [0.05, 0.2, 0.05],
-          }}
-          transition={{
-            duration: Math.random() * 5 + 5,
-            repeat: Infinity,
-            repeatType: "reverse",
           }}
         />
       ))}
