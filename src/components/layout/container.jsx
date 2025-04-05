@@ -1,6 +1,6 @@
 import React from "react";
 import { cva } from "class-variance-authority";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 /**
  * Container component for layout structure
@@ -40,7 +40,7 @@ const containerVariants = cva("mx-auto px-4 sm:px-6 lg:px-8", {
 });
 
 const Container = React.forwardRef(
-  ({ className, size, padding, ...props }, ref) => {
+  ({ className, size, padding, as: Component = "div", ...props }, ref) => {
     return (
       <Component
         ref={ref}
@@ -65,6 +65,7 @@ const Grid = React.forwardRef(
       gap = "default",
       items = "start", // align-items
       justify = "start", // justify-content
+      as: Component = "div",
       ...props
     },
     ref
@@ -132,7 +133,17 @@ Grid.displayName = "Grid";
  * GridItem component for layout structure
  */
 const GridItem = React.forwardRef(
-  ({ className, children, colSpan = "full", rowSpan = 1, ...props }, ref) => {
+  (
+    {
+      className,
+      children,
+      colSpan = "full",
+      rowSpan = 1,
+      as: Component = "div",
+      ...props
+    },
+    ref
+  ) => {
     const colSpanMap = {
       auto: "col-auto",
       1: "col-span-1",
@@ -188,6 +199,7 @@ const Flex = React.forwardRef(
       justify = "start",
       items = "start",
       gap = "default",
+      as: Component = "div",
       ...props
     },
     ref

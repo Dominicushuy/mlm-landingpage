@@ -1,53 +1,66 @@
 import React, { forwardRef } from "react";
-import SectionHeading from "../ui/SectionHeading";
-import BarChartComponent from "../charts/BarChartComponent";
+import {
+  Section,
+  SectionHeader,
+  SectionTitle,
+  SectionSubtitle,
+  SectionDescription,
+} from "../layout/section";
+import { Container, Grid, GridItem } from "../layout/container";
+import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
+import { BarChart } from "../charts/chart-components";
 import { marketGrowthData } from "../../data/siteData";
 
 const MarketAnalysis = forwardRef(({ isVisible }, ref) => {
   return (
-    <section
+    <Section
       id="market"
       ref={ref}
-      className={`py-24 bg-white transition-opacity duration-1000 ${
-        isVisible ? "opacity-100" : "opacity-50"
-      }`}
+      variant="default"
+      isVisible={isVisible}
+      animation="fade-in"
+      container
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          subtitle="Phân tích thị trường"
-          title="Thị trường MLM và xu hướng"
-          description="Tìm hiểu về sự phát triển của thị trường MLM toàn cầu và tại Việt
-              Nam, cùng với các xu hướng mới nhất."
-        />
+      <SectionHeader>
+        <SectionSubtitle>Phân tích thị trường</SectionSubtitle>
+        <SectionTitle>Thị trường MLM và xu hướng</SectionTitle>
+        <SectionDescription>
+          Tìm hiểu về sự phát triển của thị trường MLM toàn cầu và tại Việt Nam,
+          cùng với các xu hướng mới nhất.
+        </SectionDescription>
+      </SectionHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="bg-gray-50 rounded-xl shadow-lg overflow-hidden">
-            <div className="p-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+      <Grid cols={2} gap="lg">
+        <GridItem>
+          <Card variant="filled" className="h-full">
+            <CardContent className="p-6">
+              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                 Thị trường toàn cầu
-              </h3>
-              <p className="text-gray-600 mb-6">
+              </CardTitle>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Mô hình MLM góp phần đáng kể vào tổng doanh thu toàn cầu với các
                 công ty lớn như Amway, Herbalife và Natura &Co. Tuy nhiên, thị
                 trường đang đối mặt với sự cạnh tranh mạnh mẽ từ thương mại điện
                 tử.
               </p>
               <div className="h-64">
-                <BarChartComponent
+                <BarChart
                   data={marketGrowthData}
                   bars={[{ dataKey: "mlm", name: "Doanh thu MLM (tỷ USD)" }]}
                   xAxisKey="year"
                 />
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
+        </GridItem>
 
-          <div className="bg-gray-50 rounded-xl shadow-lg overflow-hidden">
-            <div className="p-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+        <GridItem>
+          <Card variant="filled" className="h-full">
+            <CardContent className="p-6">
+              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                 Thị trường Việt Nam
-              </h3>
-              <p className="text-gray-600 mb-6">
+              </CardTitle>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Tại Việt Nam, mô hình MLM đang có nhiều tiềm năng phát triển với
                 dân số trẻ, tiếp cận công nghệ cao và sự thay đổi về thói quen
                 tiêu dùng.
@@ -66,19 +79,19 @@ const MarketAnalysis = forwardRef(({ isVisible }, ref) => {
                   description="Việc ứng dụng công nghệ trong quản lý và tiếp thị đang trở thành nhu cầu thiết yếu."
                 />
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+            </CardContent>
+          </Card>
+        </GridItem>
+      </Grid>
+    </Section>
   );
 });
 
 // Helper component
 const MarketFeature = ({ title, description }) => (
   <div className="border-l-4 border-blue-500 pl-4 py-2">
-    <h4 className="font-semibold text-gray-900">{title}</h4>
-    <p className="text-gray-600">{description}</p>
+    <h4 className="font-semibold text-gray-900 dark:text-white">{title}</h4>
+    <p className="text-gray-600 dark:text-gray-300">{description}</p>
   </div>
 );
 

@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Send, X, User, Bot, ArrowRight } from "lucide-react";
+import { Card, CardHeader, CardContent, CardFooter } from "../ui/card";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Flex } from "../layout/container";
 
 const ChatBot = ({ onClose }) => {
   const [messages, setMessages] = useState([
@@ -142,23 +146,23 @@ const ChatBot = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed bottom-24 left-8 z-50 w-80 sm:w-96 h-96 bg-white dark:bg-gray-800 rounded-lg shadow-xl flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700">
-      {/* Header */}
-      <div className="bg-blue-600 dark:bg-blue-700 text-white p-3 flex items-center justify-between">
+    <Card className="fixed bottom-24 left-8 z-50 w-80 sm:w-96 h-96 shadow-xl border border-gray-200 dark:border-gray-700">
+      <CardHeader className="bg-blue-600 dark:bg-blue-700 text-white p-3 flex items-center justify-between">
         <div className="flex items-center">
           <Bot className="h-5 w-5 mr-2" />
           <h3 className="font-medium">Trợ lý MAMLM</h3>
         </div>
-        <button
+        <Button
           onClick={onClose}
-          className="text-white hover:bg-blue-700 dark:hover:bg-blue-800 rounded-full p-1"
+          variant="ghost"
+          size="icon"
+          className="text-white hover:bg-blue-700 dark:hover:bg-blue-800 rounded-full"
         >
           <X className="h-5 w-5" />
-        </button>
-      </div>
+        </Button>
+      </CardHeader>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
+      <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900 h-60">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -230,9 +234,8 @@ const ChatBot = ({ onClose }) => {
         )}
 
         <div ref={endOfMessagesRef} />
-      </div>
+      </CardContent>
 
-      {/* Quick questions */}
       <div className="p-2 bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 overflow-x-auto whitespace-nowrap hide-scrollbar">
         <div className="flex space-x-2">
           {quickQuestions.map((question, index) => (
@@ -247,30 +250,29 @@ const ChatBot = ({ onClose }) => {
         </div>
       </div>
 
-      {/* Input */}
-      <form
-        onSubmit={handleSend}
-        className="p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex items-center space-x-2"
-      >
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Nhập câu hỏi của bạn..."
-          className="flex-1 p-2 rounded-full border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm dark:bg-gray-700 dark:text-white"
-        />
-        <button
-          type="submit"
-          disabled={!input.trim()}
-          className={`rounded-full p-2 ${
-            input.trim()
-              ? "bg-blue-600 hover:bg-blue-700 text-white"
-              : "bg-gray-200 dark:bg-gray-700 text-gray-400"
-          } transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500`}
+      <CardFooter className="p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <form
+          onSubmit={handleSend}
+          className="flex items-center space-x-2 w-full"
         >
-          <Send className="h-4 w-4" />
-        </button>
-      </form>
+          <Input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Nhập câu hỏi của bạn..."
+            className="rounded-full"
+          />
+          <Button
+            type="submit"
+            disabled={!input.trim()}
+            variant={input.trim() ? "default" : "ghost"}
+            size="icon"
+            className="rounded-full"
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </form>
+      </CardFooter>
 
       <style jsx="true">{`
         .hide-scrollbar::-webkit-scrollbar {
@@ -281,7 +283,7 @@ const ChatBot = ({ onClose }) => {
           scrollbar-width: none;
         }
       `}</style>
-    </div>
+    </Card>
   );
 };
 

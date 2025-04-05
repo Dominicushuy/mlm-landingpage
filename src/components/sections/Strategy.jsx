@@ -1,52 +1,73 @@
 import React, { forwardRef } from "react";
-import SectionHeading from "../ui/SectionHeading";
-import PieChartComponent from "../charts/PieChartComponent";
+import {
+  Section,
+  SectionHeader,
+  SectionTitle,
+  SectionSubtitle,
+  SectionDescription,
+} from "../layout/section";
+import { Container, Grid, GridItem, Flex } from "../layout/container";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { FeatureCard, CalloutCard } from "../features/feature-card";
+import { PieChart } from "../charts/chart-components";
+import { Check } from "lucide-react";
 import {
   implementationPhases,
   benefitsPieChartData,
   CHART_COLORS,
 } from "../../data/siteData";
-import { Check } from "lucide-react";
 
 const Strategy = forwardRef(({ isVisible }, ref) => {
   return (
-    <section
+    <Section
       id="strategy"
       ref={ref}
-      className={`py-24 bg-white transition-opacity duration-1000 ${
-        isVisible ? "opacity-100" : "opacity-50"
-      }`}
+      variant="default"
+      isVisible={isVisible}
+      animation="fade-in"
+      container
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          subtitle="Chiến lược"
-          title="Chiến lược cho thị trường Việt Nam"
-          description="Đề xuất chiến lược triển khai Marketing Automation cho doanh nghiệp MLM tại Việt Nam"
-        />
+      <SectionHeader>
+        <SectionSubtitle>Chiến lược</SectionSubtitle>
+        <SectionTitle>Chiến lược cho thị trường Việt Nam</SectionTitle>
+        <SectionDescription>
+          Đề xuất chiến lược triển khai Marketing Automation cho doanh nghiệp
+          MLM tại Việt Nam
+        </SectionDescription>
+      </SectionHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
-            <div className="p-6">
+      <Grid cols={3} gap="lg">
+        <GridItem>
+          <Card
+            variant="outline"
+            className="border-gray-200 dark:border-gray-700 h-full"
+          >
+            <CardContent className="p-6">
               <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mb-4">
                 <Check className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <CardTitle className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                 Yếu tố cần thiết
-              </h3>
+              </CardTitle>
               <ul className="space-y-3 mt-4">
                 <RequirementItem text="Cá nhân hoá trải nghiệm khách hàng" />
                 <RequirementItem text="Tích hợp hệ thống quản lý CRM" />
                 <RequirementItem text="Áp dụng công cụ tự động hóa đa kênh" />
                 <RequirementItem text="Tuân thủ quy định pháp lý hiện hành" />
               </ul>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
+        </GridItem>
 
-          <div className="bg-blue-700 shadow-lg rounded-xl overflow-hidden text-white md:col-span-2">
-            <div className="p-6">
-              <h3 className="text-xl font-bold mb-4">
+        <GridItem colSpan={2}>
+          <Card
+            variant="filled"
+            className="bg-blue-700 dark:bg-blue-800 text-white"
+          >
+            <CardContent className="p-6">
+              <CardTitle className="text-xl font-bold mb-4 text-white">
                 Quy trình triển khai Marketing Automation
-              </h3>
+              </CardTitle>
               <div className="space-y-6">
                 {implementationPhases.map((phase, index) => (
                   <ImplementationStep
@@ -58,69 +79,77 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
                   />
                 ))}
               </div>
-            </div>
-          </div>
-        </div>
+            </CardContent>
+          </Card>
+        </GridItem>
+      </Grid>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
-          <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              Đề xuất cụ thể
-            </h3>
+      <Grid cols={2} gap="lg" className="mt-10">
+        <GridItem>
+          <Card variant="default">
+            <CardContent className="p-6">
+              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                Đề xuất cụ thể
+              </CardTitle>
 
-            <div className="space-y-4">
-              <RecommendationCard
-                number="01"
-                title="Đầu tư vào hệ thống CRM hiện đại"
-                description="Tích hợp dữ liệu khách hàng từ nhiều nguồn để tạo ra một hồ sơ toàn diện. Sử dụng dữ liệu này để cá nhân hoá nội dung tiếp thị."
-              />
+              <div className="space-y-4">
+                <RecommendationCard
+                  number="01"
+                  title="Đầu tư vào hệ thống CRM hiện đại"
+                  description="Tích hợp dữ liệu khách hàng từ nhiều nguồn để tạo ra một hồ sơ toàn diện. Sử dụng dữ liệu này để cá nhân hoá nội dung tiếp thị."
+                />
 
-              <RecommendationCard
-                number="02"
-                title="Xây dựng nền tảng tự động hóa tiếp thị đa kênh"
-                description="Áp dụng các giải pháp tự động hóa email marketing, SMS, và push notification để tiếp cận khách hàng kịp thời."
-              />
+                <RecommendationCard
+                  number="02"
+                  title="Xây dựng nền tảng tự động hóa tiếp thị đa kênh"
+                  description="Áp dụng các giải pháp tự động hóa email marketing, SMS, và push notification để tiếp cận khách hàng kịp thời."
+                />
 
-              <RecommendationCard
-                number="03"
-                title="Tích hợp phân tích dữ liệu và báo cáo"
-                description="Sử dụng các công cụ phân tích BI để thu thập và xử lý dữ liệu kinh doanh theo thời gian thực."
-              />
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              Lợi ích kỳ vọng
-            </h3>
-
-            <div className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-xl shadow-lg overflow-hidden text-white">
-              <div className="p-6">
-                <div className="mb-8">
-                  <h4 className="text-lg font-semibold mb-2">
-                    Phân bổ lợi ích
-                  </h4>
-                  <div className="h-64">
-                    <PieChartComponent
-                      data={benefitsPieChartData}
-                      colors={CHART_COLORS}
-                    />
-                  </div>
-                </div>
+                <RecommendationCard
+                  number="03"
+                  title="Tích hợp phân tích dữ liệu và báo cáo"
+                  description="Sử dụng các công cụ phân tích BI để thu thập và xử lý dữ liệu kinh doanh theo thời gian thực."
+                />
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+            </CardContent>
+          </Card>
+        </GridItem>
+
+        <GridItem>
+          <Card
+            variant="gradient"
+            className="bg-gradient-to-r from-blue-600 to-blue-400 text-white h-full"
+          >
+            <CardContent className="p-6">
+              <CardTitle className="text-2xl font-bold text-white mb-6">
+                Lợi ích kỳ vọng
+              </CardTitle>
+
+              <CardTitle className="text-lg font-semibold text-white mb-2">
+                Phân bổ lợi ích
+              </CardTitle>
+              <div className="h-64">
+                <PieChart
+                  data={benefitsPieChartData}
+                  colors={CHART_COLORS}
+                  innerRadius={50}
+                  outerRadius={80}
+                  paddingAngle={2}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </GridItem>
+      </Grid>
+    </Section>
   );
 });
 
 // Helper components
 const RequirementItem = ({ text }) => (
   <li className="flex items-start">
-    <Check className="h-5 w-5 text-blue-500 mt-1 mr-2" />
-    <span className="text-gray-600">{text}</span>
+    <Check className="h-5 w-5 text-blue-500 dark:text-blue-400 mt-1 mr-2" />
+    <span className="text-gray-600 dark:text-gray-300">{text}</span>
   </li>
 );
 
@@ -140,12 +169,12 @@ const ImplementationStep = ({ number, name, description, isLast }) => (
 );
 
 const RecommendationCard = ({ number, title, description }) => (
-  <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
-    <h4 className="font-bold text-lg text-gray-900 mb-2">
-      <span className="text-blue-600 mr-2">{number}</span>
+  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-md transition-shadow">
+    <h4 className="font-bold text-lg text-gray-900 dark:text-white mb-2">
+      <span className="text-blue-600 dark:text-blue-400 mr-2">{number}</span>
       {title}
     </h4>
-    <p className="text-gray-600">{description}</p>
+    <p className="text-gray-600 dark:text-gray-300">{description}</p>
   </div>
 );
 

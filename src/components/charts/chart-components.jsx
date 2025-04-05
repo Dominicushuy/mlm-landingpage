@@ -21,6 +21,7 @@ import {
   PolarRadiusAxis,
   Radar,
 } from "recharts";
+import { cn } from "../../lib/utils";
 import { ChartWrapper, ChartLegend } from "./chart-wrapper";
 
 // Default color palette

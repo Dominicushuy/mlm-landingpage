@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useIntersectionObserver } from "./hooks/useIntersectionObserver";
-import Navbar from "./components/layout/Navbar";
+import { Navbar } from "./components/navigation/nav-bar";
 import Footer from "./components/layout/Footer";
 import Hero from "./components/sections/Hero";
 import MarketAnalysis from "./components/sections/MarketAnalysis";
@@ -11,8 +11,10 @@ import Tools from "./components/sections/Tools";
 import Strategy from "./components/sections/Strategy";
 import Investment from "./components/sections/Investment";
 import ChatBot from "./components/features/ChatBot";
-import AnimatedBackgroundBubbles from "./components/ui/AnimatedBackgroundBubbles";
 import AmwayDetailCaseStudy from "./components/sections/AmwayDetailCaseStudy";
+import { ArrowUp, MessageSquare, Moon, Sun } from "lucide-react";
+import { Button } from "./components/ui/button";
+import { navItems } from "./data/siteData";
 
 const App = () => {
   const [activeSection, setActiveSection] = useState("intro");
@@ -85,17 +87,50 @@ const App = () => {
     });
   };
 
+  // Convert navItems to the format expected by Navbar component
+  const navigationItems = navItems.map((item) => ({
+    label: item.label,
+    id: item.id,
+    href: `#${item.id}`,
+  }));
+
+  // Create logo element for navbar
+  const logo = (
+    <div className="flex items-center text-2xl font-bold">
+      <div className="bg-blue-600 dark:bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-md mr-2">
+        MA
+      </div>
+      <span className="text-blue-700 dark:text-blue-400">MLM</span>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-200 transition-colors duration-300">
-      <AnimatedBackgroundBubbles />
-
+      {/* New Navbar using the design system */}
       <Navbar
-        activeSection={activeSection}
-        scrollToSection={scrollToSection}
-        darkMode={darkMode}
-        toggleDarkMode={toggleDarkMode}
+        logo={logo}
+        items={navigationItems}
+        activeItem={activeSection}
+        variant={showScrollTop ? "translucent" : "default"}
+        onNavItemClick={(item) => scrollToSection(item.id)}
+        actions={[
+          <Button
+            key="dark-mode"
+            variant="ghost"
+            size="icon"
+            onClick={toggleDarkMode}
+            aria-label="Toggle dark mode"
+          >
+            {darkMode ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </Button>,
+        ]}
       />
 
+      {/* Section components */}
       <Hero
         ref={sectionRefs.intro}
         isVisible={isVisible.intro}
@@ -153,53 +188,31 @@ const App = () => {
 
       <Footer darkMode={darkMode} />
 
-      {/* Scroll to top button */}
-      <button
+      {/* Scroll to top button using Button component from the design system */}
+      <Button
         onClick={scrollToTop}
-        className={`fixed bottom-8 right-8 z-50 p-2 rounded-full bg-blue-600 text-white shadow-lg transform transition-all duration-300 ${
+        variant="default"
+        size="icon"
+        className={`fixed bottom-8 right-8 z-50 rounded-full bg-blue-600 text-white shadow-lg transform transition-all duration-300 ${
           showScrollTop
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-10 pointer-events-none"
         }`}
         aria-label="Scroll to top"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 10l7-7m0 0l7 7m-7-7v18"
-          />
-        </svg>
-      </button>
+        <ArrowUp className="h-5 w-5" />
+      </Button>
 
-      {/* Chat Bot Button */}
-      <button
+      {/* Chat Bot Button using Button component from the design system */}
+      <Button
         onClick={() => setShowChatBot(!showChatBot)}
-        className="fixed bottom-8 left-8 z-50 p-3 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-all duration-300"
+        variant="default"
+        size="icon"
+        className="fixed bottom-8 left-8 z-50 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-all duration-300"
         aria-label="Toggle chat"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-          />
-        </svg>
-      </button>
+        <MessageSquare className="h-5 w-5" />
+      </Button>
 
       {/* Chat Bot Component */}
       {showChatBot && <ChatBot onClose={() => setShowChatBot(false)} />}

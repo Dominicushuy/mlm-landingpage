@@ -1,50 +1,69 @@
 import React, { forwardRef } from "react";
-import SectionHeading from "../ui/SectionHeading";
-import LineChartComponent from "../charts/LineChartComponent";
+import {
+  Section,
+  SectionHeader,
+  SectionTitle,
+  SectionSubtitle,
+  SectionDescription,
+} from "../layout/section";
+import { Container, Grid, GridItem } from "../layout/container";
+import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
+import { LineChart } from "../charts/chart-components";
+import { ChartWrapper } from "../charts/chart-wrapper";
 import { amwayRevenueData } from "../../data/siteData";
 
 const CaseStudy = forwardRef(({ isVisible }, ref) => {
   return (
-    <section
+    <Section
       id="casestudy"
       ref={ref}
-      className={`py-24 bg-white transition-opacity duration-1000 ${
-        isVisible ? "opacity-100" : "opacity-50"
-      }`}
+      variant="default"
+      animation="fade-in"
+      isVisible={isVisible}
+      container
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          subtitle="Case Study"
-          title="Amway: Thách thức trong kỷ nguyên số"
-          description="Phân tích tình hình doanh thu và những thách thức của Amway - một biểu tượng trong ngành MLM"
-        />
+      <SectionHeader>
+        <SectionSubtitle>Case Study</SectionSubtitle>
+        <SectionTitle>Amway: Thách thức trong kỷ nguyên số</SectionTitle>
+        <SectionDescription>
+          Phân tích tình hình doanh thu và những thách thức của Amway - một biểu
+          tượng trong ngành MLM
+        </SectionDescription>
+      </SectionHeader>
 
-        <div className="bg-blue-50 rounded-xl shadow-lg overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">
+      <Card variant="filled" className="bg-blue-50 dark:bg-blue-900/20">
+        <Grid cols={2} gap="lg">
+          <GridItem>
+            <CardContent className="p-8">
+              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Doanh thu Amway (2019-2023)
-              </h3>
+              </CardTitle>
               <div className="h-64">
-                <LineChartComponent
+                <LineChart
                   data={amwayRevenueData}
                   lines={[{ dataKey: "revenue", name: "Doanh thu (tỷ USD)" }]}
                   xAxisKey="year"
                   yAxisDomain={[7.5, 8.5]}
                 />
               </div>
-              <div className="mt-6 bg-white p-4 rounded-lg border border-blue-100">
-                <p className="text-gray-700">
-                  Doanh thu toàn cầu của Amway năm 2023 đạt khoảng 7,7 tỷ USD,
-                  giảm 5% so với năm 2022. Thông tin này cho thấy một dấu hiệu
-                  cảnh báo rằng mô hình kinh doanh truyền thống đang gặp khó
-                  khăn.
-                </p>
-              </div>
-            </div>
+              <Card className="mt-6 border border-blue-100 dark:border-blue-800">
+                <CardContent>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    Doanh thu toàn cầu của Amway năm 2023 đạt khoảng 7,7 tỷ USD,
+                    giảm 5% so với năm 2022. Thông tin này cho thấy một dấu hiệu
+                    cảnh báo rằng mô hình kinh doanh truyền thống đang gặp khó
+                    khăn.
+                  </p>
+                </CardContent>
+              </Card>
+            </CardContent>
+          </GridItem>
 
-            <div className="p-8 bg-blue-700 text-white">
-              <h3 className="text-2xl font-bold mb-6">Nguyên nhân sụt giảm</h3>
+          <GridItem className="bg-blue-700 dark:bg-blue-800 text-white rounded-r-xl">
+            <CardContent className="p-8">
+              <CardTitle className="text-2xl font-bold mb-6 text-white">
+                Nguyên nhân sụt giảm
+              </CardTitle>
               <div className="space-y-6">
                 <DeclineReason
                   number={1}
@@ -69,15 +88,15 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
                     quản lý mạng lưới phân phối trở nên lỗi thời."
                 />
               </div>
-            </div>
-          </div>
-        </div>
+            </CardContent>
+          </GridItem>
+        </Grid>
+      </Card>
 
-        <div className="mt-12">
-          <RevenueTable />
-        </div>
+      <div className="mt-12">
+        <RevenueTable />
       </div>
-    </section>
+    </Section>
   );
 });
 
@@ -95,41 +114,39 @@ const DeclineReason = ({ number, title, description }) => (
 );
 
 const RevenueTable = () => (
-  <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
-    <div className="px-4 py-5 sm:px-6">
-      <h3 className="text-lg font-medium leading-6 text-gray-900">
-        Biến động doanh thu Amway (2019-2023)
-      </h3>
-      <p className="mt-1 max-w-2xl text-sm text-gray-500">
+  <Card>
+    <CardHeader>
+      <CardTitle>Biến động doanh thu Amway (2019-2023)</CardTitle>
+      <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
         Dựa trên dữ liệu từ các báo cáo kinh doanh
       </p>
-    </div>
-    <div className="px-4 py-5 sm:p-6">
+    </CardHeader>
+    <CardContent>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-900">
             <tr>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
               >
                 Năm
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
               >
                 Doanh thu (tỷ USD)
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
               >
                 Tỷ lệ tăng trưởng (%)
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             <TableRow year="2019" revenue="8,2" growth="-" />
             <TableRow year="2020" revenue="8,0" growth="-2,44%" isNegative />
             <TableRow year="2021" revenue="7,9" growth="-1,25%" isNegative />
@@ -138,16 +155,16 @@ const RevenueTable = () => (
           </tbody>
         </table>
       </div>
-    </div>
-  </div>
+    </CardContent>
+  </Card>
 );
 
 const TableRow = ({ year, revenue, growth, isPositive, isNegative }) => (
   <tr>
-    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
       {year}
     </td>
-    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
       {revenue}
     </td>
     <td
@@ -156,7 +173,7 @@ const TableRow = ({ year, revenue, growth, isPositive, isNegative }) => (
           ? "text-green-500"
           : isNegative
           ? "text-red-500"
-          : "text-gray-500"
+          : "text-gray-500 dark:text-gray-300"
       }`}
     >
       {growth}

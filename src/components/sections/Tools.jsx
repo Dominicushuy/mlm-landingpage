@@ -1,81 +1,89 @@
 import React, { forwardRef } from "react";
-import SectionHeading from "../ui/SectionHeading";
-import BarChartComponent from "../charts/BarChartComponent";
+import {
+  Section,
+  SectionHeader,
+  SectionTitle,
+  SectionSubtitle,
+  SectionDescription,
+} from "../layout/section";
+import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { toolsComparisonData } from "../../data/siteData";
 
 const Tools = forwardRef(({ isVisible }, ref) => {
   return (
-    <section
+    <Section
       id="tools"
       ref={ref}
-      className={`py-24 bg-blue-50 transition-opacity duration-1000 ${
-        isVisible ? "opacity-100" : "opacity-50"
-      }`}
+      variant="primary"
+      animation="fade-in"
+      isVisible={isVisible}
+      container
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          subtitle="Công cụ"
-          title="So sánh công cụ tự động hóa"
-          description="Phân tích và so sánh các công cụ tự động hóa tiếp thị hiện có cho mô hình MLM"
-        />
+      <SectionHeader>
+        <SectionSubtitle>Công cụ</SectionSubtitle>
+        <SectionTitle>So sánh công cụ tự động hóa</SectionTitle>
+        <SectionDescription>
+          Phân tích và so sánh các công cụ tự động hóa tiếp thị hiện có cho mô
+          hình MLM
+        </SectionDescription>
+      </SectionHeader>
 
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-10">
-          <div className="p-6">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              So sánh chức năng các công cụ
-            </h3>
-            <div className="h-80">
-              <BarChartComponent
-                data={toolsComparisonData}
-                bars={[
-                  { dataKey: "epixel", name: "Epixel MLM Software" },
-                  { dataKey: "global", name: "Global MLM Software" },
-                  { dataKey: "bi", name: "Công cụ BI (Tableau/Sisense)" },
-                ]}
-              />
-            </div>
+      <Card variant="elevated" className="mb-10">
+        <CardHeader>
+          <CardTitle>So sánh chức năng các công cụ</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-80">
+            <BarChart
+              data={toolsComparisonData}
+              bars={[
+                { dataKey: "epixel", name: "Epixel MLM Software" },
+                { dataKey: "global", name: "Global MLM Software" },
+                { dataKey: "bi", name: "Công cụ BI (Tableau/Sisense)" },
+              ]}
+            />
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        <ComparisonTable />
-      </div>
-    </section>
+      <ComparisonTable />
+    </Section>
   );
 });
 
 // Comparison table component
 const ComparisonTable = () => (
-  <div className="overflow-hidden bg-white shadow-lg rounded-xl">
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-50">
+  <div className="overflow-hidden bg-white dark:bg-gray-800 shadow-lg rounded-xl">
+    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+      <thead className="bg-gray-50 dark:bg-gray-900">
         <tr>
           <th
             scope="col"
-            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
           >
             Tiêu chí
           </th>
           <th
             scope="col"
-            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
           >
             Epixel MLM Software
           </th>
           <th
             scope="col"
-            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
           >
             Global MLM Software
           </th>
           <th
             scope="col"
-            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
           >
             Công cụ BI (Tableau, Sisense)
           </th>
         </tr>
       </thead>
-      <tbody className="bg-white divide-y divide-gray-200">
+      <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
         <ComparisonRow
           criteria="Quản lý Hoa hồng"
           epixel="Tự động hóa tính toán hoa hồng, báo cáo minh bạch"
@@ -113,16 +121,18 @@ const ComparisonTable = () => (
 
 const ComparisonRow = ({ criteria, epixel, global, bi }) => (
   <tr>
-    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
       {criteria}
     </td>
-    <td className="px-6 py-4 whitespace-normal text-sm text-gray-500">
+    <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-300">
       {epixel}
     </td>
-    <td className="px-6 py-4 whitespace-normal text-sm text-gray-500">
+    <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-300">
       {global}
     </td>
-    <td className="px-6 py-4 whitespace-normal text-sm text-gray-500">{bi}</td>
+    <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-300">
+      {bi}
+    </td>
   </tr>
 );
 

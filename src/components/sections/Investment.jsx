@@ -1,29 +1,41 @@
 import React, { forwardRef } from "react";
-import SectionHeading from "../ui/SectionHeading";
-import PricingCard from "../ui/PricingCard";
+import {
+  Section,
+  SectionHeader,
+  SectionTitle,
+  SectionSubtitle,
+  SectionDescription,
+} from "../layout/section";
+import { Container, Grid, GridItem, Flex } from "../layout/container";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { ArrowRight, Check } from "lucide-react";
 import { pricingPlans } from "../../data/siteData";
-import { ArrowRight } from "lucide-react";
 
 const Investment = forwardRef(({ isVisible }, ref) => {
   return (
-    <section
+    <Section
       id="invest"
       ref={ref}
-      className={`py-24 bg-gradient-to-r from-blue-700 to-blue-500 text-white transition-opacity duration-1000 ${
-        isVisible ? "opacity-100" : "opacity-50"
-      }`}
+      variant="gradientPrimary"
+      isVisible={isVisible}
+      animation="fade-in"
+      container
+      className="text-white"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          subtitle="Cơ hội đầu tư"
-          title="Tham gia cùng chúng tôi"
-          description="Đầu tư vào tương lai của Marketing Automation trong ngành MLM tại Việt Nam"
-        />
+      <SectionHeader>
+        <SectionSubtitle variant="white">Cơ hội đầu tư</SectionSubtitle>
+        <SectionTitle variant="white">Tham gia cùng chúng tôi</SectionTitle>
+        <SectionDescription variant="white">
+          Đầu tư vào tương lai của Marketing Automation trong ngành MLM tại Việt
+          Nam
+        </SectionDescription>
+      </SectionHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {pricingPlans.map((plan, index) => (
+      <Grid cols={3} gap="lg">
+        {pricingPlans.map((plan, index) => (
+          <GridItem key={index}>
             <PricingCard
-              key={index}
               name={plan.name}
               price={plan.price}
               features={plan.features}
@@ -31,30 +43,76 @@ const Investment = forwardRef(({ isVisible }, ref) => {
               popular={plan.popular}
               buttonVariant={plan.buttonVariant}
             />
-          ))}
-        </div>
+          </GridItem>
+        ))}
+      </Grid>
 
-        <CallToAction />
+      <div className="mt-16 text-center">
+        <p className="mb-6 text-xl text-blue-100">
+          Chúng tôi đang tìm kiếm các đối tác chiến lược để cùng xây dựng tương
+          lai của Marketing Automation trong lĩnh vực MLM tại Việt Nam.
+        </p>
+        <Button
+          variant="outline"
+          size="lg"
+          className="inline-flex items-center px-8 py-4 border border-white text-white bg-transparent hover:bg-white/10 focus:ring-offset-blue-500"
+        >
+          Liên hệ đội ngũ đầu tư
+          <ArrowRight className="ml-2 -mr-1 h-5 w-5" />
+        </Button>
       </div>
-    </section>
+    </Section>
   );
 });
 
-const CallToAction = () => (
-  <div className="mt-16 text-center">
-    <p className="mb-6 text-xl text-blue-100">
-      Chúng tôi đang tìm kiếm các đối tác chiến lược để cùng xây dựng tương lai
-      của Marketing Automation trong lĩnh vực MLM tại Việt Nam.
-    </p>
-    <a
-      href="#"
-      className="inline-flex items-center px-8 py-4 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200 transition-colors shadow-lg"
+const PricingCard = ({
+  name,
+  price,
+  features,
+  buttonText,
+  popular = false,
+  buttonVariant = "outline",
+}) => {
+  return (
+    <Card
+      variant="default"
+      className="bg-white text-gray-900 rounded-xl shadow-xl overflow-hidden transform transition-all hover:scale-105 h-full"
     >
-      Liên hệ đội ngũ đầu tư
-      <ArrowRight className="ml-2 -mr-1 h-5 w-5" />
-    </a>
-  </div>
-);
+      {popular && (
+        <div className="absolute top-4 right-4">
+          <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+            Phổ biến nhất
+          </span>
+        </div>
+      )}
+      <CardContent className="p-6">
+        <div className="w-full h-1 bg-blue-500 mb-6"></div>
+        <h3 className="text-2xl font-bold text-gray-900 mb-4">{name}</h3>
+        <p className="text-4xl font-bold text-blue-600 mb-6">{price}</p>
+        <ul className="space-y-3 mb-8">
+          {features.map((feature, index) => (
+            <li key={index} className="flex items-start">
+              <Check className="h-5 w-5 text-green-500 mt-1 mr-2" />
+              <span className="text-gray-600">{feature}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="text-center">
+          <Button
+            variant={buttonVariant === "solid" ? "default" : "outline"}
+            className={
+              buttonVariant === "solid"
+                ? "bg-blue-600 hover:bg-blue-700 text-white"
+                : "border-blue-600 text-blue-600 hover:bg-blue-50"
+            }
+          >
+            {buttonText}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 Investment.displayName = "Investment";
 
