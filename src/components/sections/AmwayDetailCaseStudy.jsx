@@ -318,8 +318,7 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
     const handleScroll = () => {
       if (!containerRef.current) return;
 
-      const { scrollTop, scrollHeight, clientHeight } =
-        document.documentElement;
+      const { scrollTop, clientHeight } = document.documentElement;
       const windowScroll = scrollTop;
       const containerRect = containerRef.current.getBoundingClientRect();
 
@@ -411,7 +410,7 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
         </div>
 
         {/* Nội dung */}
-        <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <span className="inline-block px-4 py-1 rounded-full bg-white/10 backdrop-blur-md text-blue-200 text-sm font-medium mb-4">
               Phân tích tình huống
@@ -457,7 +456,7 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
         ref={sectionRef}
         className="py-20 bg-gradient-to-b from-white to-blue-50 dark:from-gray-900 dark:to-blue-900/10"
       >
-        <div className="container px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Giới thiệu & Chỉ số hiệu suất chính */}
           <div className="mb-20">
             <div className="flex flex-col md:flex-row justify-between items-start mb-12 gap-8">
@@ -690,43 +689,43 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
-              <div className="p-1 bg-gray-100 dark:bg-gray-700">
+              <div className="p-2 bg-gray-100 dark:bg-gray-700">
                 <Tabs
                   value={activeTab}
                   onValueChange={handleTabChange}
                   className="w-full"
                 >
-                  <TabsList className="grid grid-cols-4 bg-transparent">
+                  <TabsList className="grid grid-cols-4 bg-transparent gap-1">
                     <TabsTrigger
                       value="tech"
-                      className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm rounded-lg"
+                      className="py-2.5 px-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:font-medium data-[state=active]:scale-105 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     >
-                      <Database className="h-4 w-4 md:mr-2" />
+                      <Database className="h-4 w-4 md:mr-2 data-[state=active]:text-blue-500" />
                       <span className="hidden md:inline">
                         Tích hợp công nghệ
                       </span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="crm"
-                      className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm rounded-lg"
+                      className="py-2.5 px-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:font-medium data-[state=active]:scale-105 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     >
-                      <Users className="h-4 w-4 md:mr-2" />
+                      <Users className="h-4 w-4 md:mr-2 data-[state=active]:text-blue-500" />
                       <span className="hidden md:inline">CRM & Marketing</span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="data"
-                      className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm rounded-lg"
+                      className="py-2.5 px-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:font-medium data-[state=active]:scale-105 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     >
-                      <BarChart2 className="h-4 w-4 md:mr-2" />
+                      <BarChart2 className="h-4 w-4 md:mr-2 data-[state=active]:text-blue-500" />
                       <span className="hidden md:inline">
                         Phân tích dữ liệu
                       </span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="trends"
-                      className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm rounded-lg"
+                      className="py-2.5 px-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:font-medium data-[state=active]:scale-105 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     >
-                      <Zap className="h-4 w-4 md:mr-2" />
+                      <Zap className="h-4 w-4 md:mr-2 data-[state=active]:text-blue-500" />
                       <span className="hidden md:inline">
                         Xu hướng tương lai
                       </span>
@@ -737,20 +736,18 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
 
               {/* Nội dung tab */}
               <div className="p-6 md:p-8">
-                <div>
-                  {activeTab === "tech" && (
-                    <TechnologyIntegrationTab techFeatures={techFeatures} />
-                  )}
-                  {activeTab === "crm" && (
-                    <CrmMarketingTab crmFeatures={crmFeatures} />
-                  )}
-                  {activeTab === "data" && (
-                    <DataAnalyticsTab dataPoints={dataPoints} />
-                  )}
-                  {activeTab === "trends" && (
-                    <FutureTrendsTab futureImpact={futureImpact} />
-                  )}
-                </div>
+                {activeTab === "tech" && (
+                  <TechnologyIntegrationTab techFeatures={techFeatures} />
+                )}
+                {activeTab === "crm" && (
+                  <CrmMarketingTab crmFeatures={crmFeatures} />
+                )}
+                {activeTab === "data" && (
+                  <DataAnalyticsTab dataPoints={dataPoints} />
+                )}
+                {activeTab === "trends" && (
+                  <FutureTrendsTab futureImpact={futureImpact} />
+                )}
               </div>
             </div>
           </div>

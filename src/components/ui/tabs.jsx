@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 
 /**
- * Tabs component
+ * Tabs component với active state cải tiến
  *
  * @example
  * <Tabs defaultValue="tab1">
@@ -29,18 +29,15 @@ const useTabsContext = () => {
 };
 
 const tabsListVariants = cva(
-  "inline-flex items-center justify-center rounded-md bg-gray-100 dark:bg-gray-800 p-1",
+  "inline-flex items-center justify-center rounded-md p-1",
   {
     variants: {
       variant: {
-        default:
-          "inline-flex items-center justify-center rounded-md bg-gray-100 dark:bg-gray-800 p-1",
-        outline:
-          "inline-flex items-center justify-center rounded-md border border-gray-200 dark:border-gray-700 p-1",
-        pills:
-          "inline-flex items-center justify-center space-x-1 p-1 bg-transparent",
+        default: "bg-gray-100 dark:bg-gray-800",
+        outline: "border border-gray-200 dark:border-gray-700",
+        pills: "space-x-1 bg-transparent",
         underline:
-          "inline-flex items-center justify-center space-x-1 p-1 bg-transparent border-b border-gray-200 dark:border-gray-700",
+          "space-x-1 bg-transparent border-b border-gray-200 dark:border-gray-700 w-full",
       },
     },
     defaultVariants: {
@@ -50,18 +47,18 @@ const tabsListVariants = cva(
 );
 
 const tabsTriggerVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap px-3 py-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         default:
-          "data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-gray-900 dark:data-[state=active]:text-gray-50 data-[state=active]:shadow-sm rounded-md",
+          "text-gray-600 dark:text-gray-400 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-gray-900 dark:data-[state=active]:text-gray-50 data-[state=active]:shadow-sm rounded-md",
         outline:
-          "data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-gray-900 dark:data-[state=active]:text-gray-50 rounded-md data-[state=active]:border-gray-200 dark:data-[state=active]:border-gray-700 data-[state=active]:border",
+          "text-gray-600 dark:text-gray-400 rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-gray-900 dark:data-[state=active]:text-gray-50 data-[state=active]:border-gray-200 dark:data-[state=active]:border-gray-700 data-[state=active]:border",
         pills:
-          "rounded-full data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:data-[state=active]:text-white hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:hover:bg-blue-600 dark:data-[state=active]:hover:bg-blue-600",
+          "text-gray-600 dark:text-gray-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:hover:bg-blue-700 dark:data-[state=active]:hover:bg-blue-700",
         underline:
-          "border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400",
+          "text-gray-600 dark:text-gray-400 border-b-2 border-transparent rounded-none hover:text-gray-900 dark:hover:text-gray-300 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:font-semibold",
       },
     },
     defaultVariants: {
@@ -166,8 +163,8 @@ const TabsContent = React.forwardRef(
         hidden={!isSelected}
         data-state={isSelected ? "active" : "inactive"}
         className={cn(
-          "mt-2",
-          isSelected ? "animate-in zoom-in-95" : "",
+          "mt-4 p-2",
+          isSelected ? "animate-in fade-in-75 duration-200" : "",
           className
         )}
         {...props}

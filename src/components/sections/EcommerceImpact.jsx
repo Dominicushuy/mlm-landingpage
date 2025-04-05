@@ -151,9 +151,8 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
         <Grid cols={2} gap="lg" className="mt-12 items-center">
           <GridItem>
             <motion.div
-              variants={childVariants}
+              variants={{ ...childVariants, ...cardVariants }}
               whileHover="hover"
-              variants={cardVariants}
               style={{
                 transformStyle: "preserve-3d",
                 transform: `perspective(1000px) rotateY(${
