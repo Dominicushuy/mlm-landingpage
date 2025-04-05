@@ -138,9 +138,8 @@ const MarketAnalysis = forwardRef(({ isVisible }, ref) => {
         <Grid cols={2} gap="lg" className="mt-12">
           <GridItem>
             <motion.div
-              variants={childVariants}
+              variants={{ ...childVariants, ...cardVariants }}
               whileHover="hover"
-              variants={cardVariants}
               onMouseEnter={() => setHoveredCard("global")}
               onMouseLeave={() => setHoveredCard(null)}
               style={{
@@ -223,9 +222,8 @@ const MarketAnalysis = forwardRef(({ isVisible }, ref) => {
 
           <GridItem>
             <motion.div
-              variants={childVariants}
+              variants={{ ...childVariants, ...cardVariants }}
               whileHover="hover"
-              variants={cardVariants}
               onMouseEnter={() => setHoveredCard("vietnam")}
               onMouseLeave={() => setHoveredCard(null)}
               style={{
