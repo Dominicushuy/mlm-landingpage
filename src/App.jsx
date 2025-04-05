@@ -16,6 +16,7 @@ import DemoSection from "./components/sections/DemoSection";
 import { ArrowUp, MessageSquare, Moon, Sun } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { navItems } from "./data/siteData";
+import { MainLayout } from "./components/layout/MainLayout";
 
 const App = () => {
   const [activeSection, setActiveSection] = useState("intro");
@@ -40,6 +41,7 @@ const App = () => {
     solutions: useRef(null),
     tools: useRef(null),
     strategy: useRef(null),
+    demo: useRef(null),
     invest: useRef(null),
   };
 
@@ -106,13 +108,15 @@ const App = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-200 transition-colors duration-300">
-      {/* New Navbar using the design system */}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+      {/* Navbar with consistent styling */}
       <Navbar
         logo={logo}
         items={navigationItems}
         activeItem={activeSection}
         variant={showScrollTop ? "translucent" : "default"}
+        position="sticky"
+        shadow={showScrollTop ? "default" : "none"}
         onNavItemClick={(item) => scrollToSection(item.id)}
         actions={[
           <Button
@@ -131,71 +135,83 @@ const App = () => {
         ]}
       />
 
-      {/* Section components */}
-      <Hero
-        ref={sectionRefs.intro}
-        isVisible={isVisible.intro}
-        scrollToSection={scrollToSection}
-        darkMode={darkMode}
-      />
+      {/* Main Content with consistent layout */}
+      <MainLayout>
+        {/* Hero Section - Full Height */}
+        <Hero
+          ref={sectionRefs.intro}
+          isVisible={isVisible.intro}
+          scrollToSection={scrollToSection}
+          darkMode={darkMode}
+        />
 
-      <MarketAnalysis
-        ref={sectionRefs.market}
-        isVisible={isVisible.market}
-        darkMode={darkMode}
-      />
+        {/* Market Analysis Section */}
+        <MarketAnalysis
+          ref={sectionRefs.market}
+          isVisible={isVisible.market}
+          darkMode={darkMode}
+        />
 
-      <EcommerceImpact
-        ref={sectionRefs.ecommerce}
-        isVisible={isVisible.ecommerce}
-        darkMode={darkMode}
-      />
+        {/* E-commerce Impact Section */}
+        <EcommerceImpact
+          ref={sectionRefs.ecommerce}
+          isVisible={isVisible.ecommerce}
+          darkMode={darkMode}
+        />
 
-      <CaseStudy
-        ref={sectionRefs.casestudy}
-        isVisible={isVisible.casestudy}
-        darkMode={darkMode}
-      />
+        {/* Case Study Section */}
+        <CaseStudy
+          ref={sectionRefs.casestudy}
+          isVisible={isVisible.casestudy}
+          darkMode={darkMode}
+        />
 
-      <AmwayDetailCaseStudy
-        ref={sectionRefs.amwayDetail}
-        isVisible={isVisible.amwayDetail}
-        darkMode={darkMode}
-      />
+        {/* Detailed Case Study Section */}
+        <AmwayDetailCaseStudy
+          ref={sectionRefs.amwayDetail}
+          isVisible={isVisible.amwayDetail}
+          darkMode={darkMode}
+        />
 
-      <Solutions
-        ref={sectionRefs.solutions}
-        isVisible={isVisible.solutions}
-        darkMode={darkMode}
-      />
+        {/* Solutions Section */}
+        <Solutions
+          ref={sectionRefs.solutions}
+          isVisible={isVisible.solutions}
+          darkMode={darkMode}
+        />
 
-      <Tools
-        ref={sectionRefs.tools}
-        isVisible={isVisible.tools}
-        darkMode={darkMode}
-      />
+        {/* Tools Section */}
+        <Tools
+          ref={sectionRefs.tools}
+          isVisible={isVisible.tools}
+          darkMode={darkMode}
+        />
 
-      <DemoSection
-        ref={sectionRefs.demo}
-        isVisible={isVisible.demo}
-        darkMode={darkMode}
-      />
+        {/* Demo Section */}
+        <DemoSection
+          ref={sectionRefs.demo}
+          isVisible={isVisible.demo}
+          darkMode={darkMode}
+        />
 
-      <Strategy
-        ref={sectionRefs.strategy}
-        isVisible={isVisible.strategy}
-        darkMode={darkMode}
-      />
+        {/* Strategy Section */}
+        <Strategy
+          ref={sectionRefs.strategy}
+          isVisible={isVisible.strategy}
+          darkMode={darkMode}
+        />
 
-      <Investment
-        ref={sectionRefs.invest}
-        isVisible={isVisible.invest}
-        darkMode={darkMode}
-      />
+        {/* Investment Section */}
+        <Investment
+          ref={sectionRefs.invest}
+          isVisible={isVisible.invest}
+          darkMode={darkMode}
+        />
+      </MainLayout>
 
       <Footer darkMode={darkMode} />
 
-      {/* Scroll to top button using Button component from the design system */}
+      {/* Scroll to top button - fixed style */}
       <Button
         onClick={scrollToTop}
         variant="default"
@@ -210,7 +226,7 @@ const App = () => {
         <ArrowUp className="h-5 w-5" />
       </Button>
 
-      {/* Chat Bot Button using Button component from the design system */}
+      {/* Chat Bot Button - fixed style */}
       <Button
         onClick={() => setShowChatBot(!showChatBot)}
         variant="default"

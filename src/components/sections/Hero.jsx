@@ -1,9 +1,11 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import { Check, ArrowRight, PlusCircle } from "lucide-react";
 import { Section } from "../layout/section";
+import { MainSection } from "../layout/MainLayout";
 import { Container, Grid, GridItem, Flex } from "../layout/container";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
+import { ResponsiveCard } from "../ui/ResponsiveCard";
 import {
   Modal,
   ModalContent,
@@ -41,19 +43,15 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
       id="intro"
       ref={ref}
       variant={darkMode ? "gradient" : "default"}
-      className="min-h-screen flex items-center relative overflow-hidden"
+      className="min-h-[90vh] flex items-center relative overflow-hidden"
       isVisible={isVisible}
       animation="fade-in"
     >
-      {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-500 opacity-10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/3 -left-24 w-72 h-72 bg-indigo-500 opacity-10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-500 opacity-10 rounded-full blur-3xl"></div>
-      </div>
+      {/* Decorative elements - Fixed positions for better stability */}
+      <BackgroundDecorations />
 
       <Container>
-        <Grid cols={2} gap="lg" className="py-24 items-center">
+        <Grid cols={1} md={2} gap="lg" className="py-12 md:py-24 items-center">
           <GridItem>
             <div className="space-y-6 transform transition-all duration-700 translate-y-0">
               <div className="inline-block">
@@ -66,7 +64,7 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
                 </div>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-blue-800 dark:text-blue-300 leading-tight">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-blue-800 dark:text-blue-300 leading-tight">
                 Marketing{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
                   Automation
@@ -93,11 +91,11 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
                 <FeatureCheckItem text="Tăng cường minh bạch trong quản lý" />
               </div>
 
-              <Flex gap="sm" className="pt-2">
+              <Flex gap="sm" className="pt-4">
                 <Button
                   onClick={() => scrollToSection("invest")}
                   variant="default"
-                  className="transform hover:-translate-y-1 shadow-lg hover:shadow-xl"
+                  className="transform hover:-translate-y-1 shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Tìm hiểu về đầu tư
                   <ArrowRight className="ml-2 -mr-1 h-5 w-5" />
@@ -106,6 +104,7 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
                 <Button
                   onClick={() => setShowDemo(!showDemo)}
                   variant="outline"
+                  className="hover:bg-white/10 transition-all duration-300"
                 >
                   Xem demo
                   <PlusCircle className="ml-2 -mr-1 h-5 w-5" />
@@ -114,17 +113,17 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
             </div>
           </GridItem>
 
-          <GridItem>
-            <Card
+          <GridItem className="hidden md:block">
+            <ResponsiveCard
               variant="elevated"
-              className="transform transition-all duration-700 hover:scale-105"
+              className="transform transition-all duration-700 hover:scale-105 shadow-xl"
             >
               <CardContent className="p-0">
                 <div className="bg-gradient-to-r from-blue-700 to-blue-500 dark:from-blue-800 dark:to-blue-600 p-8 text-white">
-                  <h2 className="text-2xl font-bold mb-4">
+                  <h2 className="text-2xl font-bold mb-6">
                     Chúng tôi mang đến giải pháp
                   </h2>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <SolutionItem text="Tự động hóa quản lý liên hệ và CRM" />
                     <SolutionItem text="Tự động hóa Email Marketing và nuôi dưỡng khách hàng" />
                     <SolutionItem text="Tự động hóa quản lý hoa hồng và lợi ích" />
@@ -144,7 +143,7 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
                   />
                 </div>
               </CardContent>
-            </Card>
+            </ResponsiveCard>
           </GridItem>
         </Grid>
       </Container>
@@ -157,7 +156,7 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
             <ModalTitle>Demo Marketing Automation</ModalTitle>
           </ModalHeader>
           <ModalBody>
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 mb-6">
+            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 mb-6">
               <p className="text-gray-700 dark:text-gray-300">
                 Nhập email của bạn để xem cách Marketing Automation hoạt động.
                 Bạn sẽ nhận được một chuỗi email tự động thể hiện quy trình nuôi
@@ -173,7 +172,7 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
             </form>
           </ModalBody>
           <ModalFooter>
-            <Button variant="default">
+            <Button variant="default" className="px-6">
               Bắt đầu Demo
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -183,6 +182,15 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
     </Section>
   );
 });
+
+// Background decorations component
+const BackgroundDecorations = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-500 opacity-10 rounded-full blur-3xl"></div>
+    <div className="absolute top-1/3 -left-24 w-72 h-72 bg-indigo-500 opacity-10 rounded-full blur-3xl"></div>
+    <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-500 opacity-10 rounded-full blur-3xl"></div>
+  </div>
+);
 
 // Helper components for cleaner code
 const FeatureCheckItem = ({ text }) => (
@@ -204,12 +212,12 @@ const SolutionItem = ({ text }) => (
 );
 
 const ProgressBar = ({ label, value }) => (
-  <div className="text-center mt-4 first:mt-0">
+  <div className="text-center mt-6 first:mt-0">
     <p className="text-gray-500 dark:text-gray-400 mb-2">{label}</p>
     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
       <div
         className="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-1000 ease-out"
-        style={{ width: `${value}%` }}
+        style={{ width: `${value}%`, transitionDelay: "300ms" }}
       ></div>
     </div>
     <p className="text-sm text-right text-gray-500 dark:text-gray-400 mt-1">

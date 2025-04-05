@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { cva } from "class-variance-authority";
-import { cn } from "@/lib/utils";
 import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
+import { cn } from "../../lib/utils";
 
 /**
  * Navbar component with responsive mobile menu
