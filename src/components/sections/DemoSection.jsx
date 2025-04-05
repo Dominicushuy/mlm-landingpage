@@ -35,40 +35,36 @@ const DemoSection = forwardRef(({ isVisible }, ref) => {
         </SectionDescription>
       </SectionHeader>
 
-      <Card variant="default" className="shadow-lg">
-        <CardHeader className="border-b border-gray-200 dark:border-gray-700">
-          <div className="flex justify-between items-center">
-            <CardTitle>MAMLM Platform Demo</CardTitle>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Card variant="default" className="shadow-lg">
+          <CardHeader className="border-b border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between items-center">
+              <CardTitle>MAMLM Platform Demo</CardTitle>
 
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-auto"
-            >
               <TabsList className="grid grid-cols-3 w-auto">
                 <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                 <TabsTrigger value="builder">Flow Builder</TabsTrigger>
                 <TabsTrigger value="compare">So sánh giải pháp</TabsTrigger>
               </TabsList>
-            </Tabs>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="p-6">
-            <TabsContent value="dashboard" className="mt-0">
-              <AutomationDashboard />
-            </TabsContent>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="p-6">
+              <TabsContent value="dashboard" className="mt-0">
+                <AutomationDashboard />
+              </TabsContent>
 
-            <TabsContent value="builder" className="mt-0">
-              <AutomationFlowBuilder />
-            </TabsContent>
+              <TabsContent value="builder" className="mt-0">
+                <AutomationFlowBuilder />
+              </TabsContent>
 
-            <TabsContent value="compare" className="mt-0">
-              <CompareTool />
-            </TabsContent>
-          </div>
-        </CardContent>
-      </Card>
+              <TabsContent value="compare" className="mt-0">
+                <CompareTool />
+              </TabsContent>
+            </div>
+          </CardContent>
+        </Card>
+      </Tabs>
 
       <DemoFeatures />
     </Section>
