@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef } from "react";
+import React, { forwardRef, useState, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   Section,
@@ -9,8 +9,14 @@ import {
 } from "../layout/section";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
-import { LineChart } from "../charts/chart-components";
-import { ChartWrapper } from "../charts/chart-wrapper";
+import {
+  EnhancedLineChart,
+  KpiCard,
+  DashboardGrid,
+  DashboardGridItem,
+  ENHANCED_COLORS,
+} from "../charts/chart-components";
+import { EnhancedChartWrapper as ChartWrapper } from "../charts/chart-wrapper";
 import { amwayRevenueData } from "../../data/siteData";
 import {
   TrendingDown,
@@ -27,6 +33,15 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
   const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
   const [activeTab, setActiveTab] = useState("revenue");
   const sectionRef = useRef(null);
+
+  // Usable formatters for chart data
+  const formatters = useMemo(
+    () => ({
+      valueFormatter: (value) => `${value} tỷ USD`,
+      labelFormatter: (label) => label,
+    }),
+    []
+  );
 
   // Throttled mouse position handler for 3D effects
   const handleMouseMove = (e) => {
@@ -148,20 +163,34 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-lg"></div>
                         <div className="relative z-10">
                           {activeTab === "revenue" ? (
-                            <LineChart
+                            <EnhancedLineChart
                               data={amwayRevenueData}
                               lines={[
                                 {
                                   dataKey: "revenue",
                                   name: "Doanh thu (tỷ USD)",
-                                  color: "#4f46e5",
+                                  color: ENHANCED_COLORS.primary[0],
+                                  activeDot: true,
                                 },
                               ]}
                               xAxisKey="year"
                               yAxisDomain={[7.5, 8.5]}
+                              height={240}
+                              grid={true}
+                              animate={true}
+                              formatters={formatters}
+                              unit=" tỷ USD"
+                              annotations={[
+                                {
+                                  type: "line",
+                                  y: 8.0,
+                                  color: ENHANCED_COLORS.neutral[1],
+                                  label: "Mức trung bình",
+                                },
+                              ]}
                             />
                           ) : (
-                            <LineChart
+                            <EnhancedLineChart
                               data={amwayRevenueData.map((item) => ({
                                 ...item,
                                 trend: (item.revenue - 7.8) * 10,
@@ -170,17 +199,38 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
                                 {
                                   dataKey: "revenue",
                                   name: "Doanh thu (tỷ USD)",
-                                  color: "#4f46e5",
+                                  color: ENHANCED_COLORS.primary[0],
                                 },
                                 {
                                   dataKey: "trend",
                                   name: "Chỉ số xu hướng",
-                                  color: "#ef4444",
+                                  color: ENHANCED_COLORS.danger[0],
                                   strokeDasharray: "5 5",
                                 },
                               ]}
                               xAxisKey="year"
                               yAxisDomain={[7.5, 8.5]}
+                              height={240}
+                              grid={true}
+                              animate={true}
+                              formatters={{
+                                ...formatters,
+                                valueFormatter: (value, name) =>
+                                  name === "Chỉ số xu hướng"
+                                    ? value.toFixed(1)
+                                    : `${value} tỷ USD`,
+                              }}
+                              annotations={[
+                                {
+                                  type: "area",
+                                  y1: 7.9,
+                                  y2: 7.7,
+                                  x1: "2021",
+                                  x2: "2023",
+                                  color: ENHANCED_COLORS.danger[1],
+                                  label: "Giai đoạn suy giảm",
+                                },
+                              ]}
                             />
                           )}
                         </div>
@@ -289,7 +339,7 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
                     <div className="mt-8">
                       <Button
                         variant="outline"
-                        className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm transition-transform duration-200 hover:scale-105"
+                        className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm transition-transform duration-200 hover:scale-110"
                       >
                         Xem đầy đủ báo cáo
                         <ArrowDownRight className="ml-2 h-4 w-4" />
@@ -390,43 +440,55 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
           </div>
         </div>
 
-        <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            {
-              icon: DollarSign,
-              title: "Doanh thu hiện tại",
-              value: "$7.7B",
-              change: "-4.94%",
-              description: "Doanh thu năm 2023",
-              color: "blue",
-            },
-            {
-              icon: BarChart2,
-              title: "Thị phần",
-              value: "14.2%",
-              change: "-2.1%",
-              description: "Trong thị trường MLM toàn cầu",
-              color: "indigo",
-            },
-            {
-              icon: PieChart,
-              title: "So với thương mại điện tử",
-              value: "0.12%",
-              change: "-0.03%",
-              description: "Tỷ lệ so với TMĐT toàn cầu",
-              color: "purple",
-            },
-            {
-              icon: Calendar,
-              title: "Dự báo phục hồi",
-              value: "2026+",
-              description: "Thời gian cần để quay lại đỉnh",
-              color: "orange",
-            },
-          ].map((stat, index) => (
-            <StatCard key={index} stat={stat} index={index} />
-          ))}
-        </div>
+        <DashboardGrid columns="4" gap="md" className="mt-16">
+          <KpiCard
+            title="Doanh thu hiện tại"
+            value="$7.7B"
+            previousValue={8.1}
+            change={-4.94}
+            trend="down"
+            trendDirection="up"
+            icon={<DollarSign className="h-5 w-5" />}
+            color="blue"
+            suffix=""
+            hoverEffect={true}
+          />
+
+          <KpiCard
+            title="Thị phần"
+            value="14.2%"
+            previousValue={16.3}
+            change={-2.1}
+            trend="down"
+            trendDirection="up"
+            icon={<BarChart2 className="h-5 w-5" />}
+            color="indigo"
+            suffix=""
+            hoverEffect={true}
+          />
+
+          <KpiCard
+            title="So với thương mại điện tử"
+            value="0.12%"
+            previousValue={0.15}
+            change={-0.03}
+            trend="down"
+            trendDirection="up"
+            icon={<PieChart className="h-5 w-5" />}
+            color="purple"
+            suffix=""
+            hoverEffect={true}
+          />
+
+          <KpiCard
+            title="Dự báo phục hồi"
+            value="2026+"
+            icon={<Calendar className="h-5 w-5" />}
+            color="orange"
+            suffix=""
+            hoverEffect={true}
+          />
+        </DashboardGrid>
       </div>
     </Section>
   );
@@ -564,74 +626,6 @@ const TableRowEnhanced = ({ row, index }) => {
         )}
       </td>
     </motion.tr>
-  );
-};
-
-// Stat Card Component with hover effect preserved
-const StatCard = ({ stat, index }) => {
-  const { icon: Icon, title, value, change, description, color } = stat;
-
-  const colorVariants = {
-    blue: {
-      bg: "bg-blue-50 dark:bg-blue-900/20",
-      border: "border-blue-200 dark:border-blue-800/50",
-      iconBg: "bg-blue-100 dark:bg-blue-900/50",
-      iconColor: "text-blue-500 dark:text-blue-400",
-    },
-    indigo: {
-      bg: "bg-indigo-50 dark:bg-indigo-900/20",
-      border: "border-indigo-200 dark:border-indigo-800/50",
-      iconBg: "bg-indigo-100 dark:bg-indigo-900/50",
-      iconColor: "text-indigo-500 dark:text-indigo-400",
-    },
-    purple: {
-      bg: "bg-purple-50 dark:bg-purple-900/20",
-      border: "border-purple-200 dark:border-purple-800/50",
-      iconBg: "bg-purple-100 dark:bg-purple-900/50",
-      iconColor: "text-purple-500 dark:text-purple-400",
-    },
-    orange: {
-      bg: "bg-orange-50 dark:bg-orange-900/20",
-      border: "border-orange-200 dark:border-orange-800/50",
-      iconBg: "bg-orange-100 dark:bg-orange-900/50",
-      iconColor: "text-orange-500 dark:text-orange-400",
-    },
-  };
-
-  const colors = colorVariants[color];
-
-  return (
-    <motion.div
-      whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className={`rounded-xl p-5 ${colors.bg} border ${colors.border} backdrop-blur-sm shadow-md`}
-    >
-      <div className="flex items-center mb-3">
-        <div
-          className={`p-2 rounded-lg ${colors.iconBg} ${colors.iconColor} mr-3`}
-        >
-          <Icon className="h-5 w-5" />
-        </div>
-        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">
-          {title}
-        </h3>
-      </div>
-
-      <div className="flex items-baseline">
-        <span className="text-2xl font-bold text-gray-900 dark:text-white">
-          {value}
-        </span>
-        {change && (
-          <span className="ml-2 text-sm text-red-500 dark:text-red-400 flex items-center">
-            <TrendingDown className="h-3 w-3 mr-0.5" />
-            {change}
-          </span>
-        )}
-      </div>
-
-      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-        {description}
-      </p>
-    </motion.div>
   );
 };
 

@@ -19,23 +19,6 @@ import {
 } from "../ui/dropdown-menu";
 import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
 
-/**
- * Enhanced ChartWrapper component with animations, download options, and more interaction features
- *
- * @example
- * <EnhancedChartWrapper
- *   title="Monthly Revenue"
- *   caption="Last 12 months of revenue data"
- *   downloadOptions={{
- *     csv: true,
- *     png: true,
- *     onDownload: (format) => handleDownload(format)
- *   }}
- * >
- *   <LineChart data={data} />
- * </EnhancedChartWrapper>
- */
-
 const chartWrapperVariants = cva("rounded-xl overflow-hidden", {
   variants: {
     variant: {

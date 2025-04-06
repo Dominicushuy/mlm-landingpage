@@ -238,7 +238,7 @@ export const EnhancedLineChart = React.forwardRef(
       lines = [],
       xAxisKey = "name",
       yAxisDomain,
-      height = 300,
+      height = 350,
       grid = true,
       colors = ENHANCED_COLORS.primary,
       title,

@@ -4,13 +4,13 @@ import { Navbar } from "./components/navigation/nav-bar";
 import Footer from "./components/layout/footer";
 import Hero from "./components/sections/Hero";
 import MarketAnalysis from "./components/sections/MarketAnalysis";
-// import EcommerceImpact from "./components/sections/EcommerceImpact";
-// import CaseStudy from "./components/sections/CaseStudy";
-// import Solutions from "./components/sections/Solutions";
+import EcommerceImpact from "./components/sections/EcommerceImpact";
+import CaseStudy from "./components/sections/CaseStudy";
+import AmwayDetailCaseStudy from "./components/sections/AmwayDetailCaseStudy";
+import Solutions from "./components/sections/Solutions";
 // import Tools from "./components/sections/Tools";
 // import Strategy from "./components/sections/Strategy";
 // import Investment from "./components/sections/Investment";
-// import AmwayDetailCaseStudy from "./components/sections/AmwayDetailCaseStudy";
 // import DemoSection from "./components/sections/DemoSection";
 import { ArrowUp, MessageSquare, Moon, Sun } from "lucide-react";
 import { Button } from "./components/ui/button";
@@ -247,7 +247,7 @@ const App = () => {
         </SectionWrapper>
 
         {/* E-commerce Impact Section */}
-        {/* <SectionWrapper
+        <SectionWrapper
           id="ecommerce"
           padding="large"
           variant={SECTION_COLORS.ecommerce}
@@ -257,10 +257,10 @@ const App = () => {
             isVisible={isVisible.ecommerce}
             darkMode={darkMode}
           />
-        </SectionWrapper> */}
+        </SectionWrapper>
 
         {/* Case Study Section */}
-        {/* <SectionWrapper
+        <SectionWrapper
           id="casestudy"
           padding="large"
           variant={SECTION_COLORS.casestudy}
@@ -270,10 +270,10 @@ const App = () => {
             isVisible={isVisible.casestudy}
             darkMode={darkMode}
           />
-        </SectionWrapper> */}
+        </SectionWrapper>
 
         {/* Detailed Case Study Section - Fixed ID issue */}
-        {/* <SectionWrapper
+        <SectionWrapper
           id="amwayDetail"
           padding="large"
           variant={SECTION_COLORS.amwayDetail}
@@ -283,10 +283,10 @@ const App = () => {
             isVisible={isVisible.amwayDetail}
             darkMode={darkMode}
           />
-        </SectionWrapper> */}
+        </SectionWrapper>
 
         {/* Solutions Section */}
-        {/* <SectionWrapper
+        <SectionWrapper
           id="solutions"
           padding="large"
           variant={SECTION_COLORS.solutions}
@@ -296,7 +296,7 @@ const App = () => {
             isVisible={isVisible.solutions}
             darkMode={darkMode}
           />
-        </SectionWrapper> */}
+        </SectionWrapper>
 
         {/* Tools Section - Với gradient nhẹ để tạo sự tương phản */}
         {/* <SectionWrapper

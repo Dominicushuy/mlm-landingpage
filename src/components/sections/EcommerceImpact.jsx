@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef } from "react";
+import React, { forwardRef, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Section,
@@ -7,8 +7,13 @@ import {
   SectionSubtitle,
   SectionDescription,
 } from "../layout/section";
-import { Card, CardContent, CardTitle } from "../ui/card";
-import { LineChart, AreaChart } from "../charts/chart-components";
+import {
+  EnhancedLineChart,
+  EnhancedAreaChart,
+  KpiCard,
+  DashboardGrid,
+  DashboardGridItem,
+} from "../charts/chart-components";
 import { Button } from "../ui/button";
 import { marketGrowthData } from "../../data/siteData";
 import {
@@ -33,6 +38,32 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
     ecommerce_growth: (item.ecommerce / 1000).toFixed(1), // Scale for better visualization
     mlm_relative: ((item.mlm / item.ecommerce) * 100).toFixed(1), // Calculate relative percentage
   }));
+
+  // Filter options cho chart
+  const filterOptions = [
+    { label: "MLM", value: "mlm" },
+    { label: "TMĐT", value: "ecommerce_growth" },
+  ];
+
+  // Format số liệu hiển thị
+  const valueFormatter = useCallback((value) => {
+    return typeof value === "number" ? value.toFixed(1) : value;
+  }, []);
+
+  // Format label cho trục x
+  const labelFormatter = useCallback((label) => {
+    return `Năm ${label}`;
+  }, []);
+
+  // Annotations cho chart
+  const chartAnnotations = [
+    {
+      type: "line",
+      y: 5.0,
+      stroke: "#ef4444",
+      label: { value: "Điểm tới hạn", position: "insideBottomRight" },
+    },
+  ];
 
   return (
     <Section
@@ -70,122 +101,130 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
           </SectionDescription>
         </SectionHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 items-start">
           <div>
-            {/* Chart card with hover effect preserved but no display animations */}
-            <div className="transform transition-transform duration-300 hover:scale-[1.02]">
-              <Card
-                variant="default"
-                className="shadow-xl border border-white/20 backdrop-blur-md bg-white/90 dark:bg-gray-800/90 overflow-hidden"
-              >
-                <CardContent className="p-6">
-                  {/* Chart controls */}
-                  <div className="flex justify-between items-center mb-6">
-                    <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">
-                      TMĐT vs MLM: Tăng trưởng so sánh
-                    </CardTitle>
-                    <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-                      <button
-                        onClick={() => setChartView("line")}
-                        className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                          chartView === "line"
-                            ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                            : "text-gray-600 dark:text-gray-300"
-                        }`}
-                      >
-                        Line
-                      </button>
-                      <button
-                        onClick={() => setChartView("area")}
-                        className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                          chartView === "area"
-                            ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                            : "text-gray-600 dark:text-gray-300"
-                        }`}
-                      >
-                        Area
-                      </button>
-                    </div>
-                  </div>
+            {/* Dashboard KPI cards */}
+            <DashboardGrid columns={2} gap="sm" className="mb-6">
+              <DashboardGridItem>
+                <KpiCard
+                  title="TMĐT Tăng trưởng hàng năm"
+                  value={15.7}
+                  previousValue={13.2}
+                  color="blue"
+                  suffix="%"
+                  icon={<TrendingUp className="h-5 w-5" />}
+                />
+              </DashboardGridItem>
+              <DashboardGridItem>
+                <KpiCard
+                  title="MLM Biến động hàng năm"
+                  value={-3.2}
+                  previousValue={-1.5}
+                  color="purple"
+                  suffix="%"
+                  trendDirection="down"
+                  icon={<BarChart2 className="h-5 w-5" />}
+                />
+              </DashboardGridItem>
+            </DashboardGrid>
 
-                  {/* Chart container */}
-                  <div className="h-80 relative">
-                    {/* Chart glow effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-lg"></div>
-
-                    {/* Dynamic chart based on selection */}
-                    <div className="w-full h-full">
-                      {chartView === "line" ? (
-                        <LineChart
-                          data={chartData}
-                          lines={[
-                            {
-                              dataKey: "mlm",
-                              name: "MLM (tỷ USD)",
-                              color: "#8b5cf6",
-                            },
-                            {
-                              dataKey: "ecommerce_growth",
-                              name: "TMĐT (nghìn tỷ USD)",
-                              color: "#ef4444",
-                            },
-                          ]}
-                          xAxisKey="year"
-                        />
-                      ) : (
-                        <AreaChart
-                          data={chartData}
-                          areas={[
-                            {
-                              dataKey: "mlm",
-                              name: "MLM (tỷ USD)",
-                              color: "#8b5cf6",
-                              fillOpacity: 0.4,
-                            },
-                            {
-                              dataKey: "ecommerce_growth",
-                              name: "TMĐT (nghìn tỷ USD)",
-                              color: "#ef4444",
-                              fillOpacity: 0.4,
-                            },
-                          ]}
-                          xAxisKey="year"
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="mt-6 text-center text-gray-500 dark:text-gray-400 italic">
-                    So sánh tăng trưởng thị trường MLM và thương mại điện tử
-                    toàn cầu
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-2 gap-4">
-                    <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg flex items-center">
-                      <TrendingUp className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          TMĐT tăng trưởng
-                        </p>
-                        <p className="text-xl font-bold text-red-600 dark:text-red-400">
-                          +15.7%
-                        </p>
-                      </div>
-                    </div>
-                    <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg flex items-center">
-                      <BarChart2 className="h-5 w-5 text-indigo-500 mr-2 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          MLM biến động
-                        </p>
-                        <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
-                          -3.2%
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Enhanced Chart */}
+            <div>
+              {chartView === "line" ? (
+                <EnhancedLineChart
+                  title="TMĐT vs MLM: Tăng trưởng so sánh"
+                  subtitle="So sánh tốc độ tăng trưởng của thị trường TMĐT và MLM toàn cầu"
+                  data={chartData}
+                  lines={[
+                    {
+                      dataKey: "mlm",
+                      name: "MLM (tỷ USD)",
+                      color: "#8b5cf6",
+                      filterValue: "mlm",
+                    },
+                    {
+                      dataKey: "ecommerce_growth",
+                      name: "TMĐT (nghìn tỷ USD)",
+                      color: "#ef4444",
+                      filterValue: "ecommerce_growth",
+                    },
+                  ]}
+                  xAxisKey="year"
+                  height={280}
+                  animate={true}
+                  grid={true}
+                  filterOptions={filterOptions}
+                  formatters={{
+                    valueFormatter: valueFormatter,
+                    labelFormatter: labelFormatter,
+                  }}
+                  timeRange={false}
+                  annotations={chartAnnotations}
+                  variant="glass"
+                  shadow="lg"
+                  hover="scale"
+                  animation="fadeIn"
+                  info="Biểu đồ so sánh tốc độ tăng trưởng của thị trường TMĐT và MLM trong 5 năm gần đây. Số liệu MLM theo tỷ USD, trong khi số liệu TMĐT theo nghìn tỷ USD (đã chia tỷ lệ để so sánh)."
+                  actions={
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setChartView("area")}
+                      className="text-xs"
+                    >
+                      Xem dạng Area
+                    </Button>
+                  }
+                />
+              ) : (
+                <EnhancedAreaChart
+                  title="TMĐT vs MLM: Tăng trưởng so sánh"
+                  subtitle="So sánh tốc độ tăng trưởng của thị trường TMĐT và MLM toàn cầu"
+                  data={chartData}
+                  areas={[
+                    {
+                      dataKey: "mlm",
+                      name: "MLM (tỷ USD)",
+                      color: "#8b5cf6",
+                      fillOpacity: 0.6,
+                      filterValue: "mlm",
+                    },
+                    {
+                      dataKey: "ecommerce_growth",
+                      name: "TMĐT (nghìn tỷ USD)",
+                      color: "#ef4444",
+                      fillOpacity: 0.6,
+                      filterValue: "ecommerce_growth",
+                    },
+                  ]}
+                  xAxisKey="year"
+                  height={280}
+                  animate={true}
+                  grid={true}
+                  filterOptions={filterOptions}
+                  formatters={{
+                    valueFormatter: valueFormatter,
+                    labelFormatter: labelFormatter,
+                  }}
+                  timeRange={false}
+                  annotations={chartAnnotations}
+                  variant="glass"
+                  shadow="lg"
+                  hover="scale"
+                  animation="fadeIn"
+                  info="Biểu đồ so sánh tốc độ tăng trưởng của thị trường TMĐT và MLM trong 5 năm gần đây. Số liệu MLM theo tỷ USD, trong khi số liệu TMĐT theo nghìn tỷ USD (đã chia tỷ lệ để so sánh)."
+                  actions={
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setChartView("line")}
+                      className="text-xs"
+                    >
+                      Xem dạng Line
+                    </Button>
+                  }
+                />
+              )}
             </div>
           </div>
 
