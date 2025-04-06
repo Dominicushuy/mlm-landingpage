@@ -2,7 +2,15 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
-import { BarChart, LineChart, PieChart } from "../charts/chart-components";
+import {
+  EnhancedLineChart,
+  EnhancedBarChart,
+  EnhancedPieChart,
+  KpiCard,
+  DashboardGrid,
+  DashboardGridItem,
+  SparklineCard,
+} from "../charts/chart-components";
 import { FeatureCard, StatCard } from "../features/feature-card";
 import {
   BarChart2,
@@ -28,7 +36,7 @@ const AutomationDashboard = ({ className }) => {
   const [selectedView, setSelectedView] = useState("overview");
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // Sample data (same as original)
+  // Sample data
   const overviewData = [
     { month: "Jan", campaigns: 5, leads: 120, conversions: 32 },
     { month: "Feb", campaigns: 7, leads: 145, conversions: 41 },
@@ -66,6 +74,35 @@ const AutomationDashboard = ({ className }) => {
     timeSpent: 112,
     timeSpentTrend: -23.5,
   };
+
+  // Data for sparkline charts
+  const emailTrendData = [
+    { month: "Jan", value: 2845 },
+    { month: "Feb", value: 2965 },
+    { month: "Mar", value: 3142 },
+    { month: "Apr", value: 3245 },
+  ];
+
+  const leadTrendData = [
+    { month: "Jan", value: 185 },
+    { month: "Feb", value: 205 },
+    { month: "Mar", value: 220 },
+    { month: "Apr", value: 245 },
+  ];
+
+  const conversionTrendData = [
+    { month: "Jan", value: 65 },
+    { month: "Feb", value: 72 },
+    { month: "Mar", value: 78 },
+    { month: "Apr", value: 86 },
+  ];
+
+  const timeSavedTrendData = [
+    { month: "Jan", value: 82 },
+    { month: "Feb", value: 95 },
+    { month: "Mar", value: 104 },
+    { month: "Apr", value: 112 },
+  ];
 
   // Animation variants
   const containerVariants = {
@@ -204,138 +241,68 @@ const AutomationDashboard = ({ className }) => {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          {
-            id: "emails",
-            icon: Mail,
-            title: "Email đã gửi",
-            value: automationMetrics.emailsSent.toLocaleString(),
-            trend: automationMetrics.emailOpenRateTrend,
-            trendLabel: "so với trước",
-            description: "Tổng số email đã gửi trong kỳ",
-            bgGradient:
-              "from-blue-50 to-blue-100/50 dark:from-blue-900/30 dark:to-blue-800/20",
-            iconGradient:
-              "from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500",
-            borderColor: "border-blue-200 dark:border-blue-700/50",
-          },
-          {
-            id: "leads",
-            icon: Users,
-            title: "Leads được tạo",
-            value: automationMetrics.leadGeneration.toLocaleString(),
-            trend: automationMetrics.leadGenerationTrend,
-            trendLabel: "so với trước",
-            description: "Số leads mới được tạo từ chiến dịch",
-            bgGradient:
-              "from-indigo-50 to-indigo-100/50 dark:from-indigo-900/30 dark:to-indigo-800/20",
-            iconGradient:
-              "from-indigo-500 to-indigo-600 dark:from-indigo-400 dark:to-indigo-500",
-            borderColor: "border-indigo-200 dark:border-indigo-700/50",
-          },
-          {
-            id: "conversions",
-            icon: DollarSign,
-            title: "Conversions",
-            value: automationMetrics.conversions.toLocaleString(),
-            trend: automationMetrics.conversionsTrend,
-            trendLabel: "so với trước",
-            description: "Số khách hàng đã hoàn tất giao dịch",
-            bgGradient:
-              "from-green-50 to-green-100/50 dark:from-green-900/30 dark:to-green-800/20",
-            iconGradient:
-              "from-green-500 to-green-600 dark:from-green-400 dark:to-green-500",
-            borderColor: "border-green-200 dark:border-green-700/50",
-          },
-          {
-            id: "time",
-            icon: Clock,
-            title: "Thời gian tiết kiệm",
-            value: `${automationMetrics.timeSpent}h`,
-            trend: automationMetrics.timeSpentTrend,
-            trendLabel: "so với trước",
-            description: "Thời gian tiết kiệm nhờ tự động hóa",
-            bgGradient:
-              "from-amber-50 to-amber-100/50 dark:from-amber-900/30 dark:to-amber-800/20",
-            iconGradient:
-              "from-amber-500 to-amber-600 dark:from-amber-400 dark:to-amber-500",
-            borderColor: "border-amber-200 dark:border-amber-700/50",
-          },
-        ].map((metric, index) => (
-          <div key={metric.id}>
-            <motion.div
-              variants={itemVariants}
-              whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              onMouseEnter={() => setHoveredCard(metric.id)}
-              onMouseLeave={() => setHoveredCard(null)}
-            >
-              <Card
-                className={`bg-gradient-to-br ${metric.bgGradient} border ${
-                  metric.borderColor
-                } backdrop-blur-sm shadow-md transition-all duration-300 ${
-                  hoveredCard === metric.id ? "shadow-lg" : ""
-                } overflow-hidden`}
-              >
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
-                        {metric.title}
-                      </p>
-                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {metric.value}
-                      </h3>
-                    </div>
-                    <div
-                      className={`rounded-lg p-2.5 bg-gradient-to-br ${metric.iconGradient} text-white shadow-sm`}
-                    >
-                      <metric.icon className="h-5 w-5" />
-                    </div>
-                  </div>
+      {/* KPI Cards with Sparklines */}
+      <DashboardGrid columns={4} gap="md" className="mb-6">
+        <DashboardGridItem>
+          <motion.div variants={itemVariants}>
+            <SparklineCard
+              title="Email đã gửi"
+              value={automationMetrics.emailsSent.toLocaleString()}
+              change={automationMetrics.emailOpenRateTrend}
+              sparklineData={emailTrendData}
+              sparklineKey="value"
+              sparklineType="area"
+              color="blue"
+              icon={<Mail className="h-5 w-5" />}
+            />
+          </motion.div>
+        </DashboardGridItem>
 
-                  <div className="flex items-center mt-3">
-                    <div
-                      className={`flex items-center ${
-                        metric.trend > 0
-                          ? "text-green-600 dark:text-green-400"
-                          : "text-red-600 dark:text-red-400"
-                      } text-xs font-medium`}
-                    >
-                      {metric.trend > 0 ? (
-                        <ArrowUp className="h-3 w-3 mr-1" />
-                      ) : (
-                        <ArrowDown className="h-3 w-3 mr-1" />
-                      )}
-                      {Math.abs(metric.trend)}% {metric.trendLabel}
-                    </div>
-                  </div>
+        <DashboardGridItem>
+          <motion.div variants={itemVariants}>
+            <SparklineCard
+              title="Leads được tạo"
+              value={automationMetrics.leadGeneration.toLocaleString()}
+              change={automationMetrics.leadGenerationTrend}
+              sparklineData={leadTrendData}
+              sparklineKey="value"
+              sparklineType="area"
+              color="purple"
+              icon={<Users className="h-5 w-5" />}
+            />
+          </motion.div>
+        </DashboardGridItem>
 
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    {metric.description}
-                  </p>
+        <DashboardGridItem>
+          <motion.div variants={itemVariants}>
+            <SparklineCard
+              title="Conversions"
+              value={automationMetrics.conversions.toLocaleString()}
+              change={automationMetrics.conversionsTrend}
+              sparklineData={conversionTrendData}
+              sparklineKey="value"
+              sparklineType="area"
+              color="green"
+              icon={<DollarSign className="h-5 w-5" />}
+            />
+          </motion.div>
+        </DashboardGridItem>
 
-                  {/* Decorative bottom bar that animates on hover */}
-                  <div className="mt-3 h-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <motion.div
-                      className={`h-full ${
-                        metric.trend > 0
-                          ? "bg-green-500 dark:bg-green-400"
-                          : "bg-red-500 dark:bg-red-400"
-                      } rounded-full`}
-                      initial={{ width: "30%" }}
-                      animate={{
-                        width: hoveredCard === metric.id ? "100%" : "30%",
-                      }}
-                      transition={{ duration: 0.5 }}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        ))}
-      </div>
+        <DashboardGridItem>
+          <motion.div variants={itemVariants}>
+            <SparklineCard
+              title="Thời gian tiết kiệm"
+              value={`${automationMetrics.timeSpent}h`}
+              change={Math.abs(automationMetrics.timeSpentTrend)}
+              sparklineData={timeSavedTrendData}
+              sparklineKey="value"
+              sparklineType="area"
+              color="yellow"
+              icon={<Clock className="h-5 w-5" />}
+            />
+          </motion.div>
+        </DashboardGridItem>
+      </DashboardGrid>
 
       <div className="grid grid-cols-3 gap-4 mt-6">
         <div className="col-span-2">
@@ -364,7 +331,7 @@ const AutomationDashboard = ({ className }) => {
 
                   {selectedView === "overview" && (
                     <div className="relative z-10">
-                      <LineChart
+                      <EnhancedLineChart
                         data={overviewData}
                         lines={[
                           {
@@ -379,12 +346,19 @@ const AutomationDashboard = ({ className }) => {
                           },
                         ]}
                         xAxisKey="month"
+                        animate={true}
+                        grid={true}
+                        height={280}
+                        formatters={{
+                          valueFormatter: (value) => `${value}`,
+                        }}
+                        unit=""
                       />
                     </div>
                   )}
                   {selectedView === "channels" && (
                     <div className="relative z-10">
-                      <BarChart
+                      <EnhancedBarChart
                         data={overviewData}
                         bars={[
                           { dataKey: "campaigns", name: "Chiến dịch" },
@@ -396,12 +370,18 @@ const AutomationDashboard = ({ className }) => {
                           },
                         ]}
                         xAxisKey="month"
+                        animate={true}
+                        grid={true}
+                        height={280}
+                        formatters={{
+                          valueFormatter: (value) => `${value}`,
+                        }}
                       />
                     </div>
                   )}
                   {selectedView === "funnel" && (
                     <div className="relative z-10">
-                      <BarChart
+                      <EnhancedBarChart
                         data={conversionData}
                         bars={[
                           {
@@ -411,6 +391,13 @@ const AutomationDashboard = ({ className }) => {
                           },
                         ]}
                         xAxisKey="stage"
+                        animate={true}
+                        grid={true}
+                        height={280}
+                        layout="vertical"
+                        formatters={{
+                          valueFormatter: (value) => `${value}`,
+                        }}
                       />
                     </div>
                   )}
@@ -457,11 +444,17 @@ const AutomationDashboard = ({ className }) => {
                   <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 dark:from-indigo-900/10 dark:to-purple-900/10 rounded-lg -z-0"></div>
 
                   <div className="relative z-10">
-                    <PieChart
+                    <EnhancedPieChart
                       data={channelData}
                       innerRadius={50}
                       outerRadius={80}
                       paddingAngle={4}
+                      animate={true}
+                      showLabel={false}
+                      colors={["#3b82f6", "#8b5cf6", "#ec4899", "#14b8a6"]}
+                      formatters={{
+                        valueFormatter: (value) => `${value}%`,
+                      }}
                     />
                   </div>
                 </div>
@@ -536,170 +529,286 @@ const AutomationDashboard = ({ className }) => {
       <div className="grid grid-cols-2 gap-4 mt-6">
         <div>
           <motion.div variants={itemVariants}>
-            <FeatureCard
-              icon={Filter}
-              title="Automation Workflows"
-              description={
-                <div className="mt-4 space-y-3">
-                  <WorkflowItemEnhanced
-                    name="Welcome Series"
-                    status="active"
-                    stats={{ sent: 328, opened: 245, clicked: 188 }}
-                  />
-                  <WorkflowItemEnhanced
-                    name="Abandoned Cart"
-                    status="active"
-                    stats={{ sent: 156, opened: 98, clicked: 73 }}
-                  />
-                  <WorkflowItemEnhanced
-                    name="Re-engagement"
-                    status="paused"
-                    stats={{ sent: 215, opened: 112, clicked: 65 }}
-                  />
-                  <WorkflowItemEnhanced
-                    name="Post-Purchase"
-                    status="active"
-                    stats={{ sent: 187, opened: 145, clicked: 104 }}
-                  />
+            <Card className="border border-blue-200/50 dark:border-blue-800/30 bg-gradient-to-br from-white/80 to-blue-50/50 dark:from-gray-800/80 dark:to-blue-900/20 backdrop-blur-sm shadow-md h-full">
+              <CardHeader className="border-b border-blue-100 dark:border-blue-800/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4">
+                <CardTitle className="flex items-center">
+                  <Filter className="h-5 w-5 text-blue-500 dark:text-blue-400 mr-2" />
+                  <span>Automation Workflows</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-5">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 border border-blue-100 dark:border-blue-800/50 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-sm hover:shadow transition-all">
+                    <div className="flex items-center">
+                      <div className="mr-3">
+                        <Zap className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 dark:text-white flex items-center">
+                          Welcome Series
+                          <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                            Active
+                          </span>
+                        </h4>
+                        <div className="flex space-x-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          <span>328 sent</span>
+                          <span>245 opened</span>
+                          <span>188 clicked</span>
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                    >
+                      Edit
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 border border-blue-100 dark:border-blue-800/50 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-sm hover:shadow transition-all">
+                    <div className="flex items-center">
+                      <div className="mr-3">
+                        <Zap className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 dark:text-white flex items-center">
+                          Abandoned Cart
+                          <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                            Active
+                          </span>
+                        </h4>
+                        <div className="flex space-x-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          <span>156 sent</span>
+                          <span>98 opened</span>
+                          <span>73 clicked</span>
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                    >
+                      Edit
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 border border-blue-100 dark:border-blue-800/50 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-sm hover:shadow transition-all">
+                    <div className="flex items-center">
+                      <div className="mr-3">
+                        <Zap className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 dark:text-white flex items-center">
+                          Re-engagement
+                          <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                            Paused
+                          </span>
+                        </h4>
+                        <div className="flex space-x-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          <span>215 sent</span>
+                          <span>112 opened</span>
+                          <span>65 clicked</span>
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                    >
+                      Edit
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 border border-blue-100 dark:border-blue-800/50 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-sm hover:shadow transition-all">
+                    <div className="flex items-center">
+                      <div className="mr-3">
+                        <Zap className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 dark:text-white flex items-center">
+                          Post-Purchase
+                          <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                            Active
+                          </span>
+                        </h4>
+                        <div className="flex space-x-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          <span>187 sent</span>
+                          <span>145 opened</span>
+                          <span>104 clicked</span>
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                    >
+                      Edit
+                    </Button>
+                  </div>
                 </div>
-              }
-              variant="default"
-              iconPosition="top"
-              className="border border-blue-200/50 dark:border-blue-800/30 bg-gradient-to-br from-white/80 to-blue-50/50 dark:from-gray-800/80 dark:to-blue-900/20 backdrop-blur-sm shadow-md"
-            />
+              </CardContent>
+            </Card>
           </motion.div>
         </div>
 
         <div>
           <motion.div variants={itemVariants}>
-            <FeatureCard
-              icon={BarChart2}
-              title="Campaign Performance"
-              description={
-                <div className="mt-4 space-y-3">
-                  <CampaignItemEnhanced
-                    name="Summer Sale"
-                    performance={85}
-                    status="completed"
-                  />
-                  <CampaignItemEnhanced
-                    name="New Product Launch"
-                    performance={68}
-                    status="active"
-                  />
-                  <CampaignItemEnhanced
-                    name="Customer Feedback"
-                    performance={42}
-                    status="active"
-                  />
-                  <CampaignItemEnhanced
-                    name="Loyalty Program"
-                    performance={91}
-                    status="active"
-                  />
+            <Card className="border border-indigo-200/50 dark:border-indigo-800/30 bg-gradient-to-br from-white/80 to-indigo-50/50 dark:from-gray-800/80 dark:to-indigo-900/20 backdrop-blur-sm shadow-md h-full">
+              <CardHeader className="border-b border-indigo-100 dark:border-indigo-800/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4">
+                <CardTitle className="flex items-center">
+                  <BarChart2 className="h-5 w-5 text-indigo-500 dark:text-indigo-400 mr-2" />
+                  <span>Campaign Performance</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-5">
+                <div className="space-y-3">
+                  <div className="p-3 border border-indigo-100 dark:border-indigo-800/50 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-sm hover:shadow transition-all">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="mr-3">
+                          <Bell className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
+                        </div>
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          Summer Sale
+                        </h4>
+                      </div>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                        completed
+                      </span>
+                    </div>
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between text-sm mb-1.5">
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Performance
+                        </span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          85%
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                        <div
+                          className="h-2.5 rounded-full bg-gradient-to-r from-green-500 to-green-400"
+                          style={{
+                            width: "85%",
+                            transition: "width 1s ease-in-out",
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 border border-indigo-100 dark:border-indigo-800/50 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-sm hover:shadow transition-all">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="mr-3">
+                          <Bell className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
+                        </div>
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          New Product Launch
+                        </h4>
+                      </div>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                        active
+                      </span>
+                    </div>
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between text-sm mb-1.5">
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Performance
+                        </span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          68%
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                        <div
+                          className="h-2.5 rounded-full bg-gradient-to-r from-blue-500 to-blue-400"
+                          style={{
+                            width: "68%",
+                            transition: "width 1s ease-in-out",
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 border border-indigo-100 dark:border-indigo-800/50 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-sm hover:shadow transition-all">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="mr-3">
+                          <Bell className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
+                        </div>
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          Customer Feedback
+                        </h4>
+                      </div>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                        active
+                      </span>
+                    </div>
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between text-sm mb-1.5">
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Performance
+                        </span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          42%
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                        <div
+                          className="h-2.5 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-400"
+                          style={{
+                            width: "42%",
+                            transition: "width 1s ease-in-out",
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 border border-indigo-100 dark:border-indigo-800/50 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-sm hover:shadow transition-all">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="mr-3">
+                          <Bell className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
+                        </div>
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          Loyalty Program
+                        </h4>
+                      </div>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                        active
+                      </span>
+                    </div>
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between text-sm mb-1.5">
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Performance
+                        </span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          91%
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                        <div
+                          className="h-2.5 rounded-full bg-gradient-to-r from-green-500 to-green-400"
+                          style={{
+                            width: "91%",
+                            transition: "width 1s ease-in-out",
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              }
-              variant="default"
-              iconPosition="top"
-              className="border border-indigo-200/50 dark:border-indigo-800/30 bg-gradient-to-br from-white/80 to-indigo-50/50 dark:from-gray-800/80 dark:to-indigo-900/20 backdrop-blur-sm shadow-md"
-            />
+              </CardContent>
+            </Card>
           </motion.div>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-// Helper components with enhanced styling
-const WorkflowItemEnhanced = ({ name, status, stats }) => {
-  return (
-    <motion.div
-      whileHover={{ x: 5, transition: { duration: 0.2 } }}
-      className="flex items-center justify-between p-3.5 border border-blue-100 dark:border-blue-800/50 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-sm hover:shadow transition-all"
-    >
-      <div>
-        <div className="flex items-center">
-          <div className="mr-3">
-            <Zap className="h-5 w-5 text-blue-500 dark:text-blue-400" />
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-900 dark:text-white flex items-center">
-              {name}
-              <span
-                className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
-                  status === "active"
-                    ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                    : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-                }`}
-              >
-                {status === "active" ? "Active" : "Paused"}
-              </span>
-            </h4>
-            <div className="flex space-x-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
-              <span>{stats.sent} sent</span>
-              <span>{stats.opened} opened</span>
-              <span>{stats.clicked} clicked</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-      >
-        Edit
-      </Button>
-    </motion.div>
-  );
-};
-
-const CampaignItemEnhanced = ({ name, performance, status }) => {
-  return (
-    <motion.div
-      whileHover={{ x: 5, transition: { duration: 0.2 } }}
-      className="p-3.5 border border-indigo-100 dark:border-indigo-800/50 rounded-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-sm hover:shadow transition-all"
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <div className="mr-3">
-            <Bell className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
-          </div>
-          <h4 className="font-medium text-gray-900 dark:text-white">{name}</h4>
-        </div>
-        <span
-          className={`text-xs px-2 py-0.5 rounded-full ${
-            status === "active"
-              ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-              : status === "completed"
-              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-              : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-          }`}
-        >
-          {status}
-        </span>
-      </div>
-      <div className="mt-3">
-        <div className="flex items-center justify-between text-sm mb-1.5">
-          <span className="text-gray-600 dark:text-gray-400">Performance</span>
-          <span className="font-medium text-gray-900 dark:text-white">
-            {performance}%
-          </span>
-        </div>
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
-          <div
-            className={`h-2.5 rounded-full ${
-              performance >= 80
-                ? "bg-gradient-to-r from-green-500 to-green-400"
-                : performance >= 50
-                ? "bg-gradient-to-r from-blue-500 to-blue-400"
-                : "bg-gradient-to-r from-yellow-500 to-yellow-400"
-            }`}
-            style={{
-              width: `${performance}%`,
-              transition: "width 1s ease-in-out",
-            }}
-          ></div>
         </div>
       </div>
     </motion.div>

@@ -36,9 +36,6 @@ import {
   Mail,
 } from "lucide-react";
 
-/**
- * Enhanced Flow builder component for creating marketing automation workflows
- */
 const AutomationFlowBuilder = ({ className }) => {
   const [steps, setSteps] = useState([
     { id: 1, type: "trigger", name: "Start", icon: MailPlus },
