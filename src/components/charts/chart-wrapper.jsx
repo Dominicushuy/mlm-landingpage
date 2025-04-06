@@ -479,10 +479,21 @@ const EnhancedChartGridItem = React.forwardRef(
 
 EnhancedChartGridItem.displayName = "EnhancedChartGridItem";
 
+// Thêm các aliases để tương thích với các imports hiện tại
+const ChartWrapper = EnhancedChartWrapper;
+const ChartLegend = EnhancedChartLegend;
+const ChartGrid = EnhancedChartGrid;
+const ChartGridItem = EnhancedChartGridItem;
+
 export {
   EnhancedChartWrapper,
   EnhancedChartLegend,
   EnhancedChartGrid,
   EnhancedChartGridItem,
   chartWrapperVariants,
+  // Export aliases để các file khác có thể import với tên cũ
+  ChartWrapper,
+  ChartLegend,
+  ChartGrid,
+  ChartGridItem,
 };

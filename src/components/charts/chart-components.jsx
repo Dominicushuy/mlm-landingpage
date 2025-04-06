@@ -26,7 +26,7 @@ import {
   ReferenceLine,
   ReferenceDot,
 } from "recharts";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "../../lib/utils";
 import { ChartWrapper, ChartLegend } from "./chart-wrapper";
 import {
