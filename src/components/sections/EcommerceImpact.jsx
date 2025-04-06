@@ -150,7 +150,6 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
                     },
                   ]}
                   xAxisKey="year"
-                  height={280}
                   animate={true}
                   grid={true}
                   filterOptions={filterOptions}
@@ -175,6 +174,12 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
                       Xem dạng Area
                     </Button>
                   }
+                  height={350} // Tăng chiều cao
+                  contentClassName="pb-8" // Thêm padding bottom
+                  legendProps={{
+                    verticalAlign: "top", // Thử đặt legend ở trên
+                    align: "center",
+                  }}
                 />
               ) : (
                 <EnhancedAreaChart
@@ -198,7 +203,6 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
                     },
                   ]}
                   xAxisKey="year"
-                  height={280}
                   animate={true}
                   grid={true}
                   filterOptions={filterOptions}
@@ -223,6 +227,12 @@ const EcommerceImpact = forwardRef(({ isVisible }, ref) => {
                       Xem dạng Line
                     </Button>
                   }
+                  height={350} // Tăng chiều cao
+                  contentClassName="pb-8" // Thêm padding bottom
+                  legendProps={{
+                    verticalAlign: "top", // Thử đặt legend ở trên
+                    align: "center",
+                  }}
                 />
               )}
             </div>
