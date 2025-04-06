@@ -22,7 +22,7 @@ import {
   SectionDescription,
 } from "../layout/section";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardTitle, CardHeader } from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 import {
   EnhancedBarChart,
   EnhancedPieChart,
@@ -32,9 +32,7 @@ import {
   DashboardGridItem,
 } from "../charts/chart-components";
 import {
-  ChartWrapper,
   EnhancedChartWrapper,
-  ChartLegend,
   ChartGrid,
   ChartGridItem,
 } from "../charts/chart-wrapper";

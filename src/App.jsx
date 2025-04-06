@@ -9,7 +9,7 @@ import CaseStudy from "./components/sections/CaseStudy";
 import AmwayDetailCaseStudy from "./components/sections/AmwayDetailCaseStudy";
 import Solutions from "./components/sections/Solutions";
 import Tools from "./components/sections/Tools";
-// import Strategy from "./components/sections/Strategy";
+import Strategy from "./components/sections/Strategy";
 // import Investment from "./components/sections/Investment";
 // import DemoSection from "./components/sections/DemoSection";
 import { ArrowUp, MessageSquare, Moon, Sun } from "lucide-react";
@@ -313,7 +313,7 @@ const App = () => {
         </SectionWrapper>
 
         {/* Strategy Section */}
-        {/* <SectionWrapper
+        <SectionWrapper
           id="strategy"
           padding="large"
           variant={SECTION_COLORS.strategy}
@@ -323,7 +323,7 @@ const App = () => {
             isVisible={isVisible.strategy}
             darkMode={darkMode}
           />
-        </SectionWrapper> */}
+        </SectionWrapper>
 
         {/* Demo Section */}
         {/* <SectionWrapper id="demo" padding="large" variant={SECTION_COLORS.demo}>

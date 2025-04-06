@@ -18,7 +18,20 @@ import {
 import { ResponsiveCard } from "../ui/responsive-card";
 import { Button } from "../ui/button";
 import { toolsComparisonData } from "../../data/siteData";
-import { BarChart } from "../charts/chart-components";
+import {
+  // Thay thế BarChart cũ bằng EnhancedBarChart mới
+  EnhancedBarChart,
+  EnhancedPieChart,
+  KpiCard,
+  ENHANCED_COLORS,
+} from "../charts/chart-components";
+
+// Import các component từ chart-wrapper
+import {
+  EnhancedChartWrapper as ChartWrapper,
+  EnhancedChartGrid as ChartGrid,
+  EnhancedChartGridItem as ChartGridItem,
+} from "../charts/chart-wrapper";
 import {
   TrendingUp,
   TrendingDown,
@@ -44,6 +57,42 @@ const Tools = forwardRef(({ isVisible }, ref) => {
   const [hoveredTool, setHoveredTool] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
   const sectionRef = useRef(null);
+
+  // Dữ liệu biểu đồ pie mới để sử dụng trong dashboard
+  const toolCategoryData = [
+    { name: "Quản lý mạng lưới", value: 35 },
+    { name: "CRM/Email Marketing", value: 25 },
+    { name: "Phân tích dữ liệu", value: 30 },
+    { name: "Tích hợp đa kênh", value: 10 },
+  ];
+
+  // Prep data for KPIs
+  const kpiData = [
+    {
+      title: "Hiệu suất làm việc",
+      value: 85,
+      previousValue: 70,
+      suffix: "%",
+      icon: <TrendingUp className="h-6 w-6" />,
+      color: "blue",
+    },
+    {
+      title: "Tự động hóa quy trình",
+      value: 78,
+      previousValue: 55,
+      suffix: "%",
+      icon: <Zap className="h-6 w-6" />,
+      color: "purple",
+    },
+    {
+      title: "ROI Trung bình",
+      value: 3.5,
+      previousValue: 2.8,
+      suffix: "x",
+      icon: <DollarSign className="h-6 w-6" />,
+      color: "green",
+    },
+  ];
 
   // Track mouse position for 3D card effect
   useEffect(() => {
@@ -152,6 +201,27 @@ const Tools = forwardRef(({ isVisible }, ref) => {
           </SectionDescription>
         </SectionHeader>
 
+        {/* KPI Dashboard - Thêm mới */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 mb-10"
+        >
+          {kpiData.map((kpi, index) => (
+            <motion.div key={index} variants={itemVariants}>
+              <KpiCard
+                title={kpi.title}
+                value={kpi.value}
+                previousValue={kpi.previousValue}
+                suffix={kpi.suffix}
+                icon={kpi.icon}
+                color={kpi.color}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+
         <motion.div
           initial="hidden"
           animate="visible"
@@ -169,112 +239,176 @@ const Tools = forwardRef(({ isVisible }, ref) => {
             }}
             className="mb-12"
           >
-            <ResponsiveCard
-              withBorder
-              className="shadow-xl backdrop-blur-md bg-white/90 dark:bg-gray-800/90 border-white/30 dark:border-gray-700/30"
-              footer={
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Dữ liệu cập nhật Q1 2025
-                  </p>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-1 text-xs"
-                    >
-                      <Download className="h-3 w-3" /> Tải báo cáo
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-1 text-xs"
-                    >
-                      <ExternalLink className="h-3 w-3" /> Xem chi tiết
-                    </Button>
-                  </div>
-                </div>
-              }
-            >
-              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-                <div className="flex flex-wrap justify-between items-center gap-4">
-                  <div>
-                    <CardTitle className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
-                      <BarChart2 className="h-5 w-5 text-cyan-500 dark:text-cyan-400 mr-2" />
-                      So sánh chức năng các công cụ
-                    </CardTitle>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      Đánh giá hiệu suất theo từng tiêu chí
-                    </p>
+            {/* Tạo container với background light cho chart */}
+            <div className="mb-12 rounded-xl overflow-hidden">
+              <div className="w-full">
+                <EnhancedBarChart
+                  title="So sánh chức năng các công cụ"
+                  subtitle="Đánh giá hiệu suất theo từng tiêu chí"
+                  data={toolsComparisonData}
+                  xAxisKey="name"
+                  grid={true}
+                  height={400}
+                  bars={[
+                    {
+                      dataKey: "epixel",
+                      name: "Epixel MLM Software",
+                      color: "#06b6d4",
+                    },
+                    {
+                      dataKey: "global",
+                      name: "Global MLM Software",
+                      color: "#0284c7",
+                    },
+                    {
+                      dataKey: "bi",
+                      name: "Công cụ BI (Tableau/Sisense)",
+                      color: "#0d9488",
+                    },
+                  ]}
+                  className="text-gray-900"
+                  caption="Dữ liệu cập nhật Q1 2025"
+                  info="So sánh các chức năng chính giữa các công cụ dựa trên mức độ hỗ trợ và tính năng"
+                  animate={true}
+                  filterOptions={[
+                    { label: "Quản lý hoa hồng", value: "Quản lý hoa hồng" },
+                    { label: "CRM", value: "CRM" },
+                    { label: "Email Marketing", value: "Email Marketing" },
+                    { label: "Phân tích dữ liệu", value: "Phân tích dữ liệu" },
+                    { label: "Tích hợp đa kênh", value: "Tích hợp đa kênh" },
+                  ]}
+                  layout="horizontal"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Chart Grid mới với các biểu đồ bổ sung */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div className="bg-white dark:bg-white rounded-xl overflow-hidden">
+              {/* PieChart với background light */}
+              <EnhancedPieChart
+                title="Phân bổ nhu cầu theo loại công cụ"
+                data={toolCategoryData}
+                colors={ENHANCED_COLORS.primary}
+                height={320}
+                animate={true}
+                innerRadius={60}
+                outerRadius={120}
+                showLabel={true}
+                info="Phân tích nhu cầu thị trường dựa trên số lượng truy vấn và yêu cầu từ doanh nghiệp MLM"
+                paddingAngle={2}
+                className="text-gray-900"
+                formatters={{
+                  valueFormatter: (value) => `${value}%`,
+                }}
+              />
+            </div>
+
+            <div>
+              <div className="w-full h-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-xl border border-white/30 dark:border-gray-700/30 shadow-lg p-6">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                  Chi tiết đánh giá công cụ
+                </h3>
+
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-gray-900 dark:text-white flex items-center">
+                      <Database className="h-4 w-4 text-cyan-500 mr-2" />
+                      Epixel MLM Software
+                    </h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600 dark:text-gray-300">
+                          Quản lý mạng lưới
+                        </span>
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          90/100
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                        <div
+                          className="bg-cyan-500 dark:bg-cyan-400 h-full rounded-full"
+                          style={{ width: "90%" }}
+                        ></div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600 dark:text-gray-300">
+                          Phân tích dữ liệu
+                        </span>
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          75/100
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                        <div
+                          className="bg-cyan-500 dark:bg-cyan-400 h-full rounded-full"
+                          style={{ width: "75%" }}
+                        ></div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600 dark:text-gray-300">
+                          Tích hợp đa kênh
+                        </span>
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          85/100
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                        <div
+                          className="bg-cyan-500 dark:bg-cyan-400 h-full rounded-full"
+                          style={{ width: "85%" }}
+                        ></div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant={activeTab === "compare" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setActiveTab("compare")}
-                      className={
-                        activeTab === "compare"
-                          ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white"
-                          : ""
-                      }
-                    >
-                      Biểu đồ so sánh
-                    </Button>
-                    <Button
-                      variant={activeTab === "detail" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setActiveTab("detail")}
-                      className={
-                        activeTab === "detail"
-                          ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white"
-                          : ""
-                      }
-                    >
-                      Bảng chi tiết
-                    </Button>
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-gray-900 dark:text-white flex items-center">
+                      <Users className="h-4 w-4 text-blue-500 mr-2" />
+                      Global MLM Software
+                    </h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600 dark:text-gray-300">
+                          Quản lý CRM
+                        </span>
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          90/100
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                        <div
+                          className="bg-blue-500 dark:bg-blue-400 h-full rounded-full"
+                          style={{ width: "90%" }}
+                        ></div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600 dark:text-gray-300">
+                          Tích hợp đa ngôn ngữ
+                        </span>
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          95/100
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                        <div
+                          className="bg-blue-500 dark:bg-blue-400 h-full rounded-full"
+                          style={{ width: "95%" }}
+                        ></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="py-6">
-                {activeTab === "compare" ? (
-                  <div className="h-80 md:h-96 relative">
-                    {/* Chart glow effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 rounded-lg"></div>
-                    <BarChart
-                      data={toolsComparisonData}
-                      bars={[
-                        {
-                          dataKey: "epixel",
-                          name: "Epixel MLM Software",
-                          color: "#06b6d4",
-                        },
-                        {
-                          dataKey: "global",
-                          name: "Global MLM Software",
-                          color: "#0284c7",
-                        },
-                        {
-                          dataKey: "bi",
-                          name: "Công cụ BI (Tableau/Sisense)",
-                          color: "#0d9488",
-                        },
-                      ]}
-                      grid={true}
-                    />
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto mt-2">
-                    <EnhancedComparisonTable
-                      onRowHover={handleRowHover}
-                      onRowLeave={handleRowLeave}
-                      hoveredRow={hoveredRow}
-                    />
-                  </div>
-                )}
-              </CardContent>
-            </ResponsiveCard>
-          </motion.div>
+              </div>
+            </div>
+          </div>
 
           <motion.div
             variants={itemVariants}
@@ -647,125 +781,6 @@ const ToolCard = ({ tool, isActive, index }) => {
         />
       </CardContent>
     </Card>
-  );
-};
-
-// Enhanced Comparison Table component
-const EnhancedComparisonTable = ({ onRowHover, onRowLeave, hoveredRow }) => {
-  return (
-    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-      <thead className="bg-gray-50 dark:bg-gray-900">
-        <tr>
-          <th
-            scope="col"
-            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-          >
-            Tiêu chí
-          </th>
-          <th
-            scope="col"
-            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-          >
-            Epixel MLM Software
-          </th>
-          <th
-            scope="col"
-            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-          >
-            Global MLM Software
-          </th>
-          <th
-            scope="col"
-            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-          >
-            Công cụ BI (Tableau, Sisense)
-          </th>
-        </tr>
-      </thead>
-      <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-        {[
-          {
-            id: "crm",
-            criteria: "Quản lý CRM",
-            epixel: "Quản lý mạng lưới phân phối đầy đủ, CRM tích hợp",
-            global: "Quản lý thông tin liên hệ, tự động cập nhật CRM",
-            bi: "Hỗ trợ phân tích dữ liệu phân phối",
-            icon: (
-              <Users className="h-5 w-5 text-cyan-500 dark:text-cyan-400" />
-            ),
-          },
-          {
-            id: "commission",
-            criteria: "Quản lý Hoa hồng",
-            epixel: "Tự động hóa tính toán hoa hồng, báo cáo minh bạch",
-            global: "Tự động tính toán và phân phối hoa hồng",
-            bi: "Không áp dụng trực tiếp",
-            icon: (
-              <DollarSign className="h-5 w-5 text-blue-500 dark:text-blue-400" />
-            ),
-          },
-          {
-            id: "email",
-            criteria: "Email Marketing",
-            epixel: "Hỗ trợ các chiến dịch email tự động",
-            global: "Hỗ trợ tự động nuôi dưỡng khách hàng qua email",
-            bi: "Không áp dụng trực tiếp",
-            icon: <Mail className="h-5 w-5 text-teal-500 dark:text-teal-400" />,
-          },
-          {
-            id: "analysis",
-            criteria: "Phân tích Dữ liệu",
-            epixel: "Báo cáo tự động, tích hợp BI cơ bản",
-            global: "Tích hợp các công cụ phân tích và báo cáo",
-            bi: "Phân tích chuyên sâu là thế mạnh chính",
-            icon: (
-              <BarChart2 className="h-5 w-5 text-cyan-500 dark:text-cyan-400" />
-            ),
-          },
-          {
-            id: "multichannel",
-            criteria: "Tích hợp Đa kênh",
-            epixel: "Tích hợp thông báo qua SMS, email và mạng xã hội",
-            global: "Tích hợp tương tác đa kênh",
-            bi: "Không áp dụng trực tiếp",
-            icon: (
-              <Filter className="h-5 w-5 text-blue-500 dark:text-blue-400" />
-            ),
-          },
-        ].map((row) => (
-          <motion.tr
-            key={row.id}
-            onMouseEnter={() => onRowHover(row.id)}
-            onMouseLeave={onRowLeave}
-            whileHover={{ backgroundColor: "rgba(236, 254, 255, 0.5)" }}
-            animate={{
-              backgroundColor:
-                hoveredRow === row.id
-                  ? "rgba(236, 254, 255, 0.5)"
-                  : "rgba(255, 255, 255, 0)",
-            }}
-            transition={{ duration: 0.2 }}
-            className="hover:bg-cyan-50/50 dark:hover:bg-cyan-900/20 transition-colors"
-          >
-            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-              <div className="flex items-center">
-                <div className="mr-2">{row.icon}</div>
-                {row.criteria}
-              </div>
-            </td>
-            <td className="px-6 py-4 whitespace-normal text-sm text-gray-600 dark:text-gray-300">
-              {row.epixel}
-            </td>
-            <td className="px-6 py-4 whitespace-normal text-sm text-gray-600 dark:text-gray-300">
-              {row.global}
-            </td>
-            <td className="px-6 py-4 whitespace-normal text-sm text-gray-600 dark:text-gray-300">
-              {row.bi}
-            </td>
-          </motion.tr>
-        ))}
-      </tbody>
-    </table>
   );
 };
 
