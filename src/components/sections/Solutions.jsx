@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef, useEffect } from "react";
+import React, { forwardRef, useState, useRef, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   Check,
@@ -11,6 +11,8 @@ import {
   Shield,
   BarChart,
   ChevronRight,
+  PieChart,
+  LineChart,
 } from "lucide-react";
 import {
   Section,
@@ -21,8 +23,25 @@ import {
 } from "../layout/section";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardTitle, CardHeader } from "../ui/card";
-import { BarChart as BarChartComponent } from "../charts/chart-components";
-import { automationBenefitsData } from "../../data/siteData";
+import {
+  EnhancedBarChart,
+  EnhancedPieChart,
+  ENHANCED_COLORS,
+  KpiCard,
+  DashboardGrid,
+  DashboardGridItem,
+} from "../charts/chart-components";
+import {
+  ChartWrapper,
+  EnhancedChartWrapper,
+  ChartLegend,
+  ChartGrid,
+  ChartGridItem,
+} from "../charts/chart-wrapper";
+import {
+  automationBenefitsData,
+  benefitsPieChartData,
+} from "../../data/siteData";
 
 const Solutions = forwardRef(({ isVisible }, ref) => {
   const [hoveredCard, setHoveredCard] = useState(null);
@@ -104,6 +123,15 @@ const Solutions = forwardRef(({ isVisible }, ref) => {
     },
   };
 
+  // Dữ liệu so sánh hiệu quả công nghệ
+  const technologyComparisonData = [
+    { name: "Hiệu quả", traditional: 42, automation: 85 },
+    { name: "Chuyển đổi", traditional: 35, automation: 78 },
+    { name: "Chi phí quản lý", traditional: 65, automation: 35 },
+    { name: "Thời gian triển khai", traditional: 70, automation: 40 },
+    { name: "Tính minh bạch", traditional: 30, automation: 90 },
+  ];
+
   return (
     <Section
       id="solutions"
@@ -141,6 +169,57 @@ const Solutions = forwardRef(({ isVisible }, ref) => {
           </SectionDescription>
         </SectionHeader>
 
+        {/* KPI Cards */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="mt-8 mb-16"
+        >
+          <DashboardGrid columns={4} gap="md">
+            <DashboardGridItem>
+              <KpiCard
+                title="Tăng hiệu quả"
+                value={85}
+                previousValue={60}
+                suffix="%"
+                icon={<BarChart2 className="h-6 w-6" />}
+                color="purple"
+              />
+            </DashboardGridItem>
+            <DashboardGridItem>
+              <KpiCard
+                title="Tiết kiệm thời gian"
+                value={72}
+                previousValue={45}
+                suffix="%"
+                icon={<Zap className="h-6 w-6" />}
+                color="blue"
+              />
+            </DashboardGridItem>
+            <DashboardGridItem>
+              <KpiCard
+                title="Chuyển đổi"
+                value={65}
+                previousValue={38}
+                suffix="%"
+                icon={<Users className="h-6 w-6" />}
+                color="green"
+              />
+            </DashboardGridItem>
+            <DashboardGridItem>
+              <KpiCard
+                title="Minh bạch quản lý"
+                value={90}
+                previousValue={50}
+                suffix="%"
+                icon={<Shield className="h-6 w-6" />}
+                color="yellow"
+              />
+            </DashboardGridItem>
+          </DashboardGrid>
+        </motion.div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
           <div>
             <motion.div
@@ -155,50 +234,89 @@ const Solutions = forwardRef(({ isVisible }, ref) => {
                 transition: "transform 0.5s ease",
               }}
             >
-              <Card
-                variant="default"
-                className="bg-gradient-to-br from-white/95 to-white/70 dark:from-gray-800/95 dark:to-gray-800/70 backdrop-blur-md shadow-xl border border-white/30 dark:border-gray-700/30 overflow-hidden"
-              >
-                <CardContent className="p-6 relative">
-                  {/* Decorative elements */}
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 rounded-full blur-xl"></div>
-                  <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-blue-400/10 to-purple-500/10 rounded-full blur-lg"></div>
-
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-6">
-                      <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">
-                        Mức độ hiệu quả của Marketing Automation
-                      </CardTitle>
-                      <div className="p-2 rounded-full bg-purple-100/80 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
-                        <BarChart className="h-5 w-5" />
-                      </div>
-                    </div>
-
-                    <div className="h-80 relative">
-                      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-lg"></div>
-                      <div className="relative z-10">
-                        <BarChartComponent
-                          data={automationBenefitsData}
-                          bars={[
-                            {
-                              dataKey: "value",
-                              name: "Hiệu quả (%)",
-                              color: "#8b5cf6",
-                            },
-                          ]}
-                          layout="vertical"
-                        />
-                      </div>
-                    </div>
-
-                    <EnhancedBenefitsList
-                      onHover={handleBenefitHover}
-                      onLeave={handleBenefitLeave}
-                      activeId={hoveredBenefit}
+              <ChartGrid cols={1} gap="default">
+                <ChartGridItem>
+                  <EnhancedChartWrapper
+                    title="Mức độ hiệu quả của Marketing Automation"
+                    subtitle="So sánh các chỉ số hiệu suất chính"
+                    variant="glass"
+                    shadow="xl"
+                    hover="glow"
+                    animation="fadeIn"
+                    height={300}
+                    downloadOptions={{
+                      csv: true,
+                      png: true,
+                    }}
+                    actions={
+                      <Button variant="ghost" size="sm" className="mr-2">
+                        <LineChart className="h-4 w-4 mr-1" />
+                        <span>View trend</span>
+                      </Button>
+                    }
+                    info="Biểu đồ hiển thị mức độ hiệu quả của các giải pháp Marketing Automation trong các khía cạnh chính của vận hành MLM"
+                  >
+                    <EnhancedBarChart
+                      data={automationBenefitsData}
+                      bars={[
+                        {
+                          dataKey: "value",
+                          name: "Hiệu quả (%)",
+                          color: ENHANCED_COLORS.primary[0],
+                          barSize: 40,
+                          radius: [4, 4, 0, 0],
+                        },
+                      ]}
+                      layout="horizontal"
+                      height={280}
+                      animate={true}
+                      grid={true}
+                      // formatters={{
+                      //   valueFormatter: (value) => `${value}%`,
+                      // }}
+                      unit="%"
                     />
-                  </div>
-                </CardContent>
-              </Card>
+                  </EnhancedChartWrapper>
+                </ChartGridItem>
+
+                <ChartGridItem>
+                  <EnhancedChartWrapper
+                    title="Phân bổ lợi ích"
+                    subtitle="Tác động của Marketing Automation"
+                    variant="glass"
+                    shadow="md"
+                    hover="scale"
+                    animation="fadeIn"
+                    height={300}
+                    className="mt-8"
+                  >
+                    <EnhancedPieChart
+                      data={benefitsPieChartData}
+                      dataKey="value"
+                      nameKey="name"
+                      colors={ENHANCED_COLORS.secondary}
+                      innerRadius={60}
+                      outerRadius={110}
+                      paddingAngle={2}
+                      height={280}
+                      animate={true}
+                      showLabel={true}
+                      formatters={{
+                        valueFormatter: (value) => `${value}%`,
+                      }}
+                      unit="%"
+                    />
+                  </EnhancedChartWrapper>
+                </ChartGridItem>
+
+                <ChartGridItem>
+                  <EnhancedBenefitsList
+                    onHover={handleBenefitHover}
+                    onLeave={handleBenefitLeave}
+                    activeId={hoveredBenefit}
+                  />
+                </ChartGridItem>
+              </ChartGrid>
             </motion.div>
           </div>
 
@@ -303,6 +421,49 @@ const Solutions = forwardRef(({ isVisible }, ref) => {
             </motion.div>
           </div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="mt-16 mb-12"
+        >
+          <EnhancedChartWrapper
+            title="So sánh hiệu quả truyền thống vs Marketing Automation"
+            subtitle="Phân tích các khía cạnh chính trong quản lý MLM"
+            variant="glass"
+            shadow="xl"
+            padding="lg"
+            className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/30 dark:border-gray-700/30"
+          >
+            <EnhancedBarChart
+              data={technologyComparisonData}
+              bars={[
+                {
+                  dataKey: "traditional",
+                  name: "Phương pháp truyền thống",
+                  color: ENHANCED_COLORS.neutral[3],
+                  barSize: 30,
+                },
+                {
+                  dataKey: "automation",
+                  name: "Marketing Automation",
+                  color: ENHANCED_COLORS.primary[0],
+                  barSize: 30,
+                },
+              ]}
+              xAxisKey="name"
+              layout="horizontal"
+              grid={true}
+              animate={true}
+              height={350}
+              // formatters={{
+              //   valueFormatter: (value) => `${value}%`,
+              // }}
+              unit="%"
+            />
+          </EnhancedChartWrapper>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -506,7 +506,7 @@ export const EnhancedBarChart = React.forwardRef(
       height = 300,
       grid = true,
       colors = ENHANCED_COLORS.primary,
-      layout = "vertical",
+      layout = "horizontal",
       title,
       subtitle,
       caption,

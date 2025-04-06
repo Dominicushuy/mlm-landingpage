@@ -8,7 +8,7 @@ import EcommerceImpact from "./components/sections/EcommerceImpact";
 import CaseStudy from "./components/sections/CaseStudy";
 import AmwayDetailCaseStudy from "./components/sections/AmwayDetailCaseStudy";
 import Solutions from "./components/sections/Solutions";
-// import Tools from "./components/sections/Tools";
+import Tools from "./components/sections/Tools";
 // import Strategy from "./components/sections/Strategy";
 // import Investment from "./components/sections/Investment";
 // import DemoSection from "./components/sections/DemoSection";
@@ -299,7 +299,7 @@ const App = () => {
         </SectionWrapper>
 
         {/* Tools Section - Với gradient nhẹ để tạo sự tương phản */}
-        {/* <SectionWrapper
+        <SectionWrapper
           id="tools"
           padding="large"
           variant={SECTION_COLORS.tools}
@@ -310,7 +310,7 @@ const App = () => {
             isVisible={isVisible.tools}
             darkMode={darkMode}
           />
-        </SectionWrapper> */}
+        </SectionWrapper>
 
         {/* Strategy Section */}
         {/* <SectionWrapper
