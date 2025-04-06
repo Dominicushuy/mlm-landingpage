@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   ChevronDown,
@@ -31,8 +31,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 const AmwayDetailCaseStudy = ({ darkMode }) => {
   const [activeTab, setActiveTab] = useState("tech");
   const [expandedFaq, setExpandedFaq] = useState(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
   const containerRef = useRef(null);
   const sectionRef = useRef(null);
 
@@ -305,43 +303,6 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
     },
   ];
 
-  // Tiến trình cuộn
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!containerRef.current) return;
-
-      const { scrollTop, clientHeight } = document.documentElement;
-      const windowScroll = scrollTop;
-      const containerRect = containerRef.current.getBoundingClientRect();
-
-      // Chỉ cập nhật nếu phần tử đang trong tầm nhìn
-      if (containerRect.top < clientHeight && containerRect.bottom > 0) {
-        const scrolled =
-          (windowScroll - (containerRect.top + windowScroll - clientHeight)) /
-          (containerRect.height + clientHeight);
-        setScrollProgress(Math.min(Math.max(scrolled, 0), 1));
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Theo dõi vị trí chuột cho hiệu ứng 3D
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
-        setMousePosition({ x, y });
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
   // Bật/tắt mở rộng FAQ
   const toggleFaq = (index) => {
     setExpandedFaq(expandedFaq === index ? null : index);
@@ -358,14 +319,6 @@ const AmwayDetailCaseStudy = ({ darkMode }) => {
       ref={containerRef}
       className="relative overflow-hidden"
     >
-      {/* Chỉ báo tiến độ */}
-      <div className="fixed top-1/2 right-6 w-1 h-64 bg-gray-200 dark:bg-gray-700 rounded-full transform -translate-y-1/2 z-50 hidden lg:block">
-        <div
-          className="w-1 bg-blue-500 dark:bg-blue-400 rounded-full"
-          style={{ height: `${scrollProgress * 100}%` }}
-        />
-      </div>
-
       {/* Phần Hero */}
       <div className="relative h-[60vh] md:h-[80vh] overflow-hidden flex items-center justify-center">
         {/* Phần tử nền */}
