@@ -188,6 +188,24 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
                                   label: "Mức trung bình",
                                 },
                               ]}
+                              // Thêm margin để trục Y có thêm không gian
+                              chartClassName="overflow-visible"
+                              // Thêm cấu hình cho trục Y
+                              chartProps={{
+                                margin: {
+                                  top: 10,
+                                  right: 30,
+                                  left: 50,
+                                  bottom: 20,
+                                },
+                                yAxis: {
+                                  width: 70,
+                                  tickCount: 5,
+                                  tickMargin: 10,
+                                  allowDecimals: true,
+                                  tickFormatter: (value) => `${value}B`,
+                                },
+                              }}
                             />
                           ) : (
                             <EnhancedLineChart
@@ -209,10 +227,56 @@ const CaseStudy = forwardRef(({ isVisible }, ref) => {
                                 },
                               ]}
                               xAxisKey="year"
-                              yAxisDomain={[7.5, 8.5]}
+                              // Sử dụng hai trục Y riêng biệt cho các dữ liệu khác nhau
+                              chartProps={{
+                                margin: {
+                                  top: 10,
+                                  right: 30,
+                                  left: 50,
+                                  bottom: 20,
+                                },
+                                yAxes: [
+                                  {
+                                    yAxisId: "revenue",
+                                    dataKey: "revenue",
+                                    domain: [7.5, 8.5],
+                                    tickCount: 5,
+                                    tickMargin: 10,
+                                    width: 70,
+                                    allowDecimals: true,
+                                    tickFormatter: (value) => `${value}B`,
+                                  },
+                                  {
+                                    yAxisId: "trend",
+                                    dataKey: "trend",
+                                    orientation: "right",
+                                    domain: [-5, 5],
+                                    tickCount: 5,
+                                    tickMargin: 10,
+                                    allowDecimals: true,
+                                  },
+                                ],
+                                // Cập nhật cấu hình lines để sử dụng yAxisId tương ứng
+                                lines: [
+                                  {
+                                    dataKey: "revenue",
+                                    name: "Doanh thu (tỷ USD)",
+                                    color: ENHANCED_COLORS.primary[0],
+                                    yAxisId: "revenue",
+                                  },
+                                  {
+                                    dataKey: "trend",
+                                    name: "Chỉ số xu hướng",
+                                    color: ENHANCED_COLORS.danger[0],
+                                    strokeDasharray: "5 5",
+                                    yAxisId: "trend",
+                                  },
+                                ],
+                              }}
                               height={240}
                               grid={true}
                               animate={true}
+                              chartClassName="overflow-visible"
                               formatters={{
                                 ...formatters,
                                 valueFormatter: (value, name) =>

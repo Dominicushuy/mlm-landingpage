@@ -1,11 +1,18 @@
-/**
- * Modern Hero Section with Glassmorphism, 3D Effects
- * Only mouse interaction animations preserved
- */
-
 import React, { forwardRef, useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion"; // Requires installation
-import { Check, ArrowRight, PlusCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Check,
+  ArrowRight,
+  PlusCircle,
+  ChevronDown,
+  Star,
+  Activity,
+  Users,
+  Clock,
+  BarChart2,
+  Shield,
+  TrendingUp,
+} from "lucide-react";
 import { Section } from "../layout/section";
 import { Button } from "../ui/button";
 import {
@@ -21,12 +28,48 @@ import { Input, FormItem, FormLabel } from "../ui/input";
 
 const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
   // State management
-  const [typedText] = useState("dành cho MLM");
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [showDemo, setShowDemo] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
   const heroRef = useRef(null);
+  const [isTyping, setIsTyping] = useState(true);
+  const [typedText, setTypedText] = useState("");
+  const fullText = "dành cho MLM";
 
-  // Track mouse position for 3D card effect only - with reduced sensitivity
+  // Typing effect
+  useEffect(() => {
+    if (isTyping) {
+      if (typedText.length < fullText.length) {
+        const timeout = setTimeout(() => {
+          setTypedText(fullText.substring(0, typedText.length + 1));
+        }, 150);
+        return () => clearTimeout(timeout);
+      } else {
+        // Wait for a moment when complete
+        const timeout = setTimeout(() => {
+          setIsTyping(false);
+        }, 2000);
+        return () => clearTimeout(timeout);
+      }
+    } else {
+      // Reset to start typing again
+      const timeout = setTimeout(() => {
+        setTypedText("");
+        setIsTyping(true);
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [typedText, isTyping]);
+
+  // Auto slide carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % 3);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Track mouse position for 3D effect
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (heroRef.current) {
@@ -34,7 +77,6 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
         const x = (e.clientX - rect.left) / rect.width;
         const y = (e.clientY - rect.top) / rect.height;
 
-        // Only update mousePosition if the change is significant (reducing jitter)
         setMousePosition((prev) => {
           const diffX = Math.abs(prev.x - x);
           const diffY = Math.abs(prev.y - y);
@@ -46,7 +88,7 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
       }
     };
 
-    // Throttled event listener to reduce performance impact
+    // Throttled event listener
     let waiting = false;
     const onMouseMove = (e) => {
       if (!waiting) {
@@ -54,7 +96,7 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
         waiting = true;
         setTimeout(() => {
           waiting = false;
-        }, 50); // Wait 50ms between updates
+        }, 50);
       }
     };
 
@@ -64,12 +106,31 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
     };
   }, []);
 
-  // Button animation variants - preserved for mouse interaction
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.7, ease: [0.4, 0, 0.2, 1] },
+    },
+  };
+
   const buttonVariants = {
     hover: {
       scale: 1.05,
-      boxShadow:
-        "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.5)",
       transition: {
         type: "spring",
         stiffness: 400,
@@ -79,6 +140,28 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
     tap: { scale: 0.98 },
   };
 
+  // Carousel content
+  const carouselItems = [
+    {
+      heading: "Tự động hóa chuyển đổi khách hàng",
+      description:
+        "Tăng 85% hiệu quả với hệ thống tự động xử lý từ lead đến khách hàng chuyển đổi",
+      icon: <TrendingUp className="h-8 w-8 text-blue-500" />,
+    },
+    {
+      heading: "Quản lý hoa hồng thông minh",
+      description:
+        "Minh bạch hoàn toàn với hệ thống tính hoa hồng tự động theo thời gian thực",
+      icon: <BarChart2 className="h-8 w-8 text-purple-500" />,
+    },
+    {
+      heading: "Phân tích dữ liệu toàn diện",
+      description:
+        "Hệ thống BI tích hợp giúp đưa ra quyết định chiến lược dựa trên dữ liệu thực tế",
+      icon: <Activity className="h-8 w-8 text-green-500" />,
+    },
+  ];
+
   return (
     <Section
       id="intro"
@@ -87,263 +170,451 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
         heroRef.current = node;
       }}
       variant={darkMode ? "gradient" : "default"}
-      className="min-h-[90vh] flex items-center relative overflow-hidden"
+      className="min-h-screen flex items-center relative overflow-hidden"
     >
-      {/* Simplified static backgrounds */}
-      <ParticlesBackground />
-      <GlassmorphismBackground darkMode={darkMode} />
+      {/* Enhanced Background with Animated Elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Dynamic gradient background */}
+        <div
+          className={`absolute inset-0 bg-gradient-to-b ${
+            darkMode ? "from-blue-900/10 to-gray-900" : "from-blue-50 to-white"
+          } transition-colors duration-1000`}
+        ></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-12 md:py-24">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-            {/* Left column - Main content */}
-            <div className="order-1 md:order-1">
-              <div className="space-y-6 relative z-10">
-                {/* Badge - Enhanced with glassmorphism */}
-                <div className="inline-block">
-                  <div className="flex items-center space-x-2 mb-4 bg-blue-100/80 backdrop-blur-sm dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-4 py-1 rounded-full text-sm font-medium border border-blue-200/50 dark:border-blue-800/50">
-                    <span className="flex h-2 w-2 relative">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                    </span>
-                    <span>Kỷ nguyên mới của Marketing Automation</span>
-                  </div>
+        {/* Animated grid background */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYtMi42ODYgNi02cy0yLjY4Ni02LTYtNmMtMy4zMTQgMC02IDIuNjg2LTYgNnMyLjY4NiA2IDYgNiIgc3Ryb2tlPSIjYmJjN2Q0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+')] opacity-5"></div>
+
+        {/* Floating circles */}
+        <div className="absolute top-1/4 left-1/3 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-float-delayed"></div>
+
+        {/* Animated Particles */}
+        <div className="absolute inset-0">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{
+                opacity: Math.random() * 0.5 + 0.3,
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+              }}
+              animate={{
+                y: [null, Math.random() * -50, null],
+                opacity: [null, Math.random() * 0.3 + 0.5, null],
+              }}
+              transition={{
+                duration: Math.random() * 10 + 20,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className={`absolute w-${Math.floor(Math.random() * 3) + 1} h-${
+                Math.floor(Math.random() * 3) + 1
+              } rounded-full ${darkMode ? "bg-blue-400/20" : "bg-blue-500/20"}`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center py-16"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Left Column - Main Content */}
+          <motion.div
+            className="lg:col-span-6 space-y-8"
+            variants={itemVariants}
+          >
+            {/* Badge */}
+            <motion.div
+              className="inline-block"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-100/80 to-purple-100/80 dark:from-blue-900/40 dark:to-purple-900/40 backdrop-blur-md border border-blue-200/50 dark:border-blue-700/30">
+                <div className="relative flex">
+                  <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                 </div>
+                <span className="text-blue-800 dark:text-blue-300 font-medium">
+                  Công nghệ Marketing Automation mới
+                </span>
+              </div>
+            </motion.div>
 
-                {/* Main heading - Using serif font for contrast */}
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-extrabold text-blue-800 dark:text-blue-300 leading-tight">
-                  Marketing{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-500 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400">
-                    Automation
-                  </span>
-                  <br />
-                  <span className="relative">
-                    <span className="mr-1">{typedText}</span>
-                    <span className="absolute w-0.5 h-8 bg-blue-600 dark:bg-blue-400 -right-1 bottom-1 animate-blink"></span>
-                  </span>
-                </h1>
-
-                {/* Description - Using sans-serif font */}
-                <p className="text-xl font-sans text-gray-600 dark:text-gray-300 max-w-xl">
-                  Chuyển đổi số và tự động hóa tiếp thị cho mô hình kinh doanh
-                  đa cấp trong kỷ nguyên thương mại điện tử.
-                </p>
-
-                {/* Feature list */}
-                <div className="space-y-4 pt-2">
-                  <FeatureCheckItem text="Tăng hiệu quả hoạt động và doanh thu" />
-                  <FeatureCheckItem text="Cá nhân hoá trải nghiệm khách hàng" />
-                  <FeatureCheckItem text="Tăng cường minh bạch trong quản lý" />
+            {/* Main Heading with Enhanced Typography */}
+            <motion.div variants={itemVariants} className="space-y-3">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-extrabold leading-tight">
+                <span className="block text-blue-800 dark:text-blue-300">
+                  Marketing
+                </span>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-500 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400">
+                  Automation
+                </span>
+                <div className="flex items-center">
+                  <span className="inline-block">{typedText}</span>
+                  <motion.span
+                    animate={{ opacity: [0, 1, 0] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                    className="inline-block ml-1 w-1 h-10 bg-blue-600 dark:bg-blue-400"
+                  />
                 </div>
+              </h1>
+            </motion.div>
 
-                {/* CTA Buttons - Enhanced with animations (preserved for mouse interaction) */}
-                <div>
-                  <div className="flex gap-4 pt-4">
-                    {/* Primary CTA - With glow effect */}
-                    <motion.div
-                      variants={buttonVariants}
-                      whileHover="hover"
-                      whileTap="tap"
-                      className="relative"
-                    >
-                      {/* Glow effect behind the button */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-400 blur opacity-40 rounded-md transform scale-105"></div>
+            {/* Description with Enhanced Typography */}
+            <motion.p
+              variants={itemVariants}
+              className="text-xl font-sans text-gray-600 dark:text-gray-300 max-w-2xl leading-relaxed"
+            >
+              Chuyển đổi số và tự động hóa tiếp thị cho mô hình kinh doanh đa
+              cấp trong kỷ nguyên thương mại điện tử, tạo đột phá trong trải
+              nghiệm người dùng.
+            </motion.p>
 
-                      {/* Main button with z-index to sit above glow */}
-                      <Button
-                        onClick={() => scrollToSection("invest")}
-                        variant="default"
-                        className="relative z-10 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 hover:from-blue-700 hover:to-indigo-700 text-white border-none shadow-lg"
-                      >
-                        Tìm hiểu về đầu tư
-                        <ArrowRight className="ml-2 -mr-1 h-5 w-5" />
-                      </Button>
-                    </motion.div>
+            {/* Enhanced Feature List */}
+            <motion.div variants={itemVariants} className="space-y-4 pt-4">
+              <EnhancedFeatureItem
+                icon={<Clock className="h-5 w-5" />}
+                text="Tăng hiệu quả hoạt động 85% và tối ưu hóa doanh thu"
+              />
+              <EnhancedFeatureItem
+                icon={<Users className="h-5 w-5" />}
+                text="Cá nhân hoá trải nghiệm khách hàng với AI phân tích hành vi"
+              />
+              <EnhancedFeatureItem
+                icon={<Shield className="h-5 w-5" />}
+                text="Tăng cường minh bạch và xây dựng niềm tin với khách hàng"
+              />
+            </motion.div>
 
-                    {/* Secondary CTA */}
-                    <motion.div
-                      variants={buttonVariants}
-                      whileHover="hover"
-                      whileTap="tap"
-                    >
-                      <Button
-                        onClick={() => setShowDemo(!showDemo)}
-                        variant="outline"
-                        className="backdrop-blur-sm bg-white/10 border border-white/20 hover:bg-white/20 dark:text-blue-200 transition-all duration-300"
-                      >
-                        Xem demo
-                        <PlusCircle className="ml-2 -mr-1 h-5 w-5" />
-                      </Button>
-                    </motion.div>
-                  </div>
+            {/* CTA Buttons with Enhanced Design */}
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col sm:flex-row gap-4 pt-6"
+            >
+              <motion.div
+                variants={buttonVariants}
+                whileHover="hover"
+                whileTap="tap"
+                className="relative group"
+              >
+                {/* Animated glow effect */}
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-400 to-indigo-400 opacity-70 blur-xl group-hover:opacity-100 transition-opacity duration-300 transform scale-105"></div>
+
+                <Button
+                  onClick={() => scrollToSection("invest")}
+                  variant="default"
+                  className="relative z-10 w-full sm:w-auto py-6 px-8 text-lg font-medium bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600 text-white border-none shadow-xl"
+                >
+                  Giải pháp đầu tư
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </motion.div>
+
+              <motion.div
+                variants={buttonVariants}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                <Button
+                  onClick={() => setShowDemo(!showDemo)}
+                  variant="outline"
+                  className="w-full sm:w-auto py-6 px-8 text-lg font-medium backdrop-blur-sm border-2 border-blue-300/30 dark:border-blue-700/30 bg-white/10 hover:bg-white/20 text-blue-700 dark:text-blue-300 shadow-lg"
+                >
+                  Xem demo ngay
+                  <PlusCircle className="ml-2 h-5 w-5" />
+                </Button>
+              </motion.div>
+            </motion.div>
+
+            {/* Social proof or trust badges */}
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-wrap items-center gap-6 pt-8"
+            >
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  {[...Array(3)].map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-8 h-8 rounded-full border-2 border-white dark:border-gray-800 bg-gray-${
+                        300 - i * 50
+                      } dark:bg-gray-${600 + i * 100}`}
+                    ></div>
+                  ))}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="font-semibold">500+</span> khách hàng
                 </div>
               </div>
-            </div>
 
-            {/* Right column - Feature card with 3D effect */}
-            <div className="order-2 md:order-2">
-              <div
+              <div className="flex items-center gap-1 text-yellow-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-current" />
+                ))}
+                <span className="ml-1 text-sm text-gray-600 dark:text-gray-400">
+                  <span className="font-semibold">4.9/5</span> đánh giá
+                </span>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right Column - Carousel and Features */}
+          <motion.div className="lg:col-span-6" variants={itemVariants}>
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+              {/* 3D-style card with rotation effect */}
+              <motion.div
                 style={{
-                  // 3D transformation based on mouse position (preserved but reduced effect)
                   transformStyle: "preserve-3d",
                   transform: `perspective(1000px) rotateY(${
-                    (mousePosition.x - 0.5) * 3
-                  }deg) rotateX(${(mousePosition.y - 0.5) * -3}deg)`,
+                    (mousePosition.x - 0.5) * 5
+                  }deg) rotateX(${(mousePosition.y - 0.5) * -5}deg)`,
                 }}
-                className="transition-all duration-500 ease-out relative z-10"
+                className="transition-all duration-300 ease-out bg-gradient-to-br from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-900 rounded-2xl p-1"
               >
-                {/* Content with integrated design - no extra card wrapper */}
-                <div className="rounded-xl overflow-hidden shadow-xl">
-                  {/* Solutions section with gradient background */}
-                  <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 dark:from-blue-800 dark:via-blue-700 dark:to-blue-600 p-6 text-white relative overflow-hidden">
-                    {/* Creative background elements */}
-                    <div className="absolute inset-0">
-                      <svg
-                        width="100%"
-                        height="100%"
-                        viewBox="0 0 100 100"
-                        preserveAspectRatio="none"
-                        className="absolute inset-0 opacity-10"
-                      >
-                        <defs>
-                          <linearGradient
-                            id="grid-gradient"
-                            x1="0%"
-                            y1="0%"
-                            x2="100%"
-                            y2="100%"
-                          >
-                            <stop
-                              offset="0%"
-                              stopColor="#fff"
-                              stopOpacity="0.1"
-                            />
-                            <stop
-                              offset="50%"
-                              stopColor="#fff"
-                              stopOpacity="0.2"
-                            />
-                            <stop
-                              offset="100%"
-                              stopColor="#fff"
-                              stopOpacity="0.1"
-                            />
-                          </linearGradient>
-                        </defs>
-                        <pattern
-                          id="grid"
-                          width="10"
-                          height="10"
-                          patternUnits="userSpaceOnUse"
+                <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden">
+                  {/* Features Carousel */}
+                  <div className="relative overflow-hidden">
+                    <div className="p-6 sm:p-8">
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={currentSlide}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.5 }}
+                          className="flex flex-col items-center text-center space-y-4"
                         >
-                          <path
-                            d="M 10 0 L 0 0 0 10"
-                            fill="none"
-                            stroke="url(#grid-gradient)"
-                            strokeWidth="0.5"
+                          <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-full">
+                            {carouselItems[currentSlide].icon}
+                          </div>
+                          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            {carouselItems[currentSlide].heading}
+                          </h3>
+                          <p className="text-gray-600 dark:text-gray-300">
+                            {carouselItems[currentSlide].description}
+                          </p>
+                        </motion.div>
+                      </AnimatePresence>
+
+                      {/* Carousel indicators */}
+                      <div className="flex justify-center space-x-2 mt-6">
+                        {carouselItems.map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setCurrentSlide(i)}
+                            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                              currentSlide === i
+                                ? "bg-blue-600 dark:bg-blue-400 w-6"
+                                : "bg-gray-300 dark:bg-gray-600"
+                            }`}
+                            aria-label={`Go to slide ${i + 1}`}
                           />
-                        </pattern>
-                        <rect width="100" height="100" fill="url(#grid)" />
-                      </svg>
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-xl transform -translate-y-1/3 translate-x-1/3"></div>
-                      <div className="absolute bottom-0 left-0 w-20 h-20 bg-blue-300/10 rounded-full blur-lg transform translate-y-1/3 -translate-x-1/3"></div>
+                        ))}
+                      </div>
                     </div>
 
-                    {/* Modern title design */}
-                    <div className="relative z-10 mb-6">
-                      <h2 className="text-2xl font-serif font-bold mb-1 inline-block relative">
-                        Chúng tôi mang đến giải pháp
-                        <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-blue-300 to-indigo-300 dark:from-blue-200 dark:to-indigo-200 w-full" />
-                      </h2>
-                      <p className="text-blue-100 opacity-80 mt-2 text-sm">
-                        Những công nghệ hiện đại tạo nên sự khác biệt
-                      </p>
-                    </div>
+                    {/* Dashboard Preview */}
+                    <div className="border-t border-gray-100 dark:border-gray-700">
+                      <div className="overflow-hidden relative">
+                        <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-6">
+                          <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                            Bảng điều khiển của bạn
+                          </h4>
 
-                    {/* Solution items with enhanced hover effects */}
-                    <div className="space-y-1 relative z-10">
-                      {[
-                        "Tự động hóa quản lý liên hệ và CRM",
-                        "Tự động hóa Email Marketing và nuôi dưỡng khách hàng",
-                        "Tự động hóa quản lý hoa hồng và lợi ích",
-                        "Tích hợp công cụ phân tích dữ liệu (BI) và báo cáo",
-                        "Tự động hóa phân phối thông báo qua đa kênh",
-                      ].map((text, index) => (
-                        <div key={index} className="relative">
-                          <EnhancedSolutionItem text={text} index={index} />
+                          <div className="grid grid-cols-2 gap-4">
+                            {/* Stat cards */}
+                            {[
+                              {
+                                label: "Khách hàng mới",
+                                value: "58",
+                                trend: "+12%",
+                              },
+                              {
+                                label: "Tỷ lệ chuyển đổi",
+                                value: "42%",
+                                trend: "+5%",
+                              },
+                              {
+                                label: "Hoa hồng",
+                                value: "24.8M",
+                                trend: "+18%",
+                              },
+                              { label: "ROI", value: "3.2x", trend: "+0.4" },
+                            ].map((stat, i) => (
+                              <div
+                                key={i}
+                                className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+                              >
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                  {stat.label}
+                                </div>
+                                <div className="flex items-end justify-between">
+                                  <div className="text-xl font-bold text-gray-900 dark:text-white">
+                                    {stat.value}
+                                  </div>
+                                  <div className="text-xs text-green-500 flex items-center">
+                                    <TrendingUp className="h-3 w-3 mr-1" />
+                                    {stat.trend}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Graph preview */}
+                          <div className="mt-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                Hiệu suất Marketing
+                              </div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
+                                30 ngày qua
+                              </div>
+                            </div>
+
+                            {/* Fake chart bars */}
+                            <div className="h-20 flex items-end space-x-1">
+                              {[...Array(15)].map((_, i) => {
+                                const height = 30 + Math.random() * 70;
+                                return (
+                                  <div
+                                    key={i}
+                                    className="flex-1 bg-gradient-to-t from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 rounded-sm"
+                                    style={{ height: `${height}%` }}
+                                  ></div>
+                                );
+                              })}
+                            </div>
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Progress bars section with cleaner integrated design */}
-                  <div className="bg-gradient-to-b from-white/95 to-white/90 dark:from-gray-800/95 dark:to-gray-800/90 backdrop-blur-sm p-6 relative">
-                    <div className="relative z-10">
-                      <ProgressBar3D
-                        label="Tiết kiệm thời gian & nguồn lực"
-                        value={85}
-                        color="from-blue-500 to-blue-600"
-                      />
-                      <ProgressBar3D
-                        label="Tăng hiệu quả marketing"
-                        value={78}
-                        color="from-indigo-500 to-indigo-600"
-                      />
-                      <ProgressBar3D
-                        label="Cải thiện trải nghiệm khách hàng"
-                        value={82}
-                        color="from-purple-500 to-purple-600"
-                      />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+      {/* Scroll indicator with animation */}
+      <motion.div
+        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5, duration: 0.5 }}
+      >
         <span className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-          Scroll để khám phá
+          Khám phá giải pháp
         </span>
-        <div className="w-6 h-10 border-2 border-gray-400 dark:border-gray-600 rounded-full p-1">
-          <div className="w-1.5 h-1.5 bg-blue-500 dark:bg-blue-400 rounded-full mx-auto animate-bounce" />
-        </div>
-      </div>
+        <motion.div
+          className="w-8 h-14 border-2 border-gray-400 dark:border-gray-600 rounded-full p-1 flex justify-center"
+          animate={{
+            y: [0, 5, 0],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            repeatType: "loop",
+          }}
+        >
+          <motion.div
+            className="w-1.5 h-3 bg-blue-500 dark:bg-blue-400 rounded-full"
+            animate={{
+              y: [0, 6, 0],
+              opacity: [0.5, 1, 0.5],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatType: "loop",
+            }}
+          />
+        </motion.div>
+      </motion.div>
 
-      {/* Demo Modal using the Modal component from our design system */}
-      <Modal open={showDemo} onClose={() => setShowDemo(false)} size="lg">
+      {/* Demo Modal */}
+      <Modal open={showDemo} onClose={() => setShowDemo(false)} size="xl">
         <ModalContent>
           <ModalCloseButton onClick={() => setShowDemo(false)} />
           <ModalHeader>
-            <ModalTitle>Demo Marketing Automation</ModalTitle>
+            <ModalTitle className="text-2xl font-serif">
+              Demo Marketing Automation
+            </ModalTitle>
           </ModalHeader>
           <ModalBody>
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 mb-6 backdrop-blur-sm">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 mb-6 backdrop-blur-sm">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                Trải nghiệm ngay Marketing Automation
+              </h3>
               <p className="text-gray-700 dark:text-gray-300">
-                Nhập email của bạn để xem cách Marketing Automation hoạt động.
-                Bạn sẽ nhận được một chuỗi email tự động thể hiện quy trình nuôi
-                dưỡng khách hàng.
+                Nhập email của bạn để nhận bản demo hoàn chỉnh về cách hoạt động
+                của hệ thống Marketing Automation trong môi trường MLM. Bạn sẽ
+                được trải nghiệm:
               </p>
+
+              <ul className="mt-4 space-y-2">
+                {[
+                  "Quy trình tự động nuôi dưỡng khách hàng tiềm năng",
+                  "Hệ thống quản lý hoa hồng tự động",
+                  "Bảng điều khiển phân tích dữ liệu thông minh",
+                  "Mô phỏng quản lý mạng lưới phân phối",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center">
+                    <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+                    <span className="text-gray-700 dark:text-gray-300">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <form className="space-y-4">
+            <form className="space-y-5">
+              <FormItem>
+                <FormLabel htmlFor="fullname">Họ và tên</FormLabel>
+                <Input type="text" id="fullname" placeholder="Nguyễn Văn A" />
+              </FormItem>
+
               <FormItem>
                 <FormLabel htmlFor="email">Địa chỉ email</FormLabel>
-                <Input type="email" id="email" placeholder="you@example.com" />
+                <Input
+                  type="email"
+                  id="email"
+                  placeholder="email@example.com"
+                />
+              </FormItem>
+
+              <FormItem>
+                <FormLabel htmlFor="company">
+                  Công ty (không bắt buộc)
+                </FormLabel>
+                <Input
+                  type="text"
+                  id="company"
+                  placeholder="Tên công ty của bạn"
+                />
               </FormItem>
             </form>
           </ModalBody>
           <ModalFooter>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+            <motion.div
+              className="w-full"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
               <Button
                 variant="default"
-                className="px-6 bg-gradient-to-r from-blue-600 to-indigo-600"
+                className="w-full py-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-lg"
               >
-                Bắt đầu Demo
-                <ArrowRight className="ml-2 h-4 w-4" />
+                Bắt đầu Demo Ngay
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </motion.div>
           </ModalFooter>
@@ -353,214 +624,18 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
   );
 });
 
-/**
- * Simplified background with minimal particles
- */
-const ParticlesBackground = () => {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {/* Very minimal static particles - much fewer to reduce visual noise */}
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div
-          key={i}
-          className="absolute bg-blue-500/5 dark:bg-blue-400/5 rounded-full z-0"
-          style={{
-            width: Math.random() * 6 + 2,
-            height: Math.random() * 6 + 2,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-          }}
-        />
-      ))}
-    </div>
-  );
-};
-
-/**
- * Simplified subtle background with very minimal mouse interaction
- */
-const GlassmorphismBackground = ({ darkMode }) => {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {/* Static gradient elements with reduced opacity */}
-      <div className="absolute top-0 right-0 w-2/3 h-2/3 rounded-full bg-gradient-to-br from-blue-400/10 to-indigo-500/10 dark:from-blue-500/5 dark:to-indigo-600/5 blur-3xl z-0" />
-      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 rounded-full bg-gradient-to-tr from-purple-400/10 to-pink-500/10 dark:from-purple-500/5 dark:to-pink-600/5 blur-3xl z-0" />
-
-      {/* Single subtle glassmorphism element */}
-      <div className="absolute top-1/3 right-10 w-40 h-40 rounded-full bg-white/5 backdrop-blur-2xl border border-white/5 dark:border-white/5 z-0 opacity-50"></div>
-    </div>
-  );
-};
-
-/**
- * Feature item with hover animation (preserved)
- */
-const FeatureCheckItem = ({ text }) => (
+const EnhancedFeatureItem = ({ text, icon }) => (
   <motion.div
-    className="flex items-start space-x-3"
-    whileHover={{ x: 5 }}
-    transition={{ duration: 0.2 }}
+    className="flex items-center space-x-3"
+    whileHover={{ x: 5, transition: { duration: 0.2 } }}
   >
-    <div className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-100/80 backdrop-blur-sm dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800/50">
-      <Check className="h-4 w-4" />
+    <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 shadow-inner border border-blue-200/50 dark:border-blue-800/30 text-blue-600 dark:text-blue-400">
+      {icon || <Check className="h-5 w-5" />}
     </div>
-    <p className="text-lg font-sans text-gray-600 dark:text-gray-300">{text}</p>
+    <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
+      {text}
+    </p>
   </motion.div>
-);
-
-/**
- * Enhanced solution item with hover effect (preserved)
- */
-const EnhancedSolutionItem = ({ text, index }) => {
-  // Different icons for each solution item
-  const icons = [
-    // CRM icon
-    <svg
-      key="crm"
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-      <circle cx="9" cy="7" r="4"></circle>
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-    </svg>,
-    // Email icon
-    <svg
-      key="email"
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-      <polyline points="22,6 12,13 2,6"></polyline>
-    </svg>,
-    // Money icon
-    <svg
-      key="money"
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="12" y1="1" x2="12" y2="23"></line>
-      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-    </svg>,
-    // Chart icon
-    <svg
-      key="chart"
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="18" y1="20" x2="18" y2="10"></line>
-      <line x1="12" y1="20" x2="12" y2="4"></line>
-      <line x1="6" y1="20" x2="6" y2="14"></line>
-    </svg>,
-    // Message icon
-    <svg
-      key="message"
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>,
-  ];
-
-  return (
-    <motion.div
-      className="flex items-center py-2.5 px-4 rounded-lg hover:bg-white/10 transition-colors group cursor-pointer"
-      whileHover={{
-        x: 5,
-        backgroundColor: "rgba(255, 255, 255, 0.1)",
-      }}
-    >
-      {/* Animated icon container */}
-      <motion.div
-        className="flex-shrink-0 h-8 w-8 rounded-md bg-blue-500/30 flex items-center justify-center mr-3"
-        whileHover={{
-          scale: 1.1,
-          backgroundColor: "rgba(59, 130, 246, 0.4)",
-        }}
-      >
-        {icons[index]}
-      </motion.div>
-
-      {/* Text with gradient on hover */}
-      <div className="relative overflow-hidden">
-        <p className="font-medium group-hover:text-blue-100">{text}</p>
-
-        {/* Light line that appears on hover */}
-        <motion.div
-          className="absolute bottom-0 left-0 h-px bg-gradient-to-r from-blue-300/0 via-blue-300/80 to-blue-300/0 w-full"
-          initial={{ scaleX: 0, opacity: 0 }}
-          whileHover={{
-            scaleX: 1,
-            opacity: 1,
-            transition: { duration: 0.3 },
-          }}
-        />
-      </div>
-    </motion.div>
-  );
-};
-
-/**
- * 3D Progress Bar Component with gradient and lighting effects
- */
-const ProgressBar3D = ({
-  label,
-  value,
-  color = "from-blue-500 to-blue-600",
-}) => (
-  <div className="text-center mt-6 first:mt-0">
-    <p className="text-gray-600 dark:text-gray-300 mb-2 font-sans">{label}</p>
-    <div className="relative w-full h-3 bg-gray-200/70 dark:bg-gray-700/70 rounded-full overflow-hidden backdrop-blur-sm">
-      <div
-        className={`h-full rounded-full bg-gradient-to-r ${color} relative`}
-        style={{ width: `${value}%` }}
-      >
-        {/* 3D effect with lighter gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent"></div>
-      </div>
-    </div>
-    <div className="relative">
-      <p className="text-sm text-right text-gray-600 dark:text-gray-300 mt-1 font-sans">
-        {value}%
-      </p>
-    </div>
-  </div>
 );
 
 Hero.displayName = "Hero";

@@ -1,24 +1,41 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import { useIntersectionObserver } from "./hooks/useIntersectionObserver";
 import { Navbar } from "./components/navigation/nav-bar";
 import Footer from "./components/layout/footer";
-import Hero from "./components/sections/Hero";
-import MarketAnalysis from "./components/sections/MarketAnalysis";
-import EcommerceImpact from "./components/sections/EcommerceImpact";
-import CaseStudy from "./components/sections/CaseStudy";
-import AmwayDetailCaseStudy from "./components/sections/AmwayDetailCaseStudy";
-import Solutions from "./components/sections/Solutions";
-import Tools from "./components/sections/Tools";
-import Strategy from "./components/sections/Strategy";
-import Investment from "./components/sections/Investment";
-import DemoSection from "./components/sections/DemoSection";
+import Hero from "./components/sections/Hero"; // Giữ nguyên import Hero vì nó hiển thị đầu tiên
 import { ArrowUp, MessageSquare, Moon, Sun } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { navItems } from "./data/siteData";
 import { MainLayout } from "./components/layout/main-layout";
 import { scrollUtils } from "./utils/scrollUtils";
 import SectionWrapper from "./components/layout/section-wrapper";
-import ChatBot from "./components/features/chat-bot";
+
+// Lazy load các component không cần thiết ngay lập tức
+const MarketAnalysis = React.lazy(() =>
+  import("./components/sections/MarketAnalysis")
+);
+const EcommerceImpact = React.lazy(() =>
+  import("./components/sections/EcommerceImpact")
+);
+const CaseStudy = React.lazy(() => import("./components/sections/CaseStudy"));
+const AmwayDetailCaseStudy = React.lazy(() =>
+  import("./components/sections/AmwayDetailCaseStudy")
+);
+const Solutions = React.lazy(() => import("./components/sections/Solutions"));
+const Tools = React.lazy(() => import("./components/sections/Tools"));
+const Strategy = React.lazy(() => import("./components/sections/Strategy"));
+const Investment = React.lazy(() => import("./components/sections/Investment"));
+const DemoSection = React.lazy(() =>
+  import("./components/sections/DemoSection")
+);
+const ChatBot = React.lazy(() => import("./components/features/chat-bot"));
+
+// Component Loading Fallback
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+  </div>
+);
 
 // Seamless color transitions between sections
 const SECTION_COLORS = {
@@ -239,11 +256,13 @@ const App = () => {
           padding="large"
           variant={SECTION_COLORS.market}
         >
-          <MarketAnalysis
-            ref={sectionRefs.market}
-            isVisible={isVisible.market}
-            darkMode={darkMode}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <MarketAnalysis
+              ref={sectionRefs.market}
+              isVisible={isVisible.market}
+              darkMode={darkMode}
+            />
+          </Suspense>
         </SectionWrapper>
 
         {/* E-commerce Impact Section */}
@@ -252,11 +271,13 @@ const App = () => {
           padding="large"
           variant={SECTION_COLORS.ecommerce}
         >
-          <EcommerceImpact
-            ref={sectionRefs.ecommerce}
-            isVisible={isVisible.ecommerce}
-            darkMode={darkMode}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <EcommerceImpact
+              ref={sectionRefs.ecommerce}
+              isVisible={isVisible.ecommerce}
+              darkMode={darkMode}
+            />
+          </Suspense>
         </SectionWrapper>
 
         {/* Case Study Section */}
@@ -265,11 +286,13 @@ const App = () => {
           padding="large"
           variant={SECTION_COLORS.casestudy}
         >
-          <CaseStudy
-            ref={sectionRefs.casestudy}
-            isVisible={isVisible.casestudy}
-            darkMode={darkMode}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <CaseStudy
+              ref={sectionRefs.casestudy}
+              isVisible={isVisible.casestudy}
+              darkMode={darkMode}
+            />
+          </Suspense>
         </SectionWrapper>
 
         {/* Detailed Case Study Section - Fixed ID issue */}
@@ -278,11 +301,13 @@ const App = () => {
           padding="large"
           variant={SECTION_COLORS.amwayDetail}
         >
-          <AmwayDetailCaseStudy
-            ref={sectionRefs.amwayDetail}
-            isVisible={isVisible.amwayDetail}
-            darkMode={darkMode}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <AmwayDetailCaseStudy
+              ref={sectionRefs.amwayDetail}
+              isVisible={isVisible.amwayDetail}
+              darkMode={darkMode}
+            />
+          </Suspense>
         </SectionWrapper>
 
         {/* Solutions Section */}
@@ -291,11 +316,13 @@ const App = () => {
           padding="large"
           variant={SECTION_COLORS.solutions}
         >
-          <Solutions
-            ref={sectionRefs.solutions}
-            isVisible={isVisible.solutions}
-            darkMode={darkMode}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <Solutions
+              ref={sectionRefs.solutions}
+              isVisible={isVisible.solutions}
+              darkMode={darkMode}
+            />
+          </Suspense>
         </SectionWrapper>
 
         {/* Tools Section - Với gradient nhẹ để tạo sự tương phản */}
@@ -305,11 +332,13 @@ const App = () => {
           variant={SECTION_COLORS.tools}
           className="relative"
         >
-          <Tools
-            ref={sectionRefs.tools}
-            isVisible={isVisible.tools}
-            darkMode={darkMode}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <Tools
+              ref={sectionRefs.tools}
+              isVisible={isVisible.tools}
+              darkMode={darkMode}
+            />
+          </Suspense>
         </SectionWrapper>
 
         {/* Strategy Section */}
@@ -318,20 +347,24 @@ const App = () => {
           padding="large"
           variant={SECTION_COLORS.strategy}
         >
-          <Strategy
-            ref={sectionRefs.strategy}
-            isVisible={isVisible.strategy}
-            darkMode={darkMode}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <Strategy
+              ref={sectionRefs.strategy}
+              isVisible={isVisible.strategy}
+              darkMode={darkMode}
+            />
+          </Suspense>
         </SectionWrapper>
 
         {/* Demo Section */}
         <SectionWrapper id="demo" padding="large" variant={SECTION_COLORS.demo}>
-          <DemoSection
-            ref={sectionRefs.demo}
-            isVisible={isVisible.demo}
-            darkMode={darkMode}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <DemoSection
+              ref={sectionRefs.demo}
+              isVisible={isVisible.demo}
+              darkMode={darkMode}
+            />
+          </Suspense>
         </SectionWrapper>
 
         {/* Investment Section - Với gradient đặc biệt từ trắng sang xanh */}
@@ -341,11 +374,13 @@ const App = () => {
           variant={SECTION_COLORS.invest}
           className="mt-0"
         >
-          <Investment
-            ref={sectionRefs.invest}
-            isVisible={isVisible.invest}
-            darkMode={darkMode}
-          />
+          <Suspense fallback={<LoadingFallback />}>
+            <Investment
+              ref={sectionRefs.invest}
+              isVisible={isVisible.invest}
+              darkMode={darkMode}
+            />
+          </Suspense>
         </SectionWrapper>
       </MainLayout>
 
@@ -363,7 +398,24 @@ const App = () => {
       </Button>
 
       {/* Chat Bot Component */}
-      {showChatBot && <ChatBot onClose={() => setShowChatBot(false)} />}
+      {showChatBot && (
+        <Suspense fallback={<LoadingFallback />}>
+          <ChatBot onClose={() => setShowChatBot(false)} />
+        </Suspense>
+      )}
+
+      {/* Scroll to top button */}
+      {showScrollTop && (
+        <Button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          variant="default"
+          size="icon"
+          className="fixed bottom-8 right-8 z-50 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-110"
+          aria-label="Scroll to top"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </Button>
+      )}
     </div>
   );
 };
