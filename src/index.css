@@ -73,3 +73,86 @@
       background: linear-gradient(to bottom, #1e3a8a05, #111827);
     }
   }
+
+  /* Touch feedback ripple effect */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+.touch-feedback {
+  position: relative;
+  overflow: hidden;
+}
+
+.touch-feedback::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 1s;
+}
+
+.touch-feedback:active::after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+/* Extra small text size for mobile */
+.text-2xs {
+  font-size: 0.65rem;
+  line-height: 1rem;
+}
+
+/* Chỉnh touch target size phù hợp với mobile */
+@media (max-width: 640px) {
+  button, 
+  [role="button"],
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Đảm bảo các nút nhỏ không bị ảnh hưởng */
+  button.inline-button,
+  [role="button"].inline-button {
+    min-height: unset;
+    min-width: unset;
+  }
+}
+
+/* Tối ưu hóa scroll cho iOS */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ngăn font size tự động zoom trên iOS */
+@media not all and (min-resolution:.001dpcm) { 
+  @supports (-webkit-appearance:none) {
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="password"],
+    input[type="tel"],
+    select,
+    textarea {
+      font-size: 16px;
+    }
+  }
+}

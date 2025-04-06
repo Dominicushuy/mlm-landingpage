@@ -25,6 +25,7 @@ import {
   ModalCloseButton,
 } from "../ui/modal";
 import { Input, FormItem, FormLabel } from "../ui/input";
+import { useDrag } from "react-use-gesture";
 
 const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
   // State management
@@ -162,6 +163,19 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
     },
   ];
 
+  // Xử lý swipe cho carousel
+  const bindSwipe = useDrag(({ swipe: [swipeX] }) => {
+    if (swipeX < 0) {
+      // Swipe left, go to next slide
+      setCurrentSlide((prev) => (prev + 1) % carouselItems.length);
+    } else if (swipeX > 0) {
+      // Swipe right, go to previous slide
+      setCurrentSlide(
+        (prev) => (prev - 1 + carouselItems.length) % carouselItems.length
+      );
+    }
+  });
+
   return (
     <Section
       id="intro"
@@ -218,90 +232,98 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center py-16"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center py-8 md:py-16"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           {/* Left Column - Main Content */}
           <motion.div
-            className="lg:col-span-6 space-y-8"
+            className="lg:col-span-6 space-y-6 md:space-y-8 text-center lg:text-left px-4"
             variants={itemVariants}
           >
             {/* Badge */}
             <motion.div
-              className="inline-block"
+              className="inline-block mx-auto lg:mx-0"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-100/80 to-purple-100/80 dark:from-blue-900/40 dark:to-purple-900/40 backdrop-blur-md border border-blue-200/50 dark:border-blue-700/30">
+              <div className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-gradient-to-r from-blue-100/80 to-purple-100/80 dark:from-blue-900/40 dark:to-purple-900/40 backdrop-blur-md border border-blue-200/50 dark:border-blue-700/30">
                 <div className="relative flex">
                   <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                 </div>
-                <span className="text-blue-800 dark:text-blue-300 font-medium">
+                <span className="text-blue-800 dark:text-blue-300 text-xs md:text-sm font-medium">
                   Công nghệ Marketing Automation mới
                 </span>
               </div>
             </motion.div>
 
-            {/* Main Heading with Enhanced Typography */}
-            <motion.div variants={itemVariants} className="space-y-3">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-extrabold leading-tight">
+            {/* Main Heading with Enhanced Typography and Adjusted Size for Mobile */}
+            <motion.div
+              variants={itemVariants}
+              className="space-y-2 md:space-y-3"
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-extrabold leading-tight">
                 <span className="block text-blue-800 dark:text-blue-300">
                   Marketing
                 </span>
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-500 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400">
                   Automation
                 </span>
-                <div className="flex items-center">
+                <div className="flex items-center justify-center lg:justify-start">
                   <span className="inline-block">{typedText}</span>
                   <motion.span
                     animate={{ opacity: [0, 1, 0] }}
                     transition={{ duration: 1, repeat: Infinity }}
-                    className="inline-block ml-1 w-1 h-10 bg-blue-600 dark:bg-blue-400"
+                    className="inline-block ml-1 w-1 h-6 md:h-10 bg-blue-600 dark:bg-blue-400"
                   />
                 </div>
               </h1>
             </motion.div>
 
-            {/* Description with Enhanced Typography */}
+            {/* Description with Enhanced Typography and Smaller Text for Mobile */}
             <motion.p
               variants={itemVariants}
-              className="text-xl font-sans text-gray-600 dark:text-gray-300 max-w-2xl leading-relaxed"
+              className="text-base md:text-xl font-sans text-gray-600 dark:text-gray-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed"
             >
               Chuyển đổi số và tự động hóa tiếp thị cho mô hình kinh doanh đa
-              cấp trong kỷ nguyên thương mại điện tử, tạo đột phá trong trải
-              nghiệm người dùng.
+              cấp trong kỷ nguyên thương mại điện tử.
             </motion.p>
 
-            {/* Enhanced Feature List */}
-            <motion.div variants={itemVariants} className="space-y-4 pt-4">
+            {/* Enhanced Feature List - Adjusted for Mobile */}
+            <motion.div
+              variants={itemVariants}
+              className="space-y-3 md:space-y-4 pt-2 md:pt-4"
+            >
               <EnhancedFeatureItem
-                icon={<Clock className="h-5 w-5" />}
-                text="Tăng hiệu quả hoạt động 85% và tối ưu hóa doanh thu"
+                icon={<Clock className="h-4 w-4 md:h-5 md:w-5" />}
+                text="Tăng hiệu quả hoạt động 85% tối ưu doanh thu"
+                mobileOptimized={true}
               />
               <EnhancedFeatureItem
-                icon={<Users className="h-5 w-5" />}
-                text="Cá nhân hoá trải nghiệm khách hàng với AI phân tích hành vi"
+                icon={<Users className="h-4 w-4 md:h-5 md:w-5" />}
+                text="Cá nhân hoá trải nghiệm khách hàng với AI"
+                mobileOptimized={true}
               />
               <EnhancedFeatureItem
-                icon={<Shield className="h-5 w-5" />}
-                text="Tăng cường minh bạch và xây dựng niềm tin với khách hàng"
+                icon={<Shield className="h-4 w-4 md:h-5 md:w-5" />}
+                text="Tăng cường minh bạch và xây dựng niềm tin"
+                mobileOptimized={true}
               />
             </motion.div>
 
-            {/* CTA Buttons with Enhanced Design */}
+            {/* CTA Buttons - Stack on Mobile, Side by Side on Desktop */}
             <motion.div
               variants={itemVariants}
-              className="flex flex-col sm:flex-row gap-4 pt-6"
+              className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4 md:pt-6 justify-center lg:justify-start"
             >
               <motion.div
                 variants={buttonVariants}
                 whileHover="hover"
                 whileTap="tap"
-                className="relative group"
+                className="relative group w-full sm:w-auto"
               >
                 {/* Animated glow effect */}
                 <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-400 to-indigo-400 opacity-70 blur-xl group-hover:opacity-100 transition-opacity duration-300 transform scale-105"></div>
@@ -309,10 +331,10 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
                 <Button
                   onClick={() => scrollToSection("invest")}
                   variant="default"
-                  className="relative z-10 w-full sm:w-auto py-6 px-8 text-lg font-medium bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600 text-white border-none shadow-xl"
+                  className="relative z-10 w-full sm:w-auto py-4 md:py-6 px-6 md:px-8 text-base md:text-lg font-medium bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600 text-white border-none shadow-xl"
                 >
                   Giải pháp đầu tư
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
                 </Button>
               </motion.div>
 
@@ -320,54 +342,61 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
                 variants={buttonVariants}
                 whileHover="hover"
                 whileTap="tap"
+                className="w-full sm:w-auto"
               >
                 <Button
                   onClick={() => setShowDemo(!showDemo)}
                   variant="outline"
-                  className="w-full sm:w-auto py-6 px-8 text-lg font-medium backdrop-blur-sm border-2 border-blue-300/30 dark:border-blue-700/30 bg-white/10 hover:bg-white/20 text-blue-700 dark:text-blue-300 shadow-lg"
+                  className="w-full sm:w-auto py-4 md:py-6 px-6 md:px-8 text-base md:text-lg font-medium backdrop-blur-sm border-2 border-blue-300/30 dark:border-blue-700/30 bg-white/10 hover:bg-white/20 text-blue-700 dark:text-blue-300 shadow-lg"
                 >
                   Xem demo ngay
-                  <PlusCircle className="ml-2 h-5 w-5" />
+                  <PlusCircle className="ml-2 h-4 w-4 md:h-5 md:w-5" />
                 </Button>
               </motion.div>
             </motion.div>
 
-            {/* Social proof or trust badges */}
+            {/* Social proof or trust badges - Hide on smallest screens, show from SM up */}
             <motion.div
               variants={itemVariants}
-              className="flex flex-wrap items-center gap-6 pt-8"
+              className="hidden sm:flex flex-wrap items-center justify-center lg:justify-start gap-4 md:gap-6 pt-4 md:pt-8"
             >
               <div className="flex items-center gap-2">
                 <div className="flex -space-x-2">
                   {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
-                      className={`w-8 h-8 rounded-full border-2 border-white dark:border-gray-800 bg-gray-${
+                      className={`w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-white dark:border-gray-800 bg-gray-${
                         300 - i * 50
                       } dark:bg-gray-${600 + i * 100}`}
                     ></div>
                   ))}
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
                   <span className="font-semibold">500+</span> khách hàng
                 </div>
               </div>
 
               <div className="flex items-center gap-1 text-yellow-500">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-current" />
+                  <Star
+                    key={i}
+                    className="h-3 w-3 md:h-4 md:w-4 fill-current"
+                  />
                 ))}
-                <span className="ml-1 text-sm text-gray-600 dark:text-gray-400">
+                <span className="ml-1 text-xs md:text-sm text-gray-600 dark:text-gray-400">
                   <span className="font-semibold">4.9/5</span> đánh giá
                 </span>
               </div>
             </motion.div>
           </motion.div>
 
-          {/* Right Column - Carousel and Features */}
-          <motion.div className="lg:col-span-6" variants={itemVariants}>
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              {/* 3D-style card with rotation effect */}
+          {/* Right Column - Carousel and Features - Hide on small screens when space is limited */}
+          <motion.div
+            className="lg:col-span-6 mt-8 lg:mt-0"
+            variants={itemVariants}
+          >
+            {/* Responsive card */}
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl max-w-md mx-auto lg:max-w-none">
               <motion.div
                 style={{
                   transformStyle: "preserve-3d",
@@ -378,9 +407,9 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
                 className="transition-all duration-300 ease-out bg-gradient-to-br from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-900 rounded-2xl p-1"
               >
                 <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden">
-                  {/* Features Carousel */}
-                  <div className="relative overflow-hidden">
-                    <div className="p-6 sm:p-8">
+                  {/* Features Carousel - Simplified for mobile */}
+                  <div className="relative overflow-hidden" {...bindSwipe()}>
+                    <div className="p-4 sm:p-6 md:p-8">
                       <AnimatePresence mode="wait">
                         <motion.div
                           key={currentSlide}
@@ -388,29 +417,29 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ duration: 0.5 }}
-                          className="flex flex-col items-center text-center space-y-4"
+                          className="flex flex-col items-center text-center space-y-3 md:space-y-4"
                         >
-                          <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-full">
+                          <div className="p-2 md:p-3 bg-blue-50 dark:bg-blue-900/30 rounded-full">
                             {carouselItems[currentSlide].icon}
                           </div>
-                          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                          <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                             {carouselItems[currentSlide].heading}
                           </h3>
-                          <p className="text-gray-600 dark:text-gray-300">
+                          <p className="text-sm md:text-base text-gray-600 dark:text-gray-300 max-w-xs md:max-w-none">
                             {carouselItems[currentSlide].description}
                           </p>
                         </motion.div>
                       </AnimatePresence>
 
-                      {/* Carousel indicators */}
-                      <div className="flex justify-center space-x-2 mt-6">
+                      {/* Swipeable indicator for mobile */}
+                      <div className="flex justify-center space-x-2 mt-4 md:mt-6 touch-action-pan-y">
                         {carouselItems.map((_, i) => (
                           <button
                             key={i}
                             onClick={() => setCurrentSlide(i)}
-                            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                            className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
                               currentSlide === i
-                                ? "bg-blue-600 dark:bg-blue-400 w-6"
+                                ? "bg-blue-600 dark:bg-blue-400 w-4 md:w-6"
                                 : "bg-gray-300 dark:bg-gray-600"
                             }`}
                             aria-label={`Go to slide ${i + 1}`}
@@ -419,78 +448,70 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
                       </div>
                     </div>
 
-                    {/* Dashboard Preview */}
+                    {/* Dashboard Preview - Simplified for mobile */}
                     <div className="border-t border-gray-100 dark:border-gray-700">
-                      <div className="overflow-hidden relative">
-                        <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-6">
-                          <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                            Bảng điều khiển của bạn
-                          </h4>
+                      <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-4 md:p-6">
+                        <h4 className="text-base md:text-lg font-medium text-gray-900 dark:text-white mb-3 md:mb-4">
+                          Bảng điều khiển của bạn
+                        </h4>
 
-                          <div className="grid grid-cols-2 gap-4">
-                            {/* Stat cards */}
-                            {[
-                              {
-                                label: "Khách hàng mới",
-                                value: "58",
-                                trend: "+12%",
-                              },
-                              {
-                                label: "Tỷ lệ chuyển đổi",
-                                value: "42%",
-                                trend: "+5%",
-                              },
-                              {
-                                label: "Hoa hồng",
-                                value: "24.8M",
-                                trend: "+18%",
-                              },
-                              { label: "ROI", value: "3.2x", trend: "+0.4" },
-                            ].map((stat, i) => (
-                              <div
-                                key={i}
-                                className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
-                              >
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
-                                  {stat.label}
+                        <div className="grid grid-cols-2 gap-2 md:gap-4">
+                          {/* Responsive stat cards */}
+                          {[
+                            {
+                              label: "Khách hàng mới",
+                              value: "58",
+                              trend: "+12%",
+                            },
+                            {
+                              label: "Tỷ lệ chuyển đổi",
+                              value: "42%",
+                              trend: "+5%",
+                            },
+                          ].map((stat, i) => (
+                            <div
+                              key={i}
+                              className="bg-white dark:bg-gray-800 p-2 md:p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+                            >
+                              <div className="text-2xs md:text-xs text-gray-500 dark:text-gray-400">
+                                {stat.label}
+                              </div>
+                              <div className="flex items-end justify-between">
+                                <div className="text-base md:text-xl font-bold text-gray-900 dark:text-white">
+                                  {stat.value}
                                 </div>
-                                <div className="flex items-end justify-between">
-                                  <div className="text-xl font-bold text-gray-900 dark:text-white">
-                                    {stat.value}
-                                  </div>
-                                  <div className="text-xs text-green-500 flex items-center">
-                                    <TrendingUp className="h-3 w-3 mr-1" />
-                                    {stat.trend}
-                                  </div>
+                                <div className="text-2xs md:text-xs text-green-500 flex items-center">
+                                  <TrendingUp className="h-2 w-2 md:h-3 md:w-3 mr-0.5 md:mr-1" />
+                                  {stat.trend}
                                 </div>
                               </div>
-                            ))}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Simplified graph for mobile */}
+                        <div className="mt-3 md:mt-4 bg-white dark:bg-gray-800 p-3 md:p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-xs md:text-sm font-medium text-gray-900 dark:text-white">
+                              Hiệu suất Marketing
+                            </div>
+                            <div className="text-2xs md:text-xs text-gray-500 dark:text-gray-400">
+                              30 ngày
+                            </div>
                           </div>
 
-                          {/* Graph preview */}
-                          <div className="mt-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                Hiệu suất Marketing
-                              </div>
-                              <div className="text-xs text-gray-500 dark:text-gray-400">
-                                30 ngày qua
-                              </div>
-                            </div>
-
-                            {/* Fake chart bars */}
-                            <div className="h-20 flex items-end space-x-1">
-                              {[...Array(15)].map((_, i) => {
-                                const height = 30 + Math.random() * 70;
-                                return (
-                                  <div
-                                    key={i}
-                                    className="flex-1 bg-gradient-to-t from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 rounded-sm"
-                                    style={{ height: `${height}%` }}
-                                  ></div>
-                                );
-                              })}
-                            </div>
+                          {/* Mobile-friendly chart */}
+                          <div className="h-12 md:h-20 flex items-end space-x-0.5 md:space-x-1">
+                            {[...Array(8)].map((_, i) => {
+                              const height = 30 + Math.random() * 70;
+                              return (
+                                <div
+                                  key={i}
+                                  className="flex-1 bg-gradient-to-t from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 rounded-sm"
+                                  style={{ height: `${height}%` }}
+                                ></div>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>
@@ -624,15 +645,30 @@ const Hero = forwardRef(({ isVisible, scrollToSection, darkMode }, ref) => {
   );
 });
 
-const EnhancedFeatureItem = ({ text, icon }) => (
+const EnhancedFeatureItem = ({ text, icon, mobileOptimized = false }) => (
   <motion.div
-    className="flex items-center space-x-3"
+    className={`flex items-center ${
+      mobileOptimized ? "space-x-2 md:space-x-3" : "space-x-3"
+    }`}
     whileHover={{ x: 5, transition: { duration: 0.2 } }}
+    whileTap={{ scale: 0.98 }}
   >
-    <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 shadow-inner border border-blue-200/50 dark:border-blue-800/30 text-blue-600 dark:text-blue-400">
-      {icon || <Check className="h-5 w-5" />}
+    <div
+      className={`flex-shrink-0 ${
+        mobileOptimized ? "h-8 w-8 md:h-10 md:w-10" : "h-10 w-10"
+      } flex items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 shadow-inner border border-blue-200/50 dark:border-blue-800/30 text-blue-600 dark:text-blue-400`}
+    >
+      {icon || (
+        <Check
+          className={mobileOptimized ? "h-4 w-4 md:h-5 md:w-5" : "h-5 w-5"}
+        />
+      )}
     </div>
-    <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
+    <p
+      className={`${
+        mobileOptimized ? "text-sm md:text-lg" : "text-lg"
+      } font-medium text-gray-700 dark:text-gray-300`}
+    >
       {text}
     </p>
   </motion.div>
