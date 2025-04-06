@@ -18,34 +18,24 @@ import { Button } from "./components/ui/button";
 import { navItems } from "./data/siteData";
 import { MainLayout } from "./components/layout/main-layout";
 import { scrollUtils } from "./utils/scrollUtils";
+import SectionWrapper from "./components/layout/section-wrapper";
 
-// Section wrapper component for consistent styling
-const SectionWrapper = ({
-  children,
-  id,
-  className = "",
-  padding = "large",
-}) => {
-  return (
-    <div
-      id={id}
-      className={`relative w-full ${
-        padding === "none"
-          ? ""
-          : padding === "small"
-          ? "py-8 md:py-12"
-          : padding === "medium"
-          ? "py-12 md:py-16"
-          : padding === "large"
-          ? "py-16 md:py-24"
-          : padding === "xlarge"
-          ? "py-24 md:py-32"
-          : ""
-      } ${className}`}
-    >
-      {children}
-    </div>
-  );
+// Seamless color transitions between sections
+const SECTION_COLORS = {
+  // Backgrounds (carefully chosen for seamless transitions)
+  intro:
+    "bg-gradient-to-b from-blue-50 to-white dark:from-blue-900/5 dark:to-gray-900",
+  market: "bg-white dark:bg-gray-900",
+  ecommerce: "bg-white dark:bg-gray-900",
+  casestudy: "bg-white dark:bg-gray-900",
+  amwayDetail: "bg-white dark:bg-gray-900",
+  solutions: "bg-white dark:bg-gray-900",
+  tools:
+    "bg-gradient-to-b from-white to-blue-50/50 dark:from-gray-900 dark:to-blue-900/10",
+  strategy: "bg-white dark:bg-gray-900",
+  demo: "bg-white dark:bg-gray-900",
+  invest:
+    "bg-gradient-to-b from-white to-blue-600 dark:from-gray-900 dark:to-blue-700",
 };
 
 const App = () => {
@@ -69,8 +59,10 @@ const App = () => {
   });
 
   // Use intersection observer to detect which section is currently in view
+  // Thêm rootMargin để phát hiện sớm hơn khi phần tử vào viewport
   const isVisible = useIntersectionObserver(sectionRefs, {
     threshold: 0.3,
+    rootMargin: "-80px 0px 0px 0px", // Offset for fixed header
     onVisibilityChange: (id, isVisible) => {
       if (isVisible) {
         setActiveSection(id);
@@ -80,13 +72,18 @@ const App = () => {
     },
   });
 
-  // Enhanced scrollToSection function with fallback behavior
+  // Enhanced scrollToSection function with consistent handling of section IDs
   const scrollToSection = (sectionId) => {
+    // Normalize the section ID in case it has '-section' suffix
+    const normalizedId = sectionId.endsWith("-section")
+      ? sectionId.replace("-section", "")
+      : sectionId;
+
     // Primary method: Try using the ref
-    if (sectionRefs[sectionId]?.current) {
+    if (sectionRefs[normalizedId]?.current) {
       const headerOffset = 80; // Adjust based on header height
       const sectionPosition =
-        sectionRefs[sectionId].current.getBoundingClientRect().top;
+        sectionRefs[normalizedId].current.getBoundingClientRect().top;
       const offsetPosition =
         sectionPosition + window.pageYOffset - headerOffset;
 
@@ -99,12 +96,22 @@ const App = () => {
 
     // Fallback method 1: Try using scrollUtils
     if (scrollUtils && typeof scrollUtils.scrollToElement === "function") {
-      const success = scrollUtils.scrollToElement(sectionId, { offset: 80 });
+      // Try both with and without '-section' suffix
+      let success = scrollUtils.scrollToElement(normalizedId, { offset: 80 });
+      if (!success) {
+        success = scrollUtils.scrollToElement(`${normalizedId}-section`, {
+          offset: 80,
+        });
+      }
       if (success) return;
     }
 
     // Fallback method 2: Try using getElementById directly
-    const element = document.getElementById(sectionId);
+    let element = document.getElementById(normalizedId);
+    if (!element) {
+      element = document.getElementById(`${normalizedId}-section`);
+    }
+
     if (element) {
       const headerOffset = 80;
       const elementPosition = element.getBoundingClientRect().top;
@@ -125,11 +132,18 @@ const App = () => {
   // Check URL hash on initial load to scroll to the correct section
   useEffect(() => {
     const hash = window.location.hash.replace("#", "");
-    if (hash && sectionRefs[hash]) {
-      // Add a small delay to ensure the page is fully loaded
-      setTimeout(() => {
-        scrollToSection(hash);
-      }, 100);
+    if (hash) {
+      // Normalize the hash in case it contains '-section'
+      const normalizedHash = hash.endsWith("-section")
+        ? hash.replace("-section", "")
+        : hash;
+
+      if (sectionRefs[normalizedHash]) {
+        // Add a small delay to ensure the page is fully loaded
+        setTimeout(() => {
+          scrollToSection(normalizedHash);
+        }, 100);
+      }
     }
   }, []);
 
@@ -156,14 +170,6 @@ const App = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Scroll to top function
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
 
   // Convert navItems to the format expected by Navbar component
   const navigationItems = navItems.map((item) => ({
@@ -213,16 +219,26 @@ const App = () => {
 
       {/* Main Content with consistent layout */}
       <MainLayout>
-        {/* Hero Section - Full Height */}
-        <Hero
-          ref={sectionRefs.intro}
-          isVisible={isVisible.intro}
-          scrollToSection={scrollToSection}
-          darkMode={darkMode}
-        />
+        {/* Hero Section - Full Height with special styling */}
+        <SectionWrapper
+          id="intro"
+          padding="none"
+          variant={SECTION_COLORS.intro}
+        >
+          <Hero
+            ref={sectionRefs.intro}
+            isVisible={isVisible.intro}
+            scrollToSection={scrollToSection}
+            darkMode={darkMode}
+          />
+        </SectionWrapper>
 
         {/* Market Analysis Section */}
-        <SectionWrapper id="market-section">
+        <SectionWrapper
+          id="market"
+          padding="large"
+          variant={SECTION_COLORS.market}
+        >
           <MarketAnalysis
             ref={sectionRefs.market}
             isVisible={isVisible.market}
@@ -231,7 +247,11 @@ const App = () => {
         </SectionWrapper>
 
         {/* E-commerce Impact Section */}
-        <SectionWrapper id="ecommerce-section">
+        <SectionWrapper
+          id="ecommerce"
+          padding="large"
+          variant={SECTION_COLORS.ecommerce}
+        >
           <EcommerceImpact
             ref={sectionRefs.ecommerce}
             isVisible={isVisible.ecommerce}
@@ -240,7 +260,11 @@ const App = () => {
         </SectionWrapper>
 
         {/* Case Study Section */}
-        <SectionWrapper id="casestudy-section">
+        <SectionWrapper
+          id="casestudy"
+          padding="large"
+          variant={SECTION_COLORS.casestudy}
+        >
           <CaseStudy
             ref={sectionRefs.casestudy}
             isVisible={isVisible.casestudy}
@@ -248,8 +272,12 @@ const App = () => {
           />
         </SectionWrapper>
 
-        {/* Detailed Case Study Section */}
-        <SectionWrapper id="amwayDetail-section">
+        {/* Detailed Case Study Section - Fixed ID issue */}
+        <SectionWrapper
+          id="amwayDetail" // Đảm bảo ID này khớp với navItems
+          padding="large"
+          variant={SECTION_COLORS.amwayDetail}
+        >
           <AmwayDetailCaseStudy
             ref={sectionRefs.amwayDetail}
             isVisible={isVisible.amwayDetail}
@@ -258,7 +286,11 @@ const App = () => {
         </SectionWrapper>
 
         {/* Solutions Section */}
-        <SectionWrapper id="solutions-section">
+        <SectionWrapper
+          id="solutions"
+          padding="large"
+          variant={SECTION_COLORS.solutions}
+        >
           <Solutions
             ref={sectionRefs.solutions}
             isVisible={isVisible.solutions}
@@ -266,8 +298,13 @@ const App = () => {
           />
         </SectionWrapper>
 
-        {/* Tools Section */}
-        <SectionWrapper id="tools-section">
+        {/* Tools Section - Với gradient nhẹ để tạo sự tương phản */}
+        <SectionWrapper
+          id="tools"
+          padding="large"
+          variant={SECTION_COLORS.tools}
+          className="relative"
+        >
           <Tools
             ref={sectionRefs.tools}
             isVisible={isVisible.tools}
@@ -275,17 +312,12 @@ const App = () => {
           />
         </SectionWrapper>
 
-        {/* Demo Section */}
-        <SectionWrapper id="demo-section">
-          <DemoSection
-            ref={sectionRefs.demo}
-            isVisible={isVisible.demo}
-            darkMode={darkMode}
-          />
-        </SectionWrapper>
-
         {/* Strategy Section */}
-        <SectionWrapper id="strategy-section">
+        <SectionWrapper
+          id="strategy"
+          padding="large"
+          variant={SECTION_COLORS.strategy}
+        >
           <Strategy
             ref={sectionRefs.strategy}
             isVisible={isVisible.strategy}
@@ -293,8 +325,22 @@ const App = () => {
           />
         </SectionWrapper>
 
-        {/* Investment Section */}
-        <SectionWrapper id="invest-section">
+        {/* Demo Section */}
+        <SectionWrapper id="demo" padding="large" variant={SECTION_COLORS.demo}>
+          <DemoSection
+            ref={sectionRefs.demo}
+            isVisible={isVisible.demo}
+            darkMode={darkMode}
+          />
+        </SectionWrapper>
+
+        {/* Investment Section - Với gradient đặc biệt từ trắng sang xanh */}
+        <SectionWrapper
+          id="invest"
+          padding="large"
+          variant={SECTION_COLORS.invest}
+          className="mt-0"
+        >
           <Investment
             ref={sectionRefs.invest}
             isVisible={isVisible.invest}
@@ -304,21 +350,6 @@ const App = () => {
       </MainLayout>
 
       <Footer darkMode={darkMode} />
-
-      {/* Scroll to top button - fixed style */}
-      <Button
-        onClick={scrollToTop}
-        variant="default"
-        size="icon"
-        className={`fixed bottom-8 right-8 z-50 rounded-full bg-blue-600 text-white shadow-lg transform transition-all duration-300 ${
-          showScrollTop
-            ? "opacity-100 translate-y-0 hover:scale-110"
-            : "opacity-0 translate-y-10 pointer-events-none"
-        }`}
-        aria-label="Scroll to top"
-      >
-        <ArrowUp className="h-5 w-5" />
-      </Button>
 
       {/* Chat Bot Button - fixed style */}
       <Button

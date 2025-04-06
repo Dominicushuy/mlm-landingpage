@@ -1,3 +1,75 @@
 @tailwind base;  
 @tailwind components;  
 @tailwind utilities;
+
+/* Thêm vào file CSS chính của bạn hoặc tạo tệp mới */
+
+/* 
+ * CSS để tạo sự liền mạch giữa các section
+ * Có thể đặt trong src/styles/section-consistency.css và import trong main.jsx
+ */
+
+/* Soft transition between sections */
+.section-transition-container {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Consistent section styling */
+  .section-container {
+    position: relative;
+    width: 100%;
+    scroll-margin-top: 80px; /* For smooth scrolling with fixed navbar */
+  }
+  
+  /* Optional subtle section dividers */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(100, 116, 139, 0.1), transparent);
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+  
+  /* Enhanced focus shadows for active section - có thể bỏ nếu không thích hiệu ứng này */
+  .section-focused {
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* Consistent section content - áp dụng cho children của các section */
+  .section-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  /* Smooth scroll behavior for the entire page */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* 
+   * Hướng dẫn sử dụng:
+   * 
+   * 1. Thêm class section-container vào SectionWrapper
+   * 2. Thêm class section-content vào phần content (children)
+   * 3. Sử dụng section-divider nếu muốn có divider mỏng giữa sections
+   */
+  
+  /* 
+   * Bổ sung: CSS để sửa lỗi hiển thị trong dark mode
+   * Đây là cách khác để đảm bảo màu background trong dark mode
+   */
+  @media (prefers-color-scheme: dark) {
+    .dark-mode-fix {
+      background-color: #111827; /* gray-900 */
+    }
+    
+    /* Gradient cho các section cần gradient trong dark mode */
+    .dark-gradient-blue {
+      background: linear-gradient(to bottom, #1e3a8a05, #111827);
+    }
+  }
