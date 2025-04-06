@@ -9,7 +9,6 @@ import {
 } from "../layout/section";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { FeatureCard, CalloutCard } from "../features/feature-card";
-import { PieChart } from "../charts/chart-components";
 import { Button } from "../ui/button";
 import {
   Check,
@@ -36,6 +35,18 @@ import {
   CHART_COLORS,
 } from "../../data/siteData";
 
+// Import Enhanced Chart components
+import {
+  EnhancedPieChart,
+  EnhancedBarChart,
+  KpiCard,
+  SparklineCard,
+  DashboardGrid,
+  DashboardGridItem,
+  ENHANCED_COLORS,
+} from "../charts/chart-components";
+import { ChartWrapper } from "../charts/chart-wrapper";
+
 /**
  * Enhanced Strategy Section with modern UI/UX
  */
@@ -45,6 +56,13 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
   const [expandedItem, setExpandedItem] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
   const sectionRef = useRef(null);
+
+  // Prepare data for implementation phase progress chart
+  const phaseProgressData = implementationPhases.map((phase, idx) => ({
+    name: phase.name,
+    progress: idx <= activePhase ? 100 : 0,
+    target: 100,
+  }));
 
   // Track mouse position for 3D card effect
   useEffect(() => {
@@ -134,6 +152,16 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
     TrendingUp, // Đánh giá và cải tiến
   ];
 
+  // Sample data for sparkline
+  const sparklineData = [
+    { month: "T1", value: 20 },
+    { month: "T2", value: 45 },
+    { month: "T3", value: 30 },
+    { month: "T4", value: 60 },
+    { month: "T5", value: 75 },
+    { month: "T6", value: 85 },
+  ];
+
   return (
     <Section
       id="strategy"
@@ -182,6 +210,60 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
           </motion.div>
         </SectionHeader>
 
+        {/* KPI Cards using updated chart components */}
+        <motion.div variants={itemVariants} className="mt-8 mb-12">
+          <DashboardGrid columns={4} gap="md">
+            <DashboardGridItem>
+              <KpiCard
+                title="Tăng hiệu quả hoạt động"
+                value={30}
+                change={8.5}
+                suffix="%"
+                trend="up"
+                trendDirection="up"
+                icon={<TrendingUp className="h-5 w-5" />}
+                color="green"
+              />
+            </DashboardGridItem>
+            <DashboardGridItem>
+              <KpiCard
+                title="Cá nhân hoá trải nghiệm"
+                value={25}
+                change={5.2}
+                suffix="%"
+                trend="up"
+                trendDirection="up"
+                icon={<Users className="h-5 w-5" />}
+                color="blue"
+              />
+            </DashboardGridItem>
+            <DashboardGridItem>
+              <KpiCard
+                title="Tăng cường minh bạch"
+                value={20}
+                change={3.8}
+                suffix="%"
+                trend="up"
+                trendDirection="up"
+                icon={<Shield className="h-5 w-5" />}
+                color="purple"
+              />
+            </DashboardGridItem>
+            <DashboardGridItem>
+              <SparklineCard
+                title="Tăng doanh thu"
+                value="25%"
+                change={6.4}
+                sparklineData={sparklineData}
+                sparklineKey="value"
+                sparklineType="area"
+                color="teal"
+                icon={<BarChart className="h-5 w-5" />}
+              />
+            </DashboardGridItem>
+          </DashboardGrid>
+        </motion.div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
           <motion.div
             variants={itemVariants}
@@ -196,7 +278,7 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="p-6">
-                  {/* Progress indicator */}
+                  {/* Progress indicator with enhanced bar chart */}
                   <div className="mb-8">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -207,16 +289,33 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
                         {implementationPhases.length}
                       </span>
                     </div>
-                    <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-green-500 to-teal-500 dark:from-green-400 dark:to-teal-400 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${
-                            ((activePhase + 1) / implementationPhases.length) *
-                            100
-                          }%`,
+
+                    {/* Enhanced Bar Chart for Phase Progress */}
+                    <div className="h-40 mt-4">
+                      <EnhancedBarChart
+                        data={phaseProgressData}
+                        bars={[
+                          {
+                            dataKey: "progress",
+                            name: "Hoàn thành",
+                            color: ENHANCED_COLORS.success[2],
+                          },
+                          {
+                            dataKey: "target",
+                            name: "Mục tiêu",
+                            color: ENHANCED_COLORS.neutral[2],
+                            fillOpacity: 0.2,
+                          },
+                        ]}
+                        xAxisKey="name"
+                        height={150}
+                        grid={false}
+                        animate={true}
+                        formatters={{
+                          valueFormatter: (value) => `${value}%`,
                         }}
-                      ></div>
+                        className="mt-4"
+                      />
                     </div>
                   </div>
 
@@ -391,7 +490,7 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
                 </Card>
               </motion.div>
 
-              {/* Benefits chart */}
+              {/* Benefits chart with EnhancedPieChart */}
               <motion.div
                 whileHover={{ y: -5, transition: { duration: 0.2 } }}
                 style={{
@@ -412,36 +511,25 @@ const Strategy = forwardRef(({ isVisible }, ref) => {
                     <div className="h-64 relative">
                       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 rounded-lg"></div>
                       <div className="relative z-10">
-                        <PieChart
+                        {/* Enhanced Pie Chart */}
+                        <EnhancedPieChart
                           data={benefitsPieChartData}
                           colors={CHART_COLORS}
-                          innerRadius={50}
+                          dataKey="value"
+                          nameKey="name"
+                          innerRadius={40}
                           outerRadius={80}
                           paddingAngle={2}
+                          showLabel={false}
+                          animate={true}
+                          activeIndex={hoveredBenefit}
+                          height={250}
+                          unit="%"
+                          formatters={{
+                            valueFormatter: (value) => `${value}%`,
+                          }}
                         />
                       </div>
-                    </div>
-
-                    <div className="mt-4 space-y-1">
-                      {benefitsPieChartData.map((item, idx) => (
-                        <div
-                          key={idx}
-                          className={`flex justify-between items-center p-2 rounded-md transition-colors ${
-                            hoveredBenefit === idx ? "bg-white/10" : ""
-                          }`}
-                          onMouseEnter={() => setHoveredBenefit(idx)}
-                          onMouseLeave={() => setHoveredBenefit(null)}
-                        >
-                          <div className="flex items-center">
-                            <div
-                              className="w-3 h-3 rounded-full mr-2"
-                              style={{ backgroundColor: CHART_COLORS[idx] }}
-                            ></div>
-                            <span className="text-sm">{item.name}</span>
-                          </div>
-                          <span className="font-medium">{item.value}%</span>
-                        </div>
-                      ))}
                     </div>
                   </CardContent>
                 </Card>

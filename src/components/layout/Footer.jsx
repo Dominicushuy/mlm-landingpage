@@ -109,39 +109,39 @@ const Footer = ({ darkMode }) => {
       <div className="relative z-10 px-4 pt-16 pb-12 mx-auto max-w-screen-xl sm:px-6 lg:px-8">
         {/* Newsletter section */}
         <motion.div
-          className="w-full max-w-4xl mx-auto mb-16 overflow-hidden"
+          className="w-full max-w-5xl mx-auto mb-16 overflow-hidden"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <div className="relative p-8 overflow-hidden bg-gradient-to-r from-blue-900/40 to-indigo-900/40 backdrop-blur-sm rounded-2xl border border-white/10 shadow-xl">
+          <div className="relative p-6 overflow-hidden bg-gradient-to-r from-blue-900/40 to-indigo-900/40 backdrop-blur-sm rounded-2xl border border-white/10 shadow-xl">
             {/* Background decorative elements */}
-            <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-blue-500/20 rounded-full filter blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-indigo-500/20 rounded-full filter blur-3xl"></div>
+            <div className="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-blue-500/20 rounded-full filter blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-32 h-32 bg-indigo-500/20 rounded-full filter blur-3xl"></div>
 
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="mb-6 md:mb-0 max-w-xl">
-                <h3 className="mb-2 text-2xl font-bold font-serif text-white">
+            <div className="relative z-10 flex flex-col md:flex-row items-start justify-between gap-4">
+              <div className="mb-4 md:mb-0 max-w-md">
+                <h3 className="mb-2 text-xl font-bold font-serif text-white">
                   Cập nhật thông tin{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
                     marketing automation
                   </span>
                 </h3>
-                <p className="text-blue-100/80">
+                <p className="text-blue-100/80 text-sm">
                   Đăng ký nhận bản tin để cập nhật những thông tin mới nhất về
                   xu hướng marketing automation trong ngành MLM.
                 </p>
               </div>
 
-              <div className="w-full md:w-auto">
-                <form onSubmit={handleSubscribe} className="flex">
+              <div className="w-full md:w-auto md:min-w-[280px] lg:min-w-[320px]">
+                <form onSubmit={handleSubscribe} className="flex max-w-md">
                   <input
                     type="email"
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
                     placeholder="Email của bạn"
-                    className="w-full px-4 py-3 text-gray-700 bg-white/90 backdrop-blur-sm rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-none"
+                    className="w-full px-3 py-2 text-sm text-gray-700 bg-white/90 backdrop-blur-sm rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-none"
                     required
                   />
                   <motion.button
@@ -149,14 +149,14 @@ const Footer = ({ darkMode }) => {
                     variants={buttonVariants}
                     whileHover="hover"
                     whileTap="tap"
-                    className="px-5 py-3 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-r-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 flex items-center"
+                    className="px-3 py-2 text-sm whitespace-nowrap text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-r-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 flex items-center"
                   >
                     {subscribed ? (
                       "Đã đăng ký!"
                     ) : (
                       <>
                         Đăng ký
-                        <ArrowRight className="w-4 h-4 ml-2" />
+                        <ArrowRight className="w-3 h-3 ml-1" />
                       </>
                     )}
                   </motion.button>

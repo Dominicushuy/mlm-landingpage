@@ -10,8 +10,8 @@ import AmwayDetailCaseStudy from "./components/sections/AmwayDetailCaseStudy";
 import Solutions from "./components/sections/Solutions";
 import Tools from "./components/sections/Tools";
 import Strategy from "./components/sections/Strategy";
-// import Investment from "./components/sections/Investment";
-// import DemoSection from "./components/sections/DemoSection";
+import Investment from "./components/sections/Investment";
+import DemoSection from "./components/sections/DemoSection";
 import { ArrowUp, MessageSquare, Moon, Sun } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { navItems } from "./data/siteData";
@@ -326,16 +326,16 @@ const App = () => {
         </SectionWrapper>
 
         {/* Demo Section */}
-        {/* <SectionWrapper id="demo" padding="large" variant={SECTION_COLORS.demo}>
+        <SectionWrapper id="demo" padding="large" variant={SECTION_COLORS.demo}>
           <DemoSection
             ref={sectionRefs.demo}
             isVisible={isVisible.demo}
             darkMode={darkMode}
           />
-        </SectionWrapper> */}
+        </SectionWrapper>
 
         {/* Investment Section - Với gradient đặc biệt từ trắng sang xanh */}
-        {/* <SectionWrapper
+        <SectionWrapper
           id="invest"
           padding="large"
           variant={SECTION_COLORS.invest}
@@ -346,7 +346,7 @@ const App = () => {
             isVisible={isVisible.invest}
             darkMode={darkMode}
           />
-        </SectionWrapper> */}
+        </SectionWrapper>
       </MainLayout>
 
       <Footer darkMode={darkMode} />
