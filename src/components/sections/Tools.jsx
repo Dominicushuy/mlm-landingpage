@@ -239,8 +239,8 @@ const Tools = forwardRef(({ isVisible }, ref) => {
             }}
             className="mb-12"
           >
-            {/* Tạo container với background light cho chart */}
-            <div className="mb-12 rounded-xl overflow-hidden">
+            {/* Tạo container với background light cho chart - Thêm bg-white/bg-gray-800 */}
+            <div className="mb-12 rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow-lg">
               <div className="w-full">
                 <EnhancedBarChart
                   title="So sánh chức năng các công cụ"
@@ -270,12 +270,11 @@ const Tools = forwardRef(({ isVisible }, ref) => {
                   caption="Dữ liệu cập nhật Q1 2025"
                   info="So sánh các chức năng chính giữa các công cụ dựa trên mức độ hỗ trợ và tính năng"
                   animate={true}
+                  /* Sửa filterOptions để khớp với dataKey của bars */
                   filterOptions={[
-                    { label: "Quản lý hoa hồng", value: "Quản lý hoa hồng" },
-                    { label: "CRM", value: "CRM" },
-                    { label: "Email Marketing", value: "Email Marketing" },
-                    { label: "Phân tích dữ liệu", value: "Phân tích dữ liệu" },
-                    { label: "Tích hợp đa kênh", value: "Tích hợp đa kênh" },
+                    { label: "Epixel MLM Software", value: "epixel" },
+                    { label: "Global MLM Software", value: "global" },
+                    { label: "Công cụ BI", value: "bi" },
                   ]}
                   layout="horizontal"
                 />
@@ -285,7 +284,7 @@ const Tools = forwardRef(({ isVisible }, ref) => {
 
           {/* Chart Grid mới với các biểu đồ bổ sung */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            <div className="bg-white dark:bg-white rounded-xl overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg">
               {/* PieChart với background light */}
               <EnhancedPieChart
                 title="Phân bổ nhu cầu theo loại công cụ"
